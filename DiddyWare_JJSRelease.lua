@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-01-30T02:43:11.879369500+00:00",
+	genDate = "2026-01-30T14:26:28.042466400+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -156,13 +156,15 @@ then local m=#h.OrderedMoves local n,o,p=l.h/m,l.x+l.w+2,l.y for q=1,#h.
 OrderedMoves do local r=h.OrderedMoves[q]local s,t=r.Remaining,p+(q-1)*n draw.
 RectFilled(o,t,n,n,b.CooldownBackgroundColour,0,b.CooldownBackgroundAlpha)if s>0
 then local u=s/r.Cooldown local v=n*u draw.RectFilled(o+n-v,t,v,n,b.
-CooldownFillColour,0,b.CooldownFillAlpha)end draw.Rect(o,t,n,n,e)local u=r.Name
-local v,w=draw.GetTextSize(u,c.Font)local x,y=o+(n-v)/2,t+(n-w)/2 draw.
-TextOutlined(u,x,y,e,c.Font)end end end function b.Draw()if not b.Enabled then
-return end for g,h in pairs(entity.GetPlayers(false))do local j=c.Players[h.Name
-]if j then b.DrawPlayer(h,j)end end end function b.Initialise(g)local h,j,k,l,m,
-n=g:Checkbox('Character Info',false),g:Checkbox('Cooldowns',false),g:
-Colorpicker('Cooldown Fill Color',{r=255,g=0,b=0,a=180},true),g:Colorpicker(
+CooldownFillColour,0,b.CooldownFillAlpha)end draw.Rect(o,t,n,n,e)local u,v=r.
+Name,c.Font local w=u if n<40 then v='SmallestPixel'end if n<25 then w=string.
+sub(u,1,1)elseif n<40 then w=string.sub(u,1,3)end if n>=15 then local x,y=draw.
+GetTextSize(w,v)local z,A=o+(n-x)/2,t+(n-y)/2 draw.TextOutlined(w,z,A,e,v)end
+end end end function b.Draw()if not b.Enabled then return end for g,h in pairs(
+entity.GetPlayers(false))do local j=c.Players[h.Name]if j then b.DrawPlayer(h,j)
+end end end function b.Initialise(g)local h,j,k,l,m,n=g:Checkbox(
+'Character Info',false),g:Checkbox('Cooldowns',false),g:Colorpicker(
+'Cooldown Fill Color',{r=255,g=0,b=0,a=180},true),g:Colorpicker(
 'Cooldown Background Color',{r=0,g=0,b=0,a=200},true),g:Checkbox('Evasive Bar',
 false),g:Colorpicker('Evasive Fill Color',{r=121,g=74,b=148,a=255},true)cheat.
 Register('onPaint',function()b.Draw()end)cheat.Register('onSlowUpdate',function(
