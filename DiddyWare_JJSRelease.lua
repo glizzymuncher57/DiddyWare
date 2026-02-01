@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-01-31T18:39:12.312302400+00:00",
+	genDate = "2026-02-01T20:02:10.215410+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -21,14 +21,25 @@ do
 	function a.a()
 		return {
 			Font = "ConsolasBold",
-			LocalInfo = { Player = nil, PlayerGui = nil, Character = nil, SelectedCharacter = nil, Ping = 0 },
+			LocalInfo = {
+				Player = nil,
+				PlayerGui = nil,
+				Character = nil,
+				MinigameUI = nil,
+				SelectedCharacter = nil,
+				Ping = 0,
+			},
 			Players = {},
 			Folders = { Items = {}, Domains = {} },
 			ClosestDomain = { Instance = nil, Distance = math.huge },
 		}
 	end
 	function a.b()
-		local b, c = { Enabled = false, LastClick = 0, Delay = 200 }, a.load("a")
+		local b, c = {
+			Enabled = false,
+			LastClick = 0,
+			Delay = 200,
+		}, a.load("a")
 		local d = c.LocalInfo.PlayerGui
 		function b.Runtime()
 			if not b.Enabled then
@@ -334,57 +345,6 @@ do
 		return b
 	end
 	function a.g()
-		local b, c, d, e =
-			{
-				Enabled = false,
-				Timings = { Itadori = 0.285, Mahito = 0.285 },
-				_Waiting = false,
-				_NextPressTime = 0,
-				_WasDown = false,
-			},
-			entity.GetLocalPlayer(),
-			a.load("a"),
-			a.load("f")
-		function b.Runtime()
-			if not b.Enabled then
-				return
-			end
-			local f = d.LocalInfo.SelectedCharacter
-			if f ~= "Mahito" and f ~= "Itadori" then
-				return
-			end
-			local g, h = utility.GetTickCount(), keyboard.IsPressed(0x33)
-			if not e:DoesPlayerHaveMove(c, "Focus Strike") and not e:DoesPlayerHaveMove(c, "Divergent Fist") then
-				return
-			end
-			if h and not b._WasDown and not b._Waiting then
-				local i = b.Timings[f] or 0
-				local j, k = i * 1000, d.LocalInfo.Ping or 0
-				j = j - k
-				if j < 0 then
-					j = 0
-				end
-				b._NextPressTime = g + j
-				b._Waiting = true
-			end
-			if b._Waiting and g >= b._NextPressTime then
-				keyboard.Click(0x33)
-				b._Waiting = false
-			end
-			b._WasDown = h
-		end
-		function b.Initialise(f)
-			local g = f:Checkbox("Auto Blackflash", false)
-			cheat.Register("onPaint", function()
-				b.Runtime()
-			end)
-			cheat.Register("onUpdate", function()
-				b.Enabled = g:Get()
-			end)
-		end
-		return b
-	end
-	function a.h()
 		local b, c = {}, {}
 		c.__index = c
 		function c:Get()
@@ -491,6 +451,59 @@ do
 		function b.NewTab(g, h)
 			ui.newTab(g, h)
 			return setmetatable({ Ref = g }, f)
+		end
+		return b
+	end
+	function a.h()
+		local b, c, d, e =
+			{
+				Enabled = false,
+				HotkeyEnabled = false,
+				Timings = { Itadori = 0.285, Mahito = 0.285 },
+				_Waiting = false,
+				_NextPressTime = 0,
+				_WasDown = false,
+			}, entity.GetLocalPlayer(), a.load("a"), a.load("f")
+		function b.Runtime()
+			if not b.Enabled then
+				return
+			end
+			if not b.HotkeyEnabled then
+				return
+			end
+			local f = d.LocalInfo.SelectedCharacter
+			if f ~= "Mahito" and f ~= "Itadori" then
+				return
+			end
+			local g, h = utility.GetTickCount(), keyboard.IsPressed(0x33)
+			if not e:DoesPlayerHaveMove(c, "Focus Strike") and not e:DoesPlayerHaveMove(c, "Divergent Fist") then
+				return
+			end
+			if h and not b._WasDown and not b._Waiting then
+				local i = b.Timings[f] or 0
+				local j, k = i * 1000, d.LocalInfo.Ping or 0
+				j = j - k
+				if j < 0 then
+					j = 0
+				end
+				b._NextPressTime = g + j
+				b._Waiting = true
+			end
+			if b._Waiting and g >= b._NextPressTime then
+				keyboard.Click(0x33)
+				b._Waiting = false
+			end
+			b._WasDown = h
+		end
+		function b.Initialise(f)
+			local g, h = f:Checkbox("Auto Blackflash", false), f:KeyPicker("Auto Blackflash Hotkey", true)
+			cheat.Register("onPaint", function()
+				b.Runtime()
+			end)
+			cheat.Register("onUpdate", function()
+				b.Enabled = g:Get()
+				b.HotkeyEnabled = type(h:Get()) == "boolean"
+			end)
 		end
 		return b
 	end
@@ -903,6 +916,105 @@ do
 		return b
 	end
 	function a.p()
+		return function(b)
+			print("place holder")
+		end
+	end
+	function a.q()
+		local b = a.load("d")
+		local c = function(c, d)
+			local e, f = c.BG1.Floor, c.Food
+			if not e or not f then
+				print("Minigame Critical Error | Couldn't find floor or food!")
+				return nil
+			end
+			local g, h, j, k, l = b.GetFramePosition(e), b.GetFrameSize(e), math.huge
+			for m, n in pairs(f:GetChildren()) do
+				local o = b.GetFrameCenter(n)
+				local p, q = math.abs(o.X - d.X), math.abs(o.Y - g.Y)
+				local r = n.Name == "Speed" and p > (h.X * 0.45)
+				if not r then
+					if q < j then
+						k = n
+						l = o
+						j = q
+					end
+				end
+			end
+			return k, l
+		end
+		return function(d)
+			local e = d.Screen:FindFirstChild("Game")
+			if not e then
+				print("Minigame Critical | No Game UI.")
+				return
+			end
+			local f = e:FindFirstChild("Guy")
+			local g = b.GetFrameCenter(f)
+			local h, j = c(e, g)
+			if not h or not j then
+				return
+			end
+			local k = j.X - g.X
+			if math.abs(k) < 0.03 then
+				k = 0
+			end
+			if k < 0 then
+				keyboard.click("a")
+			elseif k > 0 then
+				keyboard.click("d")
+			end
+		end
+	end
+	function a.r()
+		local b, c, d =
+			{ Enabled = false, FlightGame = false, CatchGame = false, GameUI = nil, GameType = nil },
+			a.load("a"),
+			{ FlightGame = a.load("p"), CatchGame = a.load("q") }
+		local e, f =
+			function(e)
+				local f = d[b.GameType]
+				return f and f(e) or nil
+			end, function(e, f, g)
+				local h = e:Get()
+				b.Enabled = h
+				if h then
+					b.FlightGame = f:Get()
+					b.CatchGame = g:Get()
+				end
+				f:Visible(h)
+				g:Visible(h)
+			end
+		function b.Initialise(g)
+			local h, j, k =
+				g:Checkbox("Minigames Enabled", false),
+				g:Checkbox("Flight Game", false),
+				g:Checkbox("Catch Game", false)
+			cheat.Register("onUpdate", function()
+				f(h, j, k)
+				if not utility.GetMenuState() and b.Enabled and b.GameUI and b.GameType and b[b.GameType] == true then
+					e(b.GameUI)
+				end
+			end)
+			cheat.Register("onSlowUpdate", function()
+				if not b.Enabled then
+					return
+				end
+				b.GameUI = c.LocalInfo.PlayerGui:FindFirstChild("DeviceUI")
+				if b.GameUI then
+					local l = b.GameUI:FindFirstChild("DeviceSystem")
+					local m = l:FindFirstChild("Wall") and "FlightGame"
+						or l:FindFirstChild("Food") and "CatchGame"
+						or nil
+					b.GameType = m
+				else
+					b.GameType = nil
+				end
+			end)
+		end
+		return b
+	end
+	function a.s()
 		return function()
 			function math.floor(b)
 				return b - (b % 1)
@@ -913,10 +1025,10 @@ do
 		end
 	end
 end
-local b, c, d, e, f, g, h, j, k, l, m, n =
+local b, c, d, e, f, g, h, j, k, l, m, n, o =
 	a.load("b"),
 	a.load("e"),
-	a.load("g"),
+	a.load("h"),
 	a.load("i"),
 	a.load("j"),
 	a.load("k"),
@@ -924,24 +1036,29 @@ local b, c, d, e, f, g, h, j, k, l, m, n =
 	a.load("m"),
 	a.load("o"),
 	a.load("f"),
-	a.load("h"),
-	a.load("p")
-local o = function()
-	local o = m.NewTab("DiddyWare_JJS", "DiddyWare")
-	local p, q, r =
-		o:Container("DiddyWare_JJSC1", "Main", { autosize = true, next = true }),
-		o:Container("DiddyWare_JJSC2", "Visuals", { autosize = true }),
-		o:Container("DiddyWare_JJSC3", "Settings", { autosize = true })
-	n()
-	l.Initialise(r)
-	k.Initialise(r)
-	d.Initialise(p)
-	e.Initialise(p)
-	c.Initialise(p)
-	b.Initialise(p)
-	f.Initialise(q)
-	h.Initialise(q)
-	g.Initialise(q)
-	j.Initialise(r)
+	a.load("r"),
+	a.load("g"),
+	a.load("s")
+local p = function()
+	local p = n.NewTab("DiddyWare_JJS", "DiddyWare")
+	local q, r, s, t =
+		p:Container("DiddyWare_JJSC1", "Main", { autosize = true, next = true }),
+		p:Container("DiddyWare_JJSC2", "Visuals", {
+			autosize = true,
+		}),
+		p:Container("DiddyWare_JJSC3", "Settings", { autosize = true, next = true }),
+		p:Container("DiddyWare_JJSC4", "Misc", { autosize = true })
+	o()
+	l.Initialise(s)
+	k.Initialise(s)
+	d.Initialise(q)
+	e.Initialise(q)
+	c.Initialise(q)
+	b.Initialise(q)
+	f.Initialise(r)
+	h.Initialise(r)
+	g.Initialise(r)
+	j.Initialise(s)
+	m.Initialise(t)
 end
-o()
+p()
