@@ -149,7 +149,7 @@ then mouse.Click'leftmouse'b._Waiting=false end b._WasDown=h end function b.
 Initialise(g)local h,i=g:Checkbox('Todo Perfect Swap',false),g:KeyPicker(
 'Todo Perfect Swap Hotkey',true)cheat.Register('onUpdate',function()b.Runtime()b
 .Enabled=h:Get()b.BindPressed=i:Get()==true end)end return b end function a.j()
-local b,c,d,e={Enabled=false,BindEnabled=false,Delay=0.5,_WasWoosh=false,
+local b,c,d,e={Enabled=false,BindEnabled=false,Delay=0.65,_WasWoosh=false,
 _Waiting=true,_NextPressTime=0},entity.GetLocalPlayer(),a.load'a',a.load'f'
 function b.Runtime()if not b.Enabled then return end if not b.BindEnabled then
 return end if d.LocalInfo.SelectedCharacter~='Todo'or not e:DoesPlayerHaveMove(c
