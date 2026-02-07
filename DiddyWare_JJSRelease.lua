@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-04T20:33:43.343892900+00:00",
+	genDate = "2026-02-07T04:44:29.410782800+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -135,44 +135,45 @@ then mouse.Click'leftmouse'b._Waiting=false end b._WasDown=h end function b.
 Initialise(g)local h,i=g:Checkbox('Todo Perfect Swap',false),g:KeyPicker(
 'Todo Perfect Swap Hotkey',true)cheat.Register('onUpdate',function()b.Runtime()b
 .Enabled=h:Get()b.BindPressed=i:Get()==true end)end return b end function a.i()
-local b,c,d,e={Enabled=false,BindEnabled=false,Delay=0.5,_WasWoosh=false,
+local b,c,d,e={Enabled=false,BindEnabled=false,Delay=0.575,_WasWoosh=false,
 _Waiting=true,_NextPressTime=0},entity.GetLocalPlayer(),a.load'a',a.load'e'
 function b.Runtime()if not b.Enabled then return end if not b.BindEnabled then
 return end if d.LocalInfo.SelectedCharacter~='Todo'or not e:DoesPlayerHaveMove(c
 ,'Brute Force')then return end local f=c:GetBoneInstance'HumanoidRootPart'if not
 f then return end local g,h=f:FindFirstChild'Woosh',utility.GetTickCount()if g
-and not b._WasWoosh and not b._Waiting then local i=b.Delay or 0 local j,k=i*
-1000,d.LocalInfo.Ping or 0 j=j-k if j<0 then j=0 end b._NextPressTime=h+j b.
-_Waiting=true end if b._Waiting and h>=b._NextPressTime then keyboard.Click(0x32
-)b._Waiting=false end b._WasWoosh=g~=nil end function b.Initialise(f)local g,h=f
-:Checkbox('Todo Blackflash',false),f:KeyPicker('Todo Blackflash Hotkey',true)
-cheat.Register('onUpdate',function()b.Enabled=g:Get()b.BindEnabled=h:Get()==true
-b.Runtime()end)end return b end function a.j()local b,c,d,e,f={Enabled=false,
-DrawCooldowns=false,DrawEvasiveBar=false,CooldownFillColour=Color3.fromRGB(255,0
-,0),CooldownFillAlpha=180,CooldownBackgroundColour=Color3.fromRGB(0,0,0),
-CooldownBackgroundAlpha=0,EvasiveBarColour=Color3.fromRGB(121,74,148)},a.load'a'
-,Color3.new(0,0,0),Color3.new(1,1,1),function(b)if type(b)~='table'then return
-Color3.fromRGB(255,255,255)end local c,d,e=b.R or b.r or 255,b.G or b.g or 255,b
-.B or b.b or 255 return Color3.fromRGB(c,d,e)end function b.DrawPlayer(g,h)if
-not g.IsAlive then return end local i,j,k=utility.WorldToScreen(g.Position)if
-not k then return end local l=g.BoundingBox if not l then return end if b.
-DrawEvasiveBar and h.Evade then local m=math.clamp(h.Evade/50,0,1)local n,o,p,q=
-l.h*m,l.x-8,l.y,l.h draw.RectFilled(o-1,p-1,7,q+2,d,0,255)draw.RectFilled(o,p+q-
-n,5,n,b.EvasiveBarColour,0,255)local r=tostring(math.floor(m*100))..'%'local s=
-draw.GetTextSize(r,c.Font)draw.TextOutlined(r,o-s-2,p,e,c.Font)end if b.
-DrawCooldowns and#h.OrderedMoves>0 then local m=#h.OrderedMoves local n,o,p=l.h/
-m,l.x+l.w+2,l.y for q=1,#h.OrderedMoves do local r=h.OrderedMoves[q]local s,t=r.
-Remaining,p+(q-1)*n draw.RectFilled(o,t,n,n,b.CooldownBackgroundColour,0,b.
-CooldownBackgroundAlpha)if s>0 then local u=s/r.Cooldown local v=n*u draw.
-RectFilled(o+n-v,t,v,n,b.CooldownFillColour,0,b.CooldownFillAlpha)end draw.Rect(
-o,t,n,n,e)local u,v=r.Name,c.Font local w=u if n<40 then v='SmallestPixel'end if
-n<25 then w=string.sub(u,1,1)elseif n<40 then w=string.sub(u,1,3)end if n>=15
-then local x,y=draw.GetTextSize(w,v)local z,A=o+(n-x)/2,t+(n-y)/2 draw.
-TextOutlined(w,z,A,e,v)end end end end function b.Draw()if not b.Enabled then
-return end for g,h in pairs(entity.GetPlayers(false))do local j=c.Players[h.Name
-]if j then b.DrawPlayer(h,j)end end end function b.Initialise(g)local h,j,k,l,m,
-n=g:Checkbox('Character Info',false),g:Checkbox('Cooldowns',false),g:
-Colorpicker('Cooldown Fill Color',{r=255,g=0,b=0,a=180},true),g:Colorpicker(
+and not b._WasWoosh and not b._Waiting then local i=b.Delay or 0 local j=i*1000
+b._NextPressTime=h+j b._Waiting=true end if b._Waiting and h>=b._NextPressTime
+then keyboard.Click(0x32)b._Waiting=false end b._WasWoosh=g~=nil end function b.
+Initialise(f)local g,h,i=f:Checkbox('Todo Blackflash',false),f:KeyPicker(
+'Todo Blackflash Hotkey',true),f:SliderFloat('Todo Blackflash Timing (s)',0,1,
+0.575)cheat.Register('onUpdate',function()b.Enabled=g:Get()b.BindEnabled=h:Get()
+==true b.Delay=i:Get()b.Runtime()i:Visible(b.Enabled)end)end return b end
+function a.j()local b,c,d,e,f={Enabled=false,DrawCooldowns=false,DrawEvasiveBar=
+false,CooldownFillColour=Color3.fromRGB(255,0,0),CooldownFillAlpha=180,
+CooldownBackgroundColour=Color3.fromRGB(0,0,0),CooldownBackgroundAlpha=0,
+EvasiveBarColour=Color3.fromRGB(121,74,148)},a.load'a',Color3.new(0,0,0),Color3.
+new(1,1,1),function(b)if type(b)~='table'then return Color3.fromRGB(255,255,255)
+end local c,d,e=b.R or b.r or 255,b.G or b.g or 255,b.B or b.b or 255 return
+Color3.fromRGB(c,d,e)end function b.DrawPlayer(g,h)if not g.IsAlive then return
+end local i,j,k=utility.WorldToScreen(g.Position)if not k then return end local
+l=g.BoundingBox if not l then return end if b.DrawEvasiveBar and h.Evade then
+local m=math.clamp(h.Evade/50,0,1)local n,o,p,q=l.h*m,l.x-8,l.y,l.h draw.
+RectFilled(o-1,p-1,7,q+2,d,0,255)draw.RectFilled(o,p+q-n,5,n,b.EvasiveBarColour,
+0,255)local r=tostring(math.floor(m*100))..'%'local s=draw.GetTextSize(r,c.Font)
+draw.TextOutlined(r,o-s-2,p,e,c.Font)end if b.DrawCooldowns and#h.OrderedMoves>0
+then local m=#h.OrderedMoves local n,o,p=l.h/m,l.x+l.w+2,l.y for q=1,#h.
+OrderedMoves do local r=h.OrderedMoves[q]local s,t=r.Remaining,p+(q-1)*n draw.
+RectFilled(o,t,n,n,b.CooldownBackgroundColour,0,b.CooldownBackgroundAlpha)if s>0
+then local u=s/r.Cooldown local v=n*u draw.RectFilled(o+n-v,t,v,n,b.
+CooldownFillColour,0,b.CooldownFillAlpha)end draw.Rect(o,t,n,n,e)local u,v=r.
+Name,c.Font local w=u if n<40 then v='SmallestPixel'end if n<25 then w=string.
+sub(u,1,1)elseif n<40 then w=string.sub(u,1,3)end if n>=15 then local x,y=draw.
+GetTextSize(w,v)local z,A=o+(n-x)/2,t+(n-y)/2 draw.TextOutlined(w,z,A,e,v)end
+end end end function b.Draw()if not b.Enabled then return end for g,h in pairs(
+entity.GetPlayers(false))do local j=c.Players[h.Name]if j then b.DrawPlayer(h,j)
+end end end function b.Initialise(g)local h,j,k,l,m,n=g:Checkbox(
+'Character Info',false),g:Checkbox('Cooldowns',false),g:Colorpicker(
+'Cooldown Fill Color',{r=255,g=0,b=0,a=180},true),g:Colorpicker(
 'Cooldown Background Color',{r=0,g=0,b=0,a=200},true),g:Checkbox('Evasive Bar',
 false),g:Colorpicker('Evasive Fill Color',{r=121,g=74,b=148,a=255},true)cheat.
 Register('onPaint',function()b.Draw()end)cheat.Register('onSlowUpdate',function(
@@ -245,18 +246,18 @@ local e=d.Address return Vector3.new(memory.read('float',e+b.FrameSize.X_Offset)
 local e,f=c.GetFramePosition(d),c.GetFrameSize(d)return e+(f/2)end function c.
 GetFrameRotation(d)return memory.read('float',d.Address+b.FrameRotation)end
 function c.IsFrameVisible(d)return memory.read('bool',d.Address+b.Frame_Visible)
-end return c end function a.q()local b,c=a.load'p',0 local d=function(d,e,f)if
-not d or not e then return end local g,h,j=math.huge,(f.X*0.05)for k,l in pairs(
-d:GetChildren())do local m,n=b.GetFrameCenter(l),b.GetFrameSize(l.Top)local o=m.
-X+(n.X/2)local p=o+h>e.X if p then local q=m.X-e.X if q<g then j=l g=q end end
-end return j end return function(e)if not e then return end local f=e.Screen.
-Game local g,h=f.Guy,utility.GetTickCount()if b.IsFrameVisible(g.Explode)then
-return end local j,k=b.GetFrameSize(f),b.GetFrameCenter(g)local l=d(f.Walls,k,j)
-if not l then print'No closest'return end local m,n=l.Top,l.Bottom local o,p,q=b
-.GetFramePosition(m),b.GetFrameSize(m),b.GetFramePosition(n)local r,s=o.Y+p.Y,q.
-Y local t=s-r local u,v=r+t*0.5,t*0.1 local w=u+v if k.Y>w and h-c>25 then mouse
-.Click'leftmouse'c=h end end end function a.r()local b=a.load'p'local c=function
-(c,d)local e,f=c.BG1.Floor,c.Food if not e or not f then print
+end return c end function a.q()local b,c=a.load'p',0 local d=function(d,e,f)
+local g,h,j=math.huge,(f.X*0.05)for k,l in pairs(d:GetChildren())do local m,n=b.
+GetFrameCenter(l),b.GetFrameSize(l.Top)local o=m.X+(n.X/2)local p=o+h>e.X if p
+then local q=m.X-e.X if q<g then j=l g=q end end end return j end return
+function(e)if not e then return end local f=e.Screen.Game local g,h=f.Guy,
+utility.GetTickCount()if b.IsFrameVisible(g.Explode)then return end local j,k=b.
+GetFrameSize(f),b.GetFrameCenter(g)local l=d(f.Walls,k,j)if not l then return
+end local m,n=l.Top,l.Bottom local o,p,q=b.GetFramePosition(m),b.GetFrameSize(m)
+,b.GetFramePosition(n)local r,s=o.Y+p.Y,q.Y local t=s-r local u,v=r+t*0.5,t*0.1
+local w=u+v if k.Y>w and h-c>25 then mouse.Click'leftmouse'c=h end end end
+function a.r()local b=a.load'p'local c=function(c,d)local e,f=c.BG1.Floor,c.Food
+if not e or not f then print
 "Minigame Critical Error | Couldn't find floor or food!"return nil end local g,h
 =b.GetFramePosition(e),b.GetFrameSize(e)local j,k,l,m=h.X*0.15,(math.huge)for n,
 o in pairs(f:GetChildren())do local p=b.GetFrameCenter(o)local q,r=math.abs(p.X-
