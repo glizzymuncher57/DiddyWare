@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-07T04:44:29.410782800+00:00",
+	genDate = "2026-02-12T01:54:02.279192400+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -21,7 +21,7 @@ Value if not h or h==''then return end local i=tostring(h):lower()keyboard.
 click(i)b.LastClick=e end function b.Initialise(e)local f,g=e:Checkbox
 'Lawyer QTE',e:SliderInt('QTE Delay (ms)',1,200,200)cheat.register('onUpdate',
 function()b.Runtime()b.Enabled=f:Get()b.Delay=g:Get()g:Visible(b.Enabled)end)end
-return b end function a.c()return{ScreenGui_Enabled=0x644,Frame_Visible=0x5b1,
+return b end function a.c()return{ScreenGui_Enabled=0x50d,Frame_Visible=0x5b1,
 FramePosition={X_Scale=0x518,X_Offset=0x110,Y_Scale=0x520,Y_Offset=0x114},
 FrameSize={X_Scale=0x538,X_Offset=0x118,Y_Scale=0x540,Y_Offset=0x11c},
 FrameRotation=0x188}end function a.d()local b,c,d={Enabled=false,CurrentAddress=
