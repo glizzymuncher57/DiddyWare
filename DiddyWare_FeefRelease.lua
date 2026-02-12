@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-05T18:50:38.682717500+00:00",
+	genDate = "2026-02-12T01:56:08.870353900+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -11,7 +11,7 @@ local a a={cache={},load=function(b)if not a.cache[b]then a.cache[b]={c=a[b]()}
 end return a.cache[b].c end}do function a.a()return{Font='ConsolasBold',
 DistanceFade=false,LocalInfo={Player=nil,PlayerGui=nil,Character=nil,MinigameUI=
 nil,CurrentLevel=nil},Structures={InternalStructures={},ExternalStructures={}},
-CurrentHouse=nil}end function a.b()return{ScreenGui_Enabled=0x644,Frame_Visible=
+CurrentHouse=nil}end function a.b()return{ScreenGui_Enabled=0x50d,Frame_Visible=
 0x5b1,FramePosition={X_Scale=0x518,X_Offset=0x110,Y_Scale=0x520,Y_Offset=0x114},
 FrameSize={X_Scale=0x538,X_Offset=0x118,Y_Scale=0x540,Y_Offset=0x11c},
 FrameRotation=0x188}end function a.c()local b,c=a.load'b',{}function c.
