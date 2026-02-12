@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-10T02:45:36.584920600+00:00",
+	genDate = "2026-02-12T01:54:46.459918300+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -42,7 +42,7 @@ return setmetatable({Ref=g},f)end function b.NewReference(g,h,i)return e(g,h,i)
 end return b end function a.b()return{Font='ConsolasBold',CachedMap=nil,
 CachedCoinContainer=nil,CachedGunDrop=nil,ActiveCoins={},TrackedPlayers={},
 CurrentMurderer=nil,CurrentSheriff=nil}end function a.c()return{
-ScreenGui_Enabled=0x644,Frame_Visible=0x5b1,FramePosition={X_Scale=0x518,
+ScreenGui_Enabled=0x50d,Frame_Visible=0x5b1,FramePosition={X_Scale=0x518,
 X_Offset=0x110,Y_Scale=0x520,Y_Offset=0x114},FrameSize={X_Scale=0x538,X_Offset=
 0x118,Y_Scale=0x540,Y_Offset=0x11c},FrameRotation=0x188}end function a.d()local
 b,c=a.load'c',{}function c.GetFramePosition(d)local e=d.Address return Vector3.
@@ -125,24 +125,25 @@ local r=b.Flags r.Enabled=k:Get()r.SafetyOnFullBag=l:Get()r.MurdererSafezone=m:
 Get()r.DelayPerCoin=n:Get()r.TweenSpeed=o:Get()l:Visible(r.Enabled)m:Visible(r.
 Enabled)n:Visible(r.Enabled)o:Visible(r.Enabled)p:Set(r.Enabled)q:Set(1)end
 cheat.Register('onUpdate',function()b.Runtime()r()end)end return b end function
-a.i()local b,c,d={Flags={Enabled=false,ShowDistance=false,Color=Color3.fromRGB(
-255,255,255),Alpha=255},CachedTextSizes={}},a.load'b',entity.GetLocalPlayer()
-local e,f=function(e)local f=b.CachedTextSizes[e..c.Font]if f then return f.W,f.
-H end local g,h=draw.GetTextSize(e,c.Font)b.CachedTextSizes[e..c.Font]={W=g,H=h}
-return g,h end,function(e)if type(e)~='table'then return Color3.fromRGB(255,255,
-255)end local f,g,h=e.R or e.r or 255,e.G or e.g or 255,e.B or e.b or 255 return
-Color3.fromRGB(f,g,h)end function b.Runtime()if not b.Flags.Enabled then return
-end local g,h,i=b.Flags.ShowDistance,b.Flags.Color,b.Flags.Alpha for j,k in
-pairs(c.ActiveCoins)do local l,m,n=utility.WorldToScreen(k.Position)if n then
-local o='Coin'local p,q=e(o)local r=''if g then local s=(d.Position-k.Position).
-magnitude local t=math.floor(s)r=' ['..tostring(t)..']'end local s=p if g and r
-~=''then s=s+e(r)end local t,u=l-(s/2),m-(q/2)draw.TextOutlined(o,t,u,h,c.Font,i
-)if g and r~=''then draw.TextOutlined(r,t+p,u,Color3.fromRGB(255,255,255),c.Font
-,i)end end end end function b.Initialise(g)local h,i,j=g:Checkbox('Coin ESP',
-false),g:Colorpicker('Coin ESP Color',{r=255,g=255,b=255,a=255},true),g:
+a.i()local b,c,d,e={Flags={Enabled=false,ShowDistance=false,Color=Color3.
+fromRGB(255,255,255),Alpha=255},CachedTextSizes={}},a.load'b',a.load'e',entity.
+GetLocalPlayer()local f,g=function(f)local g=b.CachedTextSizes[f..c.Font]if g
+then return g.W,g.H end local h,i=draw.GetTextSize(f,c.Font)b.CachedTextSizes[f
+..c.Font]={W=h,H=i}return h,i end,function(f)if type(f)~='table'then return
+Color3.fromRGB(255,255,255)end local g,h,i=f.R or f.r or 255,f.G or f.g or 255,f
+.B or f.b or 255 return Color3.fromRGB(g,h,i)end function b.Runtime()if not b.
+Flags.Enabled then return end if not d:IsPlayerAlive()then return end local h,i,
+j=b.Flags.ShowDistance,b.Flags.Color,b.Flags.Alpha for k,l in pairs(c.
+ActiveCoins)do local m,n,o=utility.WorldToScreen(l.Position)if o then local p=
+'Coin'local q,r=f(p)local s=''if h then local t=(e.Position-l.Position).
+magnitude local u=math.floor(t)s=' ['..tostring(u)..']'end local t=q if h and s
+~=''then t=t+f(s)end local u,v=m-(t/2),n-(r/2)draw.TextOutlined(p,u,v,i,c.Font,j
+)if h and s~=''then draw.TextOutlined(s,u+q,v,Color3.fromRGB(255,255,255),c.Font
+,j)end end end end function b.Initialise(h)local i,j,k=h:Checkbox('Coin ESP',
+false),h:Colorpicker('Coin ESP Color',{r=255,g=255,b=255,a=255},true),h:
 Checkbox('Show Distance',false)cheat.Register('onPaint',b.Runtime)cheat.
-Register('onUpdate',function()local k=i:Get()b.Flags.Enabled=h:Get()b.Flags.
-Color=f(k)b.Flags.Alpha=k.a b.Flags.ShowDistance=j:Get()j:Visible(b.Flags.
+Register('onUpdate',function()local l=j:Get()b.Flags.Enabled=i:Get()b.Flags.
+Color=g(l)b.Flags.Alpha=l.a b.Flags.ShowDistance=k:Get()k:Visible(b.Flags.
 Enabled)end)end return b end function a.j()local b,c,d,e={Flags={Enabled=false,
 UseRoleColor=false,Color=Color3.new(255,255,255),Alpha=255,SelectedRoleTypes={
 Innocent=false,Sheriff=false,Murderer=false}},CachedTextSizes={}},{Innocent=
