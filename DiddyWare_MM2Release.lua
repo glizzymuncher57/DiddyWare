@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-12T01:55:17.347674200+00:00",
+	genDate = "2026-02-13T01:06:43.636828800+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -125,17 +125,25 @@ local r=b.Flags r.Enabled=k:Get()r.SafetyOnFullBag=l:Get()r.MurdererSafezone=m:
 Get()r.DelayPerCoin=n:Get()r.TweenSpeed=o:Get()l:Visible(r.Enabled)m:Visible(r.
 Enabled)n:Visible(r.Enabled)o:Visible(r.Enabled)p:Set(r.Enabled)q:Set(1)end
 cheat.Register('onUpdate',function()b.Runtime()r()end)end return b end function
-a.i()local b,c,d,e={Flags={Enabled=false,ShowDistance=false,Color=Color3.
-fromRGB(255,255,255),Alpha=255},CachedTextSizes={}},a.load'b',a.load'e',entity.
-GetLocalPlayer()local f,g=function(f)local g=b.CachedTextSizes[f..c.Font]if g
-then return g.W,g.H end local h,i=draw.GetTextSize(f,c.Font)b.CachedTextSizes[f
-..c.Font]={W=h,H=i}return h,i end,function(f)if type(f)~='table'then return
-Color3.fromRGB(255,255,255)end local g,h,i=f.R or f.r or 255,f.G or f.g or 255,f
-.B or f.b or 255 return Color3.fromRGB(g,h,i)end function b.Runtime()if not b.
-Flags.Enabled then return end if not d:IsPlayerAlive()then return end local h,i,
-j=b.Flags.ShowDistance,b.Flags.Color,b.Flags.Alpha for k,l in pairs(c.
-ActiveCoins)do local m,n,o=utility.WorldToScreen(l.Position)if o then local p=
-'Coin'local q,r=f(p)local s=''if h then local t=(e.Position-l.Position).
+a.i()local b,c,d,e,f={Flags={Enabled=false}},a.load'b',a.load'e',a.load'f',
+entity.GetLocalPlayer()local g=function()if not d:IsPlayerAlive()then return end
+if d:GetPlayerRole()=='Murderer'then return end local g=f:GetBoneInstance
+'HumanoidRootPart'if not g then return end local h=c.CachedGunDrop if not h then
+return end local i=g.Position e(g,h.Position)e(g,i)end function b.Runtime()if
+not b.Flags.Enabled then return end g()end function b.Initialise(h)local i=h:
+Checkbox('Auto Teleport To Gun',false)h:Button('Grab Gun',g)cheat.Register(
+'onUpdate',function()b.Flags.Enabled=i:Get()b.Runtime()end)end return b end
+function a.j()local b,c,d,e={Flags={Enabled=false,ShowDistance=false,Color=
+Color3.fromRGB(255,255,255),Alpha=255},CachedTextSizes={}},a.load'b',a.load'e',
+entity.GetLocalPlayer()local f,g=function(f)local g=b.CachedTextSizes[f..c.Font]
+if g then return g.W,g.H end local h,i=draw.GetTextSize(f,c.Font)b.
+CachedTextSizes[f..c.Font]={W=h,H=i}return h,i end,function(f)if type(f)~=
+'table'then return Color3.fromRGB(255,255,255)end local g,h,i=f.R or f.r or 255,
+f.G or f.g or 255,f.B or f.b or 255 return Color3.fromRGB(g,h,i)end function b.
+Runtime()if not b.Flags.Enabled then return end if not d:IsPlayerAlive()then
+return end local h,i,j=b.Flags.ShowDistance,b.Flags.Color,b.Flags.Alpha for k,l
+in pairs(c.ActiveCoins)do local m,n,o=utility.WorldToScreen(l.Position)if o then
+local p='Coin'local q,r=f(p)local s=''if h then local t=(e.Position-l.Position).
 magnitude local u=math.floor(t)s=' ['..tostring(u)..']'end local t=q if h and s
 ~=''then t=t+f(s)end local u,v=m-(t/2),n-(r/2)draw.TextOutlined(p,u,v,i,c.Font,j
 )if h and s~=''then draw.TextOutlined(s,u+q,v,Color3.fromRGB(255,255,255),c.Font
@@ -144,59 +152,80 @@ false),h:Colorpicker('Coin ESP Color',{r=255,g=255,b=255,a=255},true),h:
 Checkbox('Show Distance',false)cheat.Register('onPaint',b.Runtime)cheat.
 Register('onUpdate',function()local l=j:Get()b.Flags.Enabled=i:Get()b.Flags.
 Color=g(l)b.Flags.Alpha=l.a b.Flags.ShowDistance=k:Get()k:Visible(b.Flags.
-Enabled)end)end return b end function a.j()local b,c,d,e={Flags={Enabled=false,
-UseRoleColor=false,Color=Color3.new(255,255,255),Alpha=255,SelectedRoleTypes={
-Innocent=false,Sheriff=false,Murderer=false}},CachedTextSizes={}},{Innocent=
-Color3.new(0.117647,0.858824,0.117647),Murderer=Color3.new(0.72549,0.101961,
-0.101961),Sheriff=Color3.new(0.070588,0.517647,0.811765)},a.load'b',a.load'e'
-local f,g=function(f)local g=b.CachedTextSizes[f..d.Font]if g then return g.W,g.
-H end local h,i=draw.GetTextSize(f,d.Font)b.CachedTextSizes[f..d.Font]={W=h,H=i}
-return h,i end,function(f)if type(f)~='table'then return Color3.fromRGB(255,255,
-255)end local g,h,i=f.R or f.r or 255,f.G or f.g or 255,f.B or f.b or 255 return
-Color3.fromRGB(g,h,i)end local h=function(h)local i=e:IsPlayerAlive(h)if not i
-then return end local j=e:GetPlayerRole(h)local k=b.Flags.SelectedRoleTypes[j]~=
-nil if not k then return end local l,m,n=utility.WorldToScreen(h.Position)if not
-n then return end local o=h.BoundingBox if not o then return end local p,q=f(j)
-local r,s,t,u=o.x+(o.w/2)-(p/2),o.y+(o.h/2)-(q/2),b.Flags.UseRoleColor and c[j]
-or b.Flags.Color,b.Flags.Alpha draw.TextOutlined(j,r,s,t,d.Font,u)end function b
-.Runtime()if not b.Flags.Enabled then return end if not e:IsPlayerAlive()then
-return end for i,j in pairs(entity.GetPlayers(false))do h(j)end end function b.
-Initialise(i)local j,k,m,n=i:Checkbox'Role ESP Enabled',i:Colorpicker(
-'Role ESP Color',{r=255,g=255,b=255,a=255},true),i:Checkbox('Use Role Color',
-false),i:Multiselect('Draw Roles',{'Innocent','Sheriff','Murderer'})cheat.
-Register('onPaint',b.Runtime)cheat.Register('onUpdate',function()b.Flags.Enabled
-=j:Get()local o=k:Get()b.Flags.Color=g(o)b.Flags.Alpha=o.a b.Flags.UseRoleColor=
-m:Get()b.Flags.SelectedRoleTypes=n:Get()m:Visible(b.Flags.Enabled)n:Visible(b.
-Flags.Enabled)end)end return b end function a.k()local b,c,d={LastUpdate=0,
-UpdateInterval=50},game.GetService'Workspace',a.load'b'local e,f,g,h=function()
-local e for f,g in pairs(c:GetChildren())do local h=g:GetAttribute'MapID'if h
-then e=g break end end return e end,function()local e=d.CachedMap if not e then
-return nil end return e:FindFirstChild'CoinContainer'end,function()local e=d.
-CachedMap if not e then return nil end return e:FindFirstChild'GunDrop'end,
-function()local e=d.CachedCoinContainer if not e then return end local f={}for g
-,h in pairs(e:GetChildren())do local i=h:FindFirstDescendant'MainCoin'if i and i
-.Transparency==0 then table.insert(f,i)end end d.ActiveCoins=f end function b.
-Initialise(i)local j=i:SliderInt('Game Tracker Update Interval',1,100,50)cheat.
-Register('onUpdate',function()b.UpdateInterval=j:Get()local k=utility.
-GetTickCount()if k-b.LastUpdate>=b.UpdateInterval then h()end end)cheat.
-Register('onSlowUpdate',function()coroutine.resume(coroutine.create(function()
-local k=e()if not k then d.CachedMap=nil return end if not d.CachedMap or d.
-CachedMap~=k.Address then d.CachedMap=k end end))coroutine.resume(coroutine.
-create(function()local k=f()if not k then d.CachedCoinContainer=nil return end
-if not d.CachedCoinContainer or d.CachedCoinContainer.Address~=k.Address then d.
-CachedCoinContainer=k end end))coroutine.resume(coroutine.create(function()local
-k=g()if not k then d.CachedGunDrop=nil return end if not d.CachedGunDrop or d.
-CachedGunDrop.Address~=k.Address then d.CachedGunDrop=k end end))end)end return
-b end function a.l()local b,c={},a.load'b'function b.Initialise(d)local e=d:
-Dropdown('Font Selection',{'ConsolasBold','SmallestPixel','Verdana','Tahoma'},1)
-cheat.Register('onUpdate',function()c.Font=e:Get()end)end return b end function
-a.m()return function()function math.floor(b)return b-(b%1)end function math.
-clamp(b,c,d)return math.max(c,math.min(d,b))end end end function a.n()return
-function()table.find=function(b,c)for d,e in pairs(b)do if e==c then return d
-end end return nil end end end end local b,c,d,e,f,g,h,i,j=a.load'h',a.load'i',a
-.load'j',a.load'e',a.load'k',a.load'l',a.load'a',a.load'm',a.load'n'local k=
-function()local k=h.NewTab('DiddyWare_MM2','DiddyWare')local m,n,o=k:Container(
-'DiddyWare_MM2C1','Main',{autosize=true,next=true}),k:Container(
-'DiddyWare_MM2C2','Visuals',{autosize=true}),k:Container('DiddyWare_MM2C3',
-'Settings',{autosize=true,next=true})i()j()b.Initialise(m)c.Initialise(n)d.
-Initialise(n)e.Initialise(o)f.Initialise(o)g.Initialise(o)end k()
+Enabled)end)end return b end function a.k()local b,c,d,e={Flags={Enabled=false,
+ShowDistance=false,Color=Color3.fromRGB(255,255,255),Alpha=255},CachedTextSizes=
+{}},a.load'b',a.load'e',entity.GetLocalPlayer()local f,g=function(f)local g=b.
+CachedTextSizes[f..c.Font]if g then return g.W,g.H end local h,i=draw.
+GetTextSize(f,c.Font)b.CachedTextSizes[f..c.Font]={W=h,H=i}return h,i end,
+function(f)if type(f)~='table'then return Color3.fromRGB(255,255,255)end local g
+,h,i=f.R or f.r or 255,f.G or f.g or 255,f.B or f.b or 255 return Color3.
+fromRGB(g,h,i)end function b.Runtime()if not b.Flags.Enabled then return end if
+not d:IsPlayerAlive()then return end local h,i,j,k=b.Flags.ShowDistance,b.Flags.
+Color,b.Flags.Alpha,c.CachedGunDrop if not k then return end local l=k.Position
+local m,n,o=utility.WorldToScreen(l)if o then local p='Gun Drop'local q,r=f(p)
+local s=''if h then local t=(e.Position-l).magnitude local u=math.floor(t)s=' ['
+..tostring(u)..']'end local t=q if h and s~=''then t=t+f(s)end local u,v=m-(t/2)
+,n-(r/2)draw.TextOutlined(p,u,v,i,c.Font,j)if h and s~=''then draw.TextOutlined(
+s,u+q,v,Color3.fromRGB(255,255,255),c.Font,j)end end end function b.Initialise(h
+)local i,j,k=h:Checkbox('Gun Drop ESP',false),h:Colorpicker('Gun Drop ESP Color'
+,{r=255,g=255,b=255,a=255},true),h:Checkbox('Show Distance',false)cheat.
+Register('onPaint',b.Runtime)cheat.Register('onUpdate',function()local l=j:Get()
+b.Flags.Enabled=i:Get()b.Flags.Color=g(l)b.Flags.Alpha=l.a b.Flags.ShowDistance=
+k:Get()k:Visible(b.Flags.Enabled)end)end return b end function a.l()local b,c,d,
+e={Flags={Enabled=false,UseRoleColor=false,Color=Color3.new(255,255,255),Alpha=
+255,SelectedRoleTypes={Innocent=false,Sheriff=false,Murderer=false}},
+CachedTextSizes={}},{Innocent=Color3.new(0.117647,0.858824,0.117647),Murderer=
+Color3.new(0.72549,0.101961,0.101961),Sheriff=Color3.new(0.070588,0.517647,
+0.811765)},a.load'b',a.load'e'local f,g=function(f)local g=b.CachedTextSizes[f..
+d.Font]if g then return g.W,g.H end local h,i=draw.GetTextSize(f,d.Font)b.
+CachedTextSizes[f..d.Font]={W=h,H=i}return h,i end,function(f)if type(f)~=
+'table'then return Color3.fromRGB(255,255,255)end local g,h,i=f.R or f.r or 255,
+f.G or f.g or 255,f.B or f.b or 255 return Color3.fromRGB(g,h,i)end local h=
+function(h)local i=e:IsPlayerAlive(h)if not i then return end local j=e:
+GetPlayerRole(h)local k=b.Flags.SelectedRoleTypes[j]~=nil if not k then return
+end local l,m,n=utility.WorldToScreen(h.Position)if not n then return end local
+o=h.BoundingBox if not o then return end local p,q=f(j)local r,s,t,u=o.x+(o.w/2)
+-(p/2),o.y+(o.h/2)-(q/2),b.Flags.UseRoleColor and c[j]or b.Flags.Color,b.Flags.
+Alpha draw.TextOutlined(j,r,s,t,d.Font,u)end function b.Runtime()if not b.Flags.
+Enabled then return end if not e:IsPlayerAlive()then return end for i,j in
+pairs(entity.GetPlayers(false))do h(j)end end function b.Initialise(i)local j,k,
+m,n=i:Checkbox'Role ESP Enabled',i:Colorpicker('Role ESP Color',{r=255,g=255,b=
+255,a=255},true),i:Checkbox('Use Role Color',false),i:Multiselect('Draw Roles',{
+'Innocent','Sheriff','Murderer'})cheat.Register('onPaint',b.Runtime)cheat.
+Register('onUpdate',function()b.Flags.Enabled=j:Get()local o=k:Get()b.Flags.
+Color=g(o)b.Flags.Alpha=o.a b.Flags.UseRoleColor=m:Get()b.Flags.
+SelectedRoleTypes=n:Get()m:Visible(b.Flags.Enabled)n:Visible(b.Flags.Enabled)end
+)end return b end function a.m()local b,c,d={LastUpdate=0,UpdateInterval=50},
+game.GetService'Workspace',a.load'b'local e,f,g,h=function()local e for f,g in
+pairs(c:GetChildren())do local h=g:GetAttribute'MapID'if h then e=g break end
+end return e end,function()local e=d.CachedMap if not e then return nil end
+return e:FindFirstChild'CoinContainer'end,function()local e=d.CachedMap if not e
+then return nil end return e:FindFirstChild'GunDrop'end,function()local e=d.
+CachedCoinContainer if not e then return end local f={}for g,h in pairs(e:
+GetChildren())do local i=h:FindFirstDescendant'MainCoin'if i and i.Transparency
+==0 then table.insert(f,i)end end d.ActiveCoins=f end function b.Initialise(i)
+local j=i:SliderInt('Game Tracker Update Interval',1,100,50)cheat.Register(
+'onUpdate',function()b.UpdateInterval=j:Get()local k=utility.GetTickCount()if k-
+b.LastUpdate>=b.UpdateInterval then h()end end)cheat.Register('onSlowUpdate',
+function()coroutine.resume(coroutine.create(function()local k=e()if not k then d
+.CachedMap=nil return end if not d.CachedMap or d.CachedMap~=k.Address then d.
+CachedMap=k end end))coroutine.resume(coroutine.create(function()local k=f()if
+not k then d.CachedCoinContainer=nil return end if not d.CachedCoinContainer or
+d.CachedCoinContainer.Address~=k.Address then d.CachedCoinContainer=k end end))
+coroutine.resume(coroutine.create(function()local k=g()if not k then d.
+CachedGunDrop=nil return end if not d.CachedGunDrop or d.CachedGunDrop.Address~=
+k.Address then d.CachedGunDrop=k end end))end)end return b end function a.n()
+local b,c={},a.load'b'function b.Initialise(d)local e=d:Dropdown(
+'Font Selection',{'ConsolasBold','SmallestPixel','Verdana','Tahoma'},1)cheat.
+Register('onUpdate',function()c.Font=e:Get()end)end return b end function a.o()
+return function()function math.floor(b)return b-(b%1)end function math.clamp(b,c
+,d)return math.max(c,math.min(d,b))end end end function a.p()return function()
+table.find=function(b,c)for d,e in pairs(b)do if e==c then return d end end
+return nil end end end end local b,c,d,e,f,g,h,i,j,k,m=a.load'h',a.load'i',a.
+load'j',a.load'k',a.load'l',a.load'e',a.load'm',a.load'n',a.load'a',a.load'o',a.
+load'p'local n=function()local n=j.NewTab('DiddyWare_MM2','DiddyWare')local o,p,
+q=n:Container('DiddyWare_MM2C1','Main',{autosize=true,next=true}),n:Container(
+'DiddyWare_MM2C2','Visuals',{autosize=true}),n:Container('DiddyWare_MM2C3',
+'Settings',{autosize=true,next=true})k()m()b.Initialise(o)c.Initialise(o)d.
+Initialise(p)f.Initialise(p)e.Initialise(p)g.Initialise(q)h.Initialise(q)i.
+Initialise(q)end n()
