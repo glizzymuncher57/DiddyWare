@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-13T01:06:43.636828800+00:00",
+	genDate = "2026-02-13T01:17:12.977798100+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -60,19 +60,19 @@ and i.Value or h end local j=function(j)if not g.TrackedPlayers[j.Name]then
 local k=c:FindFirstChild(j.Name)if not k then return end g.TrackedPlayers[j.Name
 ]={EntityInstance=j,PlayerInstance=k,IsAlive=nil}end local k=g.TrackedPlayers[j.
 Name]if not k then return end local l=k.PlayerInstance.Backpack k.IsAlive=i(k.
-PlayerInstance,'Alive',false)k.IsMurderer=j.Weapon=='Knife'or(l~=nil and l:
-FindFirstChild'Knife'~=nil)k.IsSheriff=j.Weapon=='Gun'or(l~=nil and l:
-FindFirstChild'Gun'~=nil)k.IsInnocent=not k.IsMurderer and not k.IsSheriff if k.
-IsSheriff then g.CurrentSheriff=j end if k.IsMurderer then g.CurrentMurderer=j
-end if j.Name==d.Name then local m=f:FindFirstChild'MainGUI'if not m then k.
-IsFullCoins=false return end local n,o=m.Game.CoinBags.Container,false for p,q
-in pairs(n:GetChildren())do if q:IsA'Frame'then local r=h.IsFrameVisible(q.Full)
-if r then o=r break end end end k.IsFullCoins=o end end function b:IsPlayerAlive
-(k)k=k~=nil and k or d local l=g.TrackedPlayers[k.Name]if not l then return
-false end return l.IsAlive end function b:GetPlayerRole(k)k=k or d local l=g.
-TrackedPlayers[k.Name]if not l then return nil end if l.IsMurderer and l.IsAlive
-then return'Murderer'elseif l.IsSheriff and l.IsAlive then return'Sheriff'elseif
-l.IsInnocent and l.IsAlive then return'Innocent'else return'Spectator'end end
+PlayerInstance,'Alive',false)k.IsMurderer=(l and l:FindFirstChild'Knife')~=nil
+or j.Weapon=='Knife'k.IsSheriff=(l and l:FindFirstChild'Gun')~=nil or j.Weapon==
+'Gun'k.IsInnocent=not k.IsMurderer and not k.IsSheriff if k.IsSheriff then g.
+CurrentSheriff=j end if k.IsMurderer then g.CurrentMurderer=j end if j.Name==d.
+Name then local m=f:FindFirstChild'MainGUI'if not m then k.IsFullCoins=false
+return end local n,o=m.Game.CoinBags.Container,false for p,q in pairs(n:
+GetChildren())do if q:IsA'Frame'then local r=h.IsFrameVisible(q.Full)if r then o
+=r break end end end k.IsFullCoins=o end end function b:IsPlayerAlive(k)k=k~=nil
+and k or d local l=g.TrackedPlayers[k.Name]if not l then return false end return
+l.IsAlive end function b:GetPlayerRole(k)k=k or d local l=g.TrackedPlayers[k.
+Name]if not l then return nil end if l.IsMurderer and l.IsAlive then return
+'Murderer'elseif l.IsSheriff and l.IsAlive then return'Sheriff'elseif l.
+IsInnocent and l.IsAlive then return'Innocent'else return'Spectator'end end
 function b:GetPlayerStored(k)k=k or d local l=g.TrackedPlayers[k.Name]if not l
 then return nil end return l end function b:GetAlivePlayers(k)local l,m={},self:
 GetPlayerRole()for n,o in pairs(g.TrackedPlayers)do if n~=d.Name and o.IsAlive
@@ -126,17 +126,17 @@ Get()r.DelayPerCoin=n:Get()r.TweenSpeed=o:Get()l:Visible(r.Enabled)m:Visible(r.
 Enabled)n:Visible(r.Enabled)o:Visible(r.Enabled)p:Set(r.Enabled)q:Set(1)end
 cheat.Register('onUpdate',function()b.Runtime()r()end)end return b end function
 a.i()local b,c,d,e,f={Flags={Enabled=false}},a.load'b',a.load'e',a.load'f',
-entity.GetLocalPlayer()local g=function()if not d:IsPlayerAlive()then return end
-if d:GetPlayerRole()=='Murderer'then return end local g=f:GetBoneInstance
+entity.GetLocalPlayer()local g=function()local g=f:GetBoneInstance
 'HumanoidRootPart'if not g then return end local h=c.CachedGunDrop if not h then
 return end local i=g.Position e(g,h.Position)e(g,i)end function b.Runtime()if
-not b.Flags.Enabled then return end g()end function b.Initialise(h)local i=h:
-Checkbox('Auto Teleport To Gun',false)h:Button('Grab Gun',g)cheat.Register(
-'onUpdate',function()b.Flags.Enabled=i:Get()b.Runtime()end)end return b end
-function a.j()local b,c,d,e={Flags={Enabled=false,ShowDistance=false,Color=
-Color3.fromRGB(255,255,255),Alpha=255},CachedTextSizes={}},a.load'b',a.load'e',
-entity.GetLocalPlayer()local f,g=function(f)local g=b.CachedTextSizes[f..c.Font]
-if g then return g.W,g.H end local h,i=draw.GetTextSize(f,c.Font)b.
+not b.Flags.Enabled then return end if not d:IsPlayerAlive()then return end if d
+:GetPlayerRole()=='Murderer'then print'murberer'return end g()end function b.
+Initialise(h)local i=h:Checkbox('Auto Teleport To Gun',false)h:Button('Grab Gun'
+,g)cheat.Register('onUpdate',function()b.Flags.Enabled=i:Get()b.Runtime()end)end
+return b end function a.j()local b,c,d,e={Flags={Enabled=false,ShowDistance=
+false,Color=Color3.fromRGB(255,255,255),Alpha=255},CachedTextSizes={}},a.load'b'
+,a.load'e',entity.GetLocalPlayer()local f,g=function(f)local g=b.CachedTextSizes
+[f..c.Font]if g then return g.W,g.H end local h,i=draw.GetTextSize(f,c.Font)b.
 CachedTextSizes[f..c.Font]={W=h,H=i}return h,i end,function(f)if type(f)~=
 'table'then return Color3.fromRGB(255,255,255)end local g,h,i=f.R or f.r or 255,
 f.G or f.g or 255,f.B or f.b or 255 return Color3.fromRGB(g,h,i)end function b.
