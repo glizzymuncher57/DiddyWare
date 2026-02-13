@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-13T01:25:32.535886200+00:00",
+	genDate = "2026-02-13T02:10:09.296791600+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -408,16 +408,16 @@ do
 					m = k.Position
 				end
 				for n, o in pairs(e.ActiveCoins) do
-					local p, q = (c.Position - o.Position).Magnitude
+					local p, q = (c.Position - o).Magnitude
 					if m then
-						q = (m - o.Position).Magnitude
+						q = (m - o).Magnitude
 					end
 					local r = true
 					if q then
 						r = q > b.Flags.MurdererSafezone
 					end
 					if r and p < i then
-						l = o
+						l = n
 						i = p
 					end
 				end
@@ -522,7 +522,6 @@ do
 				return
 			end
 			if d:GetPlayerRole() == "Murderer" then
-				print("murberer")
 				return
 			end
 			g()
@@ -538,162 +537,182 @@ do
 		return b
 	end
 	function a.j()
-		local b, c, d, e =
-			{ Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 }, CachedTextSizes = {} },
-			a.load("b"),
-			a.load("e"),
-			entity.GetLocalPlayer()
-		local f, g =
-			function(f)
-				local g = b.CachedTextSizes[f .. c.Font]
-				if g then
-					return g.W, g.H
-				end
-				local h, i = draw.GetTextSize(f, c.Font)
-				b.CachedTextSizes[f .. c.Font] = { W = h, H = i }
-				return h, i
-			end, function(f)
-				if type(f) ~= "table" then
-					return Color3.fromRGB(255, 255, 255)
-				end
-				local g, h, i = f.R or f.r or 255, f.G or f.g or 255, f.B or f.b or 255
-				return Color3.fromRGB(g, h, i)
-			end
-		function b.Runtime()
-			if not b.Flags.Enabled then
-				return
-			end
-			if not d:IsPlayerAlive() then
-				return
-			end
-			local h, i, j = b.Flags.ShowDistance, b.Flags.Color, b.Flags.Alpha
-			for k, l in pairs(c.ActiveCoins) do
-				local m, n, o = utility.WorldToScreen(l.Position)
-				if o then
-					local p = "Coin"
-					local q, r = f(p)
-					local s = ""
-					if h then
-						local t = (e.Position - l.Position).magnitude
-						local u = math.floor(t)
-						s = " [" .. tostring(u) .. "]"
-					end
-					local t = q
-					if h and s ~= "" then
-						t = t + f(s)
-					end
-					local u, v = m - (t / 2), n - (r / 2)
-					draw.TextOutlined(p, u, v, i, c.Font, j)
-					if h and s ~= "" then
-						draw.TextOutlined(s, u + q, v, Color3.fromRGB(255, 255, 255), c.Font, j)
-					end
-				end
-			end
+		return function(b, c)
+			local d, e, f
+			d = b.X - c.X
+			e = b.Y - c.Y
+			f = b.Z - c.Z
+			return math.floor(math.sqrt(d * d + e * e + f * f))
 		end
-		function b.Initialise(h)
-			local i, j, k =
-				h:Checkbox("Coin ESP", false),
-				h:Colorpicker("Coin ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
-				h:Checkbox("Show Distance", false)
-			cheat.Register("onPaint", b.Runtime)
-			cheat.Register("onUpdate", function()
-				local l = j:Get()
-				b.Flags.Enabled = i:Get()
-				b.Flags.Color = g(l)
-				b.Flags.Alpha = l.a
-				b.Flags.ShowDistance = k:Get()
-				k:Visible(b.Flags.Enabled)
-			end)
-		end
-		return b
 	end
 	function a.k()
 		local b, c, d, e =
 			{
 				Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 },
 				CachedTextSizes = {},
-			},
-			a.load("b"),
-			a.load("e"),
-			entity.GetLocalPlayer()
-		local f, g =
-			function(f)
-				local g = b.CachedTextSizes[f .. c.Font]
-				if g then
-					return g.W, g.H
+				LastFont = nil,
+			}, "Coin"
+		local f, g, h, i, j =
+			Color3.fromRGB(255, 255, 255), a.load("b"), a.load("e"), a.load("j"), entity.GetLocalPlayer()
+		local k, l =
+			function(k)
+				local l = b.CachedTextSizes[k .. g.Font]
+				if l then
+					return l.W, l.H
 				end
-				local h, i = draw.GetTextSize(f, c.Font)
-				b.CachedTextSizes[f .. c.Font] = { W = h, H = i }
-				return h, i
-			end, function(f)
-				if type(f) ~= "table" then
+				local m, n = draw.GetTextSize(k, g.Font)
+				b.CachedTextSizes[k .. g.Font] = { W = m, H = n }
+				return m, n
+			end, function(k)
+				if type(k) ~= "table" then
 					return Color3.fromRGB(255, 255, 255)
 				end
-				local g, h, i = f.R or f.r or 255, f.G or f.g or 255, f.B or f.b or 255
-				return Color3.fromRGB(g, h, i)
+				local l, m, n = k.R or k.r or 255, k.G or k.g or 255, k.B or k.b or 255
+				return Color3.fromRGB(l, m, n)
 			end
 		function b.Runtime()
 			if not b.Flags.Enabled then
 				return
 			end
-			if not d:IsPlayerAlive() then
+			if not h:IsPlayerAlive() then
 				return
 			end
-			local h, i, j, k = b.Flags.ShowDistance, b.Flags.Color, b.Flags.Alpha, c.CachedGunDrop
-			if not k then
-				return
-			end
-			local l = k.Position
-			local m, n, o = utility.WorldToScreen(l)
-			if o then
-				local p = "Gun Drop"
-				local q, r = f(p)
-				local s = ""
-				if h then
-					local t = (e.Position - l).magnitude
-					local u = math.floor(t)
-					s = " [" .. tostring(u) .. "]"
-				end
-				local t = q
-				if h and s ~= "" then
-					t = t + f(s)
-				end
-				local u, v = m - (t / 2), n - (r / 2)
-				draw.TextOutlined(p, u, v, i, c.Font, j)
-				if h and s ~= "" then
-					draw.TextOutlined(s, u + q, v, Color3.fromRGB(255, 255, 255), c.Font, j)
+			local m, n, o = b.Flags.ShowDistance, b.Flags.Color, b.Flags.Alpha
+			for p, q in pairs(g.ActiveCoins) do
+				local r, s, t = utility.WorldToScreen(q)
+				if t then
+					local u = ""
+					if m then
+						local v = i(j.Position, q)
+						u = " [" .. tostring(v) .. "]"
+					end
+					local v = e
+					if m and u ~= "" then
+						v = v + k(u)
+					end
+					local w, x = r - (v / 2), s - (d / 2)
+					draw.TextOutlined(c, w, x, n, g.Font, o)
+					if m and u ~= "" then
+						draw.TextOutlined(u, w + e, x, f, g.Font, o)
+					end
 				end
 			end
 		end
-		function b.Initialise(h)
-			local i, j, k =
-				h:Checkbox("Gun Drop ESP", false),
-				h:Colorpicker("Gun Drop ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
-				h:Checkbox("Show Distance", false)
+		function b.Initialise(m)
+			local n, o, p =
+				m:Checkbox("Coin ESP", false),
+				m:Colorpicker("Coin ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
+				m:Checkbox("Show Distance", false)
 			cheat.Register("onPaint", b.Runtime)
 			cheat.Register("onUpdate", function()
-				local l = j:Get()
-				b.Flags.Enabled = i:Get()
-				b.Flags.Color = g(l)
-				b.Flags.Alpha = l.a
-				b.Flags.ShowDistance = k:Get()
-				k:Visible(b.Flags.Enabled)
+				local q = o:Get()
+				b.Flags.Enabled = n:Get()
+				b.Flags.Color = l(q)
+				b.Flags.Alpha = q.a
+				b.Flags.ShowDistance = p:Get()
+				p:Visible(b.Flags.Enabled)
+				local r = g.Font
+				b.LastFont = r
+				if r ~= b.LastFont or b.LastFont == nil then
+					e, d = k(c)
+				end
 			end)
 		end
 		return b
 	end
 	function a.l()
-		local b, c, d, e =
+		local b, c, d, e, f, g, h =
+			{
+				Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 },
+				CachedTextSizes = {},
+			},
+			"Gun",
+			Color3.fromRGB(255, 255, 255),
+			a.load("j"),
+			a.load("b"),
+			a.load("e"),
+			entity.GetLocalPlayer()
+		local i, j =
+			function(i)
+				local j = b.CachedTextSizes[i .. f.Font]
+				if j then
+					return j.W, j.H
+				end
+				local k, l = draw.GetTextSize(i, f.Font)
+				b.CachedTextSizes[i .. f.Font] = { W = k, H = l }
+				return k, l
+			end, function(i)
+				if type(i) ~= "table" then
+					return d
+				end
+				local j, k, l = i.R or i.r or 255, i.G or i.g or 255, i.B or i.b or 255
+				return Color3.fromRGB(j, k, l)
+			end
+		function b.Runtime()
+			if not b.Flags.Enabled then
+				return
+			end
+			if not g:IsPlayerAlive() then
+				return
+			end
+			local k, l, m, n = b.Flags.ShowDistance, b.Flags.Color, b.Flags.Alpha, f.CachedGunDrop
+			if not n then
+				return
+			end
+			local o = n.Position
+			local p, q, r = utility.WorldToScreen(o)
+			if r then
+				local s, t = i(c)
+				local u = ""
+				if k then
+					local v = e(h.Position, o)
+					u = " [" .. tostring(v) .. "]"
+				end
+				local v = s
+				if k and u ~= "" then
+					v = v + i(u)
+				end
+				local w, x = p - (v / 2), q - (t / 2)
+				draw.TextOutlined(c, w, x, l, f.Font, m)
+				if k and u ~= "" then
+					draw.TextOutlined(u, w + s, x, d, f.Font, m)
+				end
+			end
+		end
+		function b.Initialise(k)
+			local l, m, n =
+				k:Checkbox("Gun Drop ESP", false),
+				k:Colorpicker("Gun Drop ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
+				k:Checkbox("Show Distance", false)
+			cheat.Register("onPaint", b.Runtime)
+			cheat.Register("onUpdate", function()
+				local o = m:Get()
+				b.Flags.Enabled = l:Get()
+				b.Flags.Color = j(o)
+				b.Flags.Alpha = o.a
+				b.Flags.ShowDistance = n:Get()
+				n:Visible(b.Flags.Enabled)
+			end)
+		end
+		return b
+	end
+	function a.m()
+		local b, c, d, e, f =
 			{
 				Flags = {
 					Enabled = false,
 					UseRoleColor = false,
 					Color = Color3.new(255, 255, 255),
 					Alpha = 255,
-					SelectedRoleTypes = { Innocent = false, Sheriff = false, Murderer = false },
+					SelectedRoleTypes = {
+						Innocent = false,
+						Sheriff = false,
+						Murderer = false,
+					},
 				},
 				CachedTextSizes = {},
 			},
+			Color3.fromRGB(255, 255, 255),
 			{
 				Innocent = Color3.new(0.117647, 0.858824, 0.117647),
 				Murderer = Color3.new(0.72549, 0.101961, 0.101961),
@@ -701,84 +720,80 @@ do
 			},
 			a.load("b"),
 			a.load("e")
-		local f, g =
-			function(f)
-				local g = b.CachedTextSizes[f .. d.Font]
-				if g then
-					return g.W, g.H
+		local g, h =
+			function(g)
+				local h = b.CachedTextSizes[g .. e.Font]
+				if h then
+					return h.W, h.H
 				end
-				local h, i = draw.GetTextSize(f, d.Font)
-				b.CachedTextSizes[f .. d.Font] = { W = h, H = i }
-				return h, i
-			end, function(f)
-				if type(f) ~= "table" then
-					return Color3.fromRGB(255, 255, 255)
+				local i, j = draw.GetTextSize(g, e.Font)
+				b.CachedTextSizes[g .. e.Font] = { W = i, H = j }
+				return i, j
+			end, function(g)
+				if type(g) ~= "table" then
+					return c
 				end
-				local g, h, i = f.R or f.r or 255, f.G or f.g or 255, f.B or f.b or 255
-				return Color3.fromRGB(g, h, i)
+				local h, i, j = g.R or g.r or 255, g.G or g.g or 255, g.B or g.b or 255
+				return Color3.fromRGB(h, i, j)
 			end
-		local h = function(h)
-			local i = e:IsPlayerAlive(h)
-			if not i then
+		local i = function(i)
+			local j = f:IsPlayerAlive(i)
+			if not j then
 				return
 			end
-			local j = e:GetPlayerRole(h)
-			local k = b.Flags.SelectedRoleTypes[j] ~= nil
-			if not k then
+			local k = f:GetPlayerRole(i)
+			local l = b.Flags.SelectedRoleTypes[k] ~= nil
+			if not l then
 				return
 			end
-			local l, m, n = utility.WorldToScreen(h.Position)
-			if not n then
-				return
-			end
-			local o = h.BoundingBox
+			local m, n, o = utility.WorldToScreen(i.Position)
 			if not o then
 				return
 			end
-			local p, q = f(j)
-			local r, s, t, u =
-				o.x + (o.w / 2) - (p / 2),
-				o.y + (o.h / 2) - (q / 2),
-				b.Flags.UseRoleColor and c[j] or b.Flags.Color,
+			local p = i.BoundingBox
+			if not p then
+				return
+			end
+			local q, r = g(k)
+			local s, t, u, v =
+				p.x + (p.w / 2) - (q / 2),
+				p.y + (p.h / 2) - (r / 2),
+				b.Flags.UseRoleColor and d[k] or b.Flags.Color,
 				b.Flags.Alpha
-			draw.TextOutlined(j, r, s, t, d.Font, u)
+			draw.TextOutlined(k, s, t, u, e.Font, v)
 		end
 		function b.Runtime()
 			if not b.Flags.Enabled then
 				return
 			end
-			if not e:IsPlayerAlive() then
+			if not f:IsPlayerAlive() then
 				return
 			end
-			for i, j in pairs(entity.GetPlayers(false)) do
-				h(j)
+			for j, k in pairs(entity.GetPlayers(false)) do
+				i(k)
 			end
 		end
-		function b.Initialise(i)
-			local j, k, m, n =
-				i:Checkbox("Role ESP Enabled"),
-				i:Colorpicker("Role ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
-				i:Checkbox("Use Role Color", false),
-				i:Multiselect("Draw Roles", {
-					"Innocent",
-					"Sheriff",
-					"Murderer",
-				})
+		function b.Initialise(j)
+			local k, l, n, o =
+				j:Checkbox("Role ESP Enabled"),
+				j:Colorpicker("Role ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
+				j:Checkbox("Use Role Color", false),
+				j:Multiselect("Draw Roles", { "Innocent", "Sheriff", "Murderer" })
 			cheat.Register("onPaint", b.Runtime)
 			cheat.Register("onUpdate", function()
-				b.Flags.Enabled = j:Get()
-				local o = k:Get()
-				b.Flags.Color = g(o)
-				b.Flags.Alpha = o.a
-				b.Flags.UseRoleColor = m:Get()
-				b.Flags.SelectedRoleTypes = n:Get()
-				m:Visible(b.Flags.Enabled)
+				b.Flags.Enabled = k:Get()
+				local p = l:Get()
+				b.Flags.Color = h(p)
+				b.Flags.Alpha = p.a
+				b.Flags.UseRoleColor = n:Get()
+				b.Flags.SelectedRoleTypes = o:Get()
 				n:Visible(b.Flags.Enabled)
+				o:Visible(b.Flags.Enabled)
 			end)
 		end
 		return b
 	end
-	function a.m()
+	function a.n()
 		local b, c, d = { LastUpdate = 0, UpdateInterval = 50 }, game.GetService("Workspace"), a.load("b")
 		local e, f, g, h =
 			function()
@@ -812,7 +827,7 @@ do
 				for g, h in pairs(e:GetChildren()) do
 					local i = h:FindFirstDescendant("MainCoin")
 					if i and i.Transparency == 0 then
-						table.insert(f, i)
+						f[h.Address] = h.Position
 					end
 				end
 				d.ActiveCoins = f
@@ -861,7 +876,7 @@ do
 		end
 		return b
 	end
-	function a.n()
+	function a.o()
 		local b, c = {}, a.load("b")
 		function b.Initialise(d)
 			local e = d:Dropdown("Font Selection", { "ConsolasBold", "SmallestPixel", "Verdana", "Tahoma" }, 1)
@@ -871,7 +886,7 @@ do
 		end
 		return b
 	end
-	function a.o()
+	function a.p()
 		return function()
 			function math.floor(b)
 				return b - (b % 1)
@@ -881,7 +896,7 @@ do
 			end
 		end
 	end
-	function a.p()
+	function a.q()
 		return function()
 			table.find = function(b, c)
 				for d, e in pairs(b) do
@@ -894,18 +909,18 @@ do
 		end
 	end
 end
-local b, c, d, e, f, g, h, i, j, k, m =
+local b, c, d, e, f, g, h, i, j, k, l =
 	a.load("h"),
 	a.load("i"),
-	a.load("j"),
 	a.load("k"),
 	a.load("l"),
-	a.load("e"),
 	a.load("m"),
+	a.load("e"),
 	a.load("n"),
-	a.load("a"),
 	a.load("o"),
-	a.load("p")
+	a.load("a"),
+	a.load("p"),
+	a.load("q")
 local n = function()
 	local n = j.NewTab("DiddyWare_MM2", "DiddyWare")
 	local o, p, q =
@@ -913,7 +928,7 @@ local n = function()
 		n:Container("DiddyWare_MM2C2", "Visuals", { autosize = true }),
 		n:Container("DiddyWare_MM2C3", "Settings", { autosize = true, next = true })
 	k()
-	m()
+	l()
 	b.Initialise(o)
 	c.Initialise(o)
 	d.Initialise(p)
