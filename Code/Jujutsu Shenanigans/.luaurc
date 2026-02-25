@@ -1,0 +1,8 @@
+{
+    "aliases": {
+        "modules": "./src/modules",
+        "features": "./src/features",
+        "utility": "./src/utility",
+        "gui": "./src/gui"
+    }
+}
