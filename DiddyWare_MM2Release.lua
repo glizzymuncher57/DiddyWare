@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-20T12:34:43.491329100+00:00",
+	genDate = "2026-02-27T14:17:10.347220100+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -42,9 +42,9 @@ return setmetatable({Ref=g},f)end function b.NewReference(g,h,i)return e(g,h,i)
 end return b end function a.b()return{Font='ConsolasBold',CachedMap=nil,
 CachedCoinContainer=nil,CachedGunDrop=nil,ActiveCoins={},TrackedPlayers={},
 CurrentMurderer=nil,CurrentSheriff=nil}end function a.c()return{
-ScreenGui_Enabled=0x4cc,Frame_Visible=0x5b1,FramePosition={X_Scale=0x518,
-X_Offset=0x110,Y_Scale=0x520,Y_Offset=0x114},FrameSize={X_Scale=0x538,X_Offset=
-0x118,Y_Scale=0x540,Y_Offset=0x11c},FrameRotation=0x188}end function a.d()local
+ScreenGui_Enabled=0x4bc,Frame_Visible=0x5a1,FramePosition={X_Scale=0x508,
+X_Offset=0x110,Y_Scale=0x510,Y_Offset=0x114},FrameSize={X_Scale=0x528,X_Offset=
+0x118,Y_Scale=0x530,Y_Offset=0x11c},FrameRotation=0x188}end function a.d()local
 b,c=a.load'c',{}function c.GetFramePosition(d)local e=d.Address return Vector3.
 new(memory.read('float',e+b.FramePosition.X_Offset),memory.read('float',e+b.
 FramePosition.Y_Offset),0)end function c.GetFrameSize(d)local e=d.Address return
