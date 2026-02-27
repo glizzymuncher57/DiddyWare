@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-20T12:32:46.109112300+00:00",
+	genDate = "2026-02-27T14:16:23.238266400+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -21,9 +21,9 @@ Value if not h or h==''then return end local i=tostring(h):lower()keyboard.
 click(i)b.LastClick=e end function b.Initialise(e)local f,g=e:Checkbox
 'Lawyer QTE',e:SliderInt('QTE Delay (ms)',1,200,200)cheat.register('onUpdate',
 function()b.Runtime()b.Enabled=f:Get()b.Delay=g:Get()g:Visible(b.Enabled)end)end
-return b end function a.c()return{ScreenGui_Enabled=0x4cc,Frame_Visible=0x5b1,
-FramePosition={X_Scale=0x518,X_Offset=0x110,Y_Scale=0x520,Y_Offset=0x114},
-FrameSize={X_Scale=0x538,X_Offset=0x118,Y_Scale=0x540,Y_Offset=0x11c},
+return b end function a.c()return{ScreenGui_Enabled=0x4bc,Frame_Visible=0x5a1,
+FramePosition={X_Scale=0x508,X_Offset=0x110,Y_Scale=0x510,Y_Offset=0x114},
+FrameSize={X_Scale=0x528,X_Offset=0x118,Y_Scale=0x530,Y_Offset=0x11c},
 FrameRotation=0x188}end function a.d()local b,c,d={Enabled=false,CurrentAddress=
 nil,PressedR=false},a.load'c',a.load'a'function b.Runtime()if d.LocalInfo.
 SelectedCharacter~='Nanami'then return end if not b.Enabled then return end
