@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-28T01:51:53.326000400+00:00",
+	genDate = "2026-02-28T02:00:20.329203900+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -500,7 +500,7 @@ do
 				q:Set(s.Enabled)
 				r:Set(1)
 			end
-			b.SAFE_POSITION = c.Lobby.Spawns.SpawnLocation
+			b.SAFE_POSITION = c.Lobby.Spawns.SpawnLocation.Position
 			cheat.Register("onUpdate", function()
 				b.Runtime()
 				s()
@@ -510,7 +510,9 @@ do
 	end
 	function a.i()
 		local b, c, d, e, f =
-			{ Flags = { Enabled = false } }, a.load("b"), a.load("e"), a.load("f"), entity.GetLocalPlayer()
+			{
+				Flags = { Enabled = false },
+			}, a.load("b"), a.load("e"), a.load("f"), entity.GetLocalPlayer()
 		local g = function()
 			local g = f:GetBoneInstance("HumanoidRootPart")
 			if not g then
@@ -633,7 +635,10 @@ do
 	end
 	function a.l()
 		local b, c, d, e, f, g, h =
-			{ Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 }, CachedTextSizes = {} },
+			{
+				Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 },
+				CachedTextSizes = {},
+			},
 			"Gun",
 			Color3.fromRGB(255, 255, 255),
 			a.load("j"),
@@ -707,9 +712,23 @@ do
 	function a.m()
 		local b, c, d, e, f =
 			{
-				Flags = { Enabled = false, UseRoleColor = false, Color = Color3.new(255, 255, 255), Alpha = 255, SelectedRoleTypes = { Innocent = false, Sheriff = false, Murderer = false } },
+				Flags = {
+					Enabled = false,
+					UseRoleColor = false,
+					Color = Color3.new(255, 255, 255),
+					Alpha = 255,
+					SelectedRoleTypes = { Innocent = false, Sheriff = false, Murderer = false },
+				},
 				CachedTextSizes = {},
-			}, Color3.fromRGB(255, 255, 255), { Innocent = Color3.new(0.117647, 0.858824, 0.117647), Murderer = Color3.new(0.72549, 0.101961, 0.101961), Sheriff = Color3.new(0.070588, 0.517647, 0.811765) }, a.load("b"), a.load("e")
+			},
+			Color3.fromRGB(255, 255, 255),
+			{
+				Innocent = Color3.new(0.117647, 0.858824, 0.117647),
+				Murderer = Color3.new(0.72549, 0.101961, 0.101961),
+				Sheriff = Color3.new(0.070588, 0.517647, 0.811765),
+			},
+			a.load("b"),
+			a.load("e")
 		local g, h =
 			function(g)
 				local h = b.CachedTextSizes[g .. e.Font]
@@ -768,11 +787,7 @@ do
 				j:Checkbox("Role ESP Enabled"),
 				j:Colorpicker("Role ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
 				j:Checkbox("Use Role Color", false),
-				j:Multiselect("Draw Roles", {
-					"Innocent",
-					"Sheriff",
-					"Murderer",
-				})
+				j:Multiselect("Draw Roles", { "Innocent", "Sheriff", "Murderer" })
 			cheat.Register("onPaint", b.Runtime)
 			cheat.Register("onUpdate", function()
 				b.Flags.Enabled = k:Get()
