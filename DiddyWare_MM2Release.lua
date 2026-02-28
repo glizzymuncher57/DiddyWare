@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-27T14:17:10.347220100+00:00",
+	genDate = "2026-02-28T01:51:53.326000400+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -145,11 +145,19 @@ do
 	end
 	function a.c()
 		return {
-			ScreenGui_Enabled = 0x4bc,
-			Frame_Visible = 0x5a1,
-			FramePosition = { X_Scale = 0x508, X_Offset = 0x110, Y_Scale = 0x510, Y_Offset = 0x114 },
-			FrameSize = { X_Scale = 0x528, X_Offset = 0x118, Y_Scale = 0x530, Y_Offset = 0x11c },
-			FrameRotation = 0x188,
+			DoubleConstrainedValue = { Value = { Type = "double", Offset = 0xe0 } },
+			ScreenGui = { Enabled = {
+				Type = "bool",
+				Offset = 0x4bc,
+			} },
+			GuiObject = {
+				AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
+				Rotation = { Type = "float", Offset = 0x188 },
+				Position = { Type = "float", X = 0x508, Y = 0x510 },
+				Visible = { Type = "bool", Offset = 0x5a1 },
+				Size = { Type = "float", X = 0x528, Y = 0x530 },
+				AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c },
+			},
 		}
 	end
 	function a.d()
@@ -157,16 +165,16 @@ do
 		function c.GetFramePosition(d)
 			local e = d.Address
 			return Vector3.new(
-				memory.read("float", e + b.FramePosition.X_Offset),
-				memory.read("float", e + b.FramePosition.Y_Offset),
+				memory.read("float", e + b.GuiObject.Position.X),
+				memory.read("float", e + b.GuiObject.Position.Y),
 				0
 			)
 		end
 		function c.GetFrameSize(d)
 			local e = d.Address
 			return Vector3.new(
-				memory.read("float", e + b.FrameSize.X_Offset),
-				memory.read("float", e + b.FrameSize.Y_Offset),
+				memory.read("float", e + b.GuiObject.Size.X),
+				memory.read("float", e + b.GuiObject.Size.Y),
 				0
 			)
 		end
@@ -175,10 +183,10 @@ do
 			return e + (f / 2)
 		end
 		function c.GetFrameRotation(d)
-			return memory.read("float", d.Address + b.FrameRotation)
+			return memory.read("float", d.Address + b.GuiObject.Rotation.Offset)
 		end
 		function c.IsFrameVisible(d)
-			return memory.read("bool", d.Address + b.Frame_Visible)
+			return memory.read("bool", d.Address + b.GuiObject.Visible.Offset)
 		end
 		return c
 	end
@@ -383,9 +391,9 @@ do
 		return b
 	end
 	function a.h()
-		local b, c, d, e, f, g =
+		local b, c, d, e, f, g, h =
 			{
-				SAFE_POSITION = Vector3.new(14, 505, -45),
+				SAFE_POSITION = nil,
 				Flags = { Enabled = false, SafetyOnFullBag = false, MurdererSafezone = 35, DelayPerCoin = 0.75, TweenSpeed = 35 },
 				State = {
 					GoingToCoin = false,
@@ -396,104 +404,106 @@ do
 					Target = nil,
 				},
 			},
+			game.GetService("Workspace"),
 			entity.GetLocalPlayer(),
 			a.load("a"),
 			a.load("b"),
 			a.load("e"),
 			a.load("g")
-		local h, i =
-			function(h)
-				local i, j, k, l, m = math.huge, h ~= "Murderer", e.CurrentMurderer
-				if j and k then
-					m = k.Position
+		local i, j =
+			function(i)
+				local j, k, l, m, n = math.huge, i ~= "Murderer", f.CurrentMurderer
+				if k and l then
+					n = l.Position
 				end
-				for n, o in pairs(e.ActiveCoins) do
-					local p, q = (c.Position - o).Magnitude
-					if m then
-						q = (m - o).Magnitude
+				for o, p in pairs(f.ActiveCoins) do
+					local q, r = (d.Position - p).Magnitude
+					if n then
+						r = (n - p).Magnitude
 					end
-					local r = true
-					if q then
-						r = q > b.Flags.MurdererSafezone
+					local s = true
+					if r then
+						s = r > b.Flags.MurdererSafezone
 					end
-					if r and p < i then
-						l = n
-						i = p
+					if s and q < j then
+						m = { Address = o, Position = p }
+						j = q
 					end
 				end
-				return l, i
-			end, function(h)
-				return table.find(e.ActiveCoins, h)
+				return m, j
+			end, function(i)
+				return f.ActiveCoins[i]
 			end
 		function b.Runtime()
 			if not b.Flags.Enabled then
 				return
 			end
-			if not f:IsPlayerAlive() then
+			if not g:IsPlayerAlive() then
 				return
 			end
-			local j = c:GetBoneInstance("HumanoidRootPart")
-			if not j then
+			local k = d:GetBoneInstance("HumanoidRootPart")
+			if not k then
 				return
 			end
-			local k, l = utility.GetTickCount(), b.State.CoinTween
-			if l then
-				local m = l:Step()
-				if m then
+			local l, m = utility.GetTickCount(), b.State.CoinTween
+			if m then
+				local n = m:Step()
+				if n then
 					b.State.CoinTween = nil
 					b.State.GoingToCoin = false
-					b.State.LastCoinGrab = k
+					b.State.LastCoinGrab = l
 				end
 				return
 			end
-			local m, n, o, p, q =
-				f:GetPlayerStored(),
-				f:GetPlayerRole(),
+			local n, o, p, q, r =
+				g:GetPlayerStored(),
+				g:GetPlayerRole(),
 				b.Flags.SafetyOnFullBag,
 				b.State.GoingToCoin,
 				b.State.LastCoinGrab
-			local r = o and m.IsFullCoins and n ~= "Sheriff" and n ~= "Murderer"
-			if r then
-				j.Position = b.SAFE_POSITION
+			local s = p and n.IsFullCoins and o ~= "Sheriff" and o ~= "Murderer"
+			if s then
+				k.Position = b.SAFE_POSITION
 				return
 			end
-			if not p and not m.IsFullCoins and (k - q) >= b.Flags.DelayPerCoin * 1000 then
-				local s, t = h(n)
-				if not s or not i(s) then
+			if not q and not n.IsFullCoins and (l - r) >= b.Flags.DelayPerCoin * 1000 then
+				local t, u = i(o)
+				if not t or not j(t.Address) then
 					return
 				end
-				local u = t / b.Flags.TweenSpeed
+				local v = u / b.Flags.TweenSpeed
 				b.State.GoingToCoin = true
-				b.State.CoinTween = g.new(j, "Position", s.Position, u, g.Easing.Linear)
+				b.State.CoinTween = h.new(k, "Position", t.Position, v, h.Easing.Linear)
 				return
 			end
 		end
-		function b.Initialise(j)
-			local k, l, m, n, o, p, q =
-				j:Checkbox("Coin Farm", false),
-				j:Checkbox("Return to Safety when Bag is Full", false),
-				j:SliderInt("Murderer Safezne", 1, 100, 20),
-				j:SliderFloat("Delay Per Coin (s)", 0, 3, 0.55),
-				j:SliderInt("Tween Speed", 1, 100, 25),
-				d.NewReference("Exploits", "Misc", "Slow Fall"),
-				d.NewReference("Exploits", "Misc", "Fall Speed")
-			local r = function()
-				local r = b.Flags
-				r.Enabled = k:Get()
-				r.SafetyOnFullBag = l:Get()
-				r.MurdererSafezone = m:Get()
-				r.DelayPerCoin = n:Get()
-				r.TweenSpeed = o:Get()
-				l:Visible(r.Enabled)
-				m:Visible(r.Enabled)
-				n:Visible(r.Enabled)
-				o:Visible(r.Enabled)
-				p:Set(r.Enabled)
-				q:Set(1)
+		function b.Initialise(k)
+			local l, m, n, o, p, q, r =
+				k:Checkbox("Coin Farm", false),
+				k:Checkbox("Return to Safety when Bag is Full", false),
+				k:SliderInt("Murderer Safezne", 1, 100, 20),
+				k:SliderFloat("Delay Per Coin (s)", 0, 3, 0.55),
+				k:SliderInt("Tween Speed", 1, 100, 25),
+				e.NewReference("Exploits", "Misc", "Slow Fall"),
+				e.NewReference("Exploits", "Misc", "Fall Speed")
+			local s = function()
+				local s = b.Flags
+				s.Enabled = l:Get()
+				s.SafetyOnFullBag = m:Get()
+				s.MurdererSafezone = n:Get()
+				s.DelayPerCoin = o:Get()
+				s.TweenSpeed = p:Get()
+				m:Visible(s.Enabled)
+				n:Visible(s.Enabled)
+				o:Visible(s.Enabled)
+				p:Visible(s.Enabled)
+				q:Set(s.Enabled)
+				r:Set(1)
 			end
+			b.SAFE_POSITION = c.Lobby.Spawns.SpawnLocation
 			cheat.Register("onUpdate", function()
 				b.Runtime()
-				r()
+				s()
 			end)
 		end
 		return b
@@ -551,7 +561,8 @@ do
 				Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 },
 				CachedTextSizes = {},
 				LastFont = nil,
-			}, "Coin"
+			},
+			"Coin"
 		local f, g, h, i, j =
 			Color3.fromRGB(255, 255, 255), a.load("b"), a.load("e"), a.load("j"), entity.GetLocalPlayer()
 		local k, l =
@@ -602,18 +613,18 @@ do
 			local n, o, p =
 				m:Checkbox("Coin ESP", false),
 				m:Colorpicker("Coin ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
-				m:Checkbox("Show Distance", false)
+				m:Checkbox("Show Coin Distance", false)
 			cheat.Register("onPaint", b.Runtime)
 			cheat.Register("onUpdate", function()
 				local q = o:Get()
 				b.Flags.Enabled = n:Get()
+				b.Flags.ShowDistance = p:Get()
 				b.Flags.Color = l(q)
 				b.Flags.Alpha = q.a
-				b.Flags.ShowDistance = p:Get()
 				p:Visible(b.Flags.Enabled)
 				local r = g.Font
-				b.LastFont = r
-				if r ~= b.LastFont or b.LastFont == nil then
+				if b.LastFont ~= r then
+					b.LastFont = r
 					e, d = k(c)
 				end
 			end)
@@ -622,10 +633,7 @@ do
 	end
 	function a.l()
 		local b, c, d, e, f, g, h =
-			{
-				Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 },
-				CachedTextSizes = {},
-			},
+			{ Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 }, CachedTextSizes = {} },
 			"Gun",
 			Color3.fromRGB(255, 255, 255),
 			a.load("j"),
@@ -683,7 +691,7 @@ do
 			local l, m, n =
 				k:Checkbox("Gun Drop ESP", false),
 				k:Colorpicker("Gun Drop ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
-				k:Checkbox("Show Distance", false)
+				k:Checkbox("Show Gun Distance", false)
 			cheat.Register("onPaint", b.Runtime)
 			cheat.Register("onUpdate", function()
 				local o = m:Get()
@@ -699,27 +707,9 @@ do
 	function a.m()
 		local b, c, d, e, f =
 			{
-				Flags = {
-					Enabled = false,
-					UseRoleColor = false,
-					Color = Color3.new(255, 255, 255),
-					Alpha = 255,
-					SelectedRoleTypes = {
-						Innocent = false,
-						Sheriff = false,
-						Murderer = false,
-					},
-				},
+				Flags = { Enabled = false, UseRoleColor = false, Color = Color3.new(255, 255, 255), Alpha = 255, SelectedRoleTypes = { Innocent = false, Sheriff = false, Murderer = false } },
 				CachedTextSizes = {},
-			},
-			Color3.fromRGB(255, 255, 255),
-			{
-				Innocent = Color3.new(0.117647, 0.858824, 0.117647),
-				Murderer = Color3.new(0.72549, 0.101961, 0.101961),
-				Sheriff = Color3.new(0.070588, 0.517647, 0.811765),
-			},
-			a.load("b"),
-			a.load("e")
+			}, Color3.fromRGB(255, 255, 255), { Innocent = Color3.new(0.117647, 0.858824, 0.117647), Murderer = Color3.new(0.72549, 0.101961, 0.101961), Sheriff = Color3.new(0.070588, 0.517647, 0.811765) }, a.load("b"), a.load("e")
 		local g, h =
 			function(g)
 				local h = b.CachedTextSizes[g .. e.Font]
@@ -778,7 +768,11 @@ do
 				j:Checkbox("Role ESP Enabled"),
 				j:Colorpicker("Role ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
 				j:Checkbox("Use Role Color", false),
-				j:Multiselect("Draw Roles", { "Innocent", "Sheriff", "Murderer" })
+				j:Multiselect("Draw Roles", {
+					"Innocent",
+					"Sheriff",
+					"Murderer",
+				})
 			cheat.Register("onPaint", b.Runtime)
 			cheat.Register("onUpdate", function()
 				b.Flags.Enabled = k:Get()
