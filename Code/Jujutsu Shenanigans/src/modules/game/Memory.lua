@@ -1,37 +1,37 @@
 local Offsets = require("@modules/game/Offsets")
 
+local read = memory.read
 local MemoryFunctions = {}
 
+function MemoryFunctions.Read(Object, Offset)
+	return read(Offset.Type, Object.Address + (Offset.Offset or 0x00))
+end
+
 function MemoryFunctions.GetFramePosition(Frame)
-	local Address = Frame.Address
-	return Vector3.new(
-		memory.read("float", Address + Offsets.FramePosition.X_Offset),
-		memory.read("float", Address + Offsets.FramePosition.Y_Offset),
-		0
-	)
+	return MemoryFunctions.ReadVector2(Frame, Offsets.GuiObject.AbsolutePosition)
 end
 
 function MemoryFunctions.GetFrameSize(Frame)
-	local Address = Frame.Address
-	return Vector3.new(
-		memory.read("float", Address + Offsets.FrameSize.X_Offset),
-		memory.read("float", Address + Offsets.FrameSize.Y_Offset),
-		0
-	)
+	return MemoryFunctions.ReadVector2(Frame, Offsets.GuiObject.AbsoluteSize)
 end
 
 function MemoryFunctions.GetFrameCenter(Frame)
-	local Position = MemoryFunctions.GetFramePosition(Frame)
-	local Size = MemoryFunctions.GetFrameSize(Frame)
+	local Position = MemoryFunctions.ReadVector2(Frame, Offsets.GuiObject.AbsolutePosition)
+	local Size = MemoryFunctions.ReadVector2(Frame, Offsets.GuiObject.AbsoluteSize)
 	return Position + (Size / 2)
 end
 
+function MemoryFunctions.ReadVector2(Object, Offset)
+	local Address = Object.Address
+	return Vector3.new(read(Offset.Type, Address + Offset.X), read(Offset.Type, Address + Offset.Y), 0)
+end
+
 function MemoryFunctions.GetFrameRotation(Frame)
-	return memory.read("float", Frame.Address + Offsets.FrameRotation)
+	return MemoryFunctions.Read(Frame, Offsets.GuiObject.Rotation)
 end
 
 function MemoryFunctions.IsFrameVisible(Frame)
-	return memory.read("bool", Frame.Address + Offsets.Frame_Visible)
+	return MemoryFunctions.Read(Frame, Offsets.GuiObject.Visible)
 end
 
 return MemoryFunctions

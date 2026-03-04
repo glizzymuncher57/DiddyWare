@@ -11,6 +11,7 @@ local DomainHealth = require("@features/visuals/DomainHealth")
 local Customisation = require("@modules/ui/Customisation")
 local Cache = require("@modules/core/Cache")
 local PlayerTracker = require("@modules/core/PlayerTracker")
+local AnimationTracker = require("@modules/core/AnimationTracker")
 
 local Minigames = require("@features/misc/Minigames/Main")
 
@@ -26,6 +27,7 @@ local function Initialise()
 
 	Math()
 	PlayerTracker.Initialise(Settings)
+	AnimationTracker.Initialise(Settings)
 	Cache.Initialise(Settings)
 	AutoBlackFlash.Initialise(Main)
 	TodoBlackflash.Initialise(Main)

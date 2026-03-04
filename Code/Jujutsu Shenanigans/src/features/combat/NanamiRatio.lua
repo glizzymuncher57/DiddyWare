@@ -29,7 +29,7 @@ function Feature.Runtime()
 				return
 			end
 
-			if not memory.read("bool", Ratio.Address + Offsets.ScreenGui_Enabled) then
+			if not memory.read("bool", Ratio.Address + Offsets.ScreenGui.Enabled) then
 				return
 			end
 
@@ -49,7 +49,7 @@ function Feature.Runtime()
 				return
 			end
 
-			local CursorScale = memory.Read("float", Cursor.Address + Offsets.FramePosition.Y_Scale)
+			local CursorScale = memory.Read("float", Cursor.Address + Offsets.GuiObject.Size.Y)
 			if math.abs(CursorScale - 0.3) <= 0.03 and not Feature.PressedR then
 				keyboard.Click("r")
 				Feature.PressedR = true

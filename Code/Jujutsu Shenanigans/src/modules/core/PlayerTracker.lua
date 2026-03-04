@@ -31,6 +31,8 @@ local function ProcessPlayer(Player, NewPlayers)
 		return
 	end
 
+	local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+
 	local Moveset = Character:FindFirstChild("Moveset")
 	if not Moveset then
 		return
@@ -73,12 +75,14 @@ local function ProcessPlayer(Player, NewPlayers)
 	NewPlayers[Player.Name] = {
 		Player = Player,
 		Character = Character,
+		Humanoid = Humanoid,
 		SelectedMoveset = GetAttribute(Character, "Moveset", "[???]"),
 		Evade = GetAttribute(Character, "Evade", 50),
 		Ultimate = PlayerInstance and GetAttribute(PlayerInstance, "Ultimate", 0) or 0,
 		Ragdolled = GetAttribute(Character, "Ragdoll", 0),
 		Moves = MoveLookup,
 		OrderedMoves = OrderedMoves,
+		Animations = OldPlayerData and OldPlayerData.Animations or {},
 	}
 end
 

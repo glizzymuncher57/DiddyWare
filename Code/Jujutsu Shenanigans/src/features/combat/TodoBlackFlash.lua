@@ -1,16 +1,41 @@
 local TodoBlackflash = {
 	Enabled = false,
 	BindEnabled = false,
-	Delay = 0.575,
 
-	_WasWoosh = false,
-	_Waiting = true,
-	_NextPressTime = 0,
+	WasSliding = false,
+	Waiting = false,
+	BrutForceStarted = false,
 }
 
 local EntityLocalPlayer = entity.GetLocalPlayer()
 local Environment = require("@modules/core/Environment")
 local PlayerTracker = require("@modules/core/PlayerTracker")
+
+local Animations = {
+	["Slide"] = {
+		["AnimationID"] = "rbxassetid://100081544058065",
+	},
+
+	["Brute Force"] = {
+		["AnimationID"] = "rbxassetid://123167492985370",
+		["TimePosition"] = 2.9,
+	},
+}
+
+local function GetAnimationByID(AnimationID)
+	local LocalTracker = PlayerTracker:ReturnLocalPlayer()
+	local Tracks = LocalTracker.Animations
+	if not Tracks then
+		return nil
+	end
+
+	for i = 1, #Tracks do
+		if Tracks[i].Animation.AnimationId == AnimationID then
+			return Tracks[i]
+		end
+	end
+	return nil
+end
 
 function TodoBlackflash.Runtime()
 	if not TodoBlackflash.Enabled then
@@ -28,34 +53,29 @@ function TodoBlackflash.Runtime()
 		return
 	end
 
-	local HumanoidRootPart = EntityLocalPlayer:GetBoneInstance("HumanoidRootPart")
-	if not HumanoidRootPart then
-		return
+	local IsSliding = GetAnimationByID(Animations.Slide.AnimationID)
+
+	if IsSliding and not TodoBlackflash.WasSliding and not TodoBlackflash.Waiting then
+		TodoBlackflash.Waiting = true
 	end
 
-	local Woosh = HumanoidRootPart:FindFirstChild("Woosh")
-	local Now = utility.GetTickCount()
+	if TodoBlackflash.Waiting then
+		local BruteForce = GetAnimationByID(Animations["Brute Force"].AnimationID)
 
-	if Woosh and not TodoBlackflash._WasWoosh and not TodoBlackflash._Waiting then
-		local BaseDelaySeconds = TodoBlackflash.Delay or 0
-		local DelayMs = BaseDelaySeconds * 1000
-		TodoBlackflash._NextPressTime = Now + DelayMs
-		TodoBlackflash._Waiting = true
-
-		if Environment.DebugMode then
-			print("Executing Todo Blackflash Delay: " .. tostring(TodoBlackflash._NextPressTime))
+		if not IsSliding and not BruteForce then
+			TodoBlackflash.Waiting = false
+			TodoBlackflash.BruteForceStarted = false
+		elseif BruteForce then
+			TodoBlackflash.BruteForceStarted = true
+			if BruteForce.TimePosition >= Animations["Brute Force"].TimePosition then
+				keyboard.Click(0x32)
+				TodoBlackflash.Waiting = false
+				TodoBlackflash.BruteForceStarted = false
+			end
 		end
 	end
 
-	if TodoBlackflash._Waiting and Now >= TodoBlackflash._NextPressTime then
-		keyboard.Click(0x32)
-		TodoBlackflash._Waiting = false
-		if Environment.DebugMode then
-			print("Executed Todo Blackflash.")
-		end
-	end
-
-	TodoBlackflash._WasWoosh = Woosh ~= nil
+	TodoBlackflash.WasSliding = IsSliding
 end
 
 function TodoBlackflash.Initialise(
@@ -65,15 +85,11 @@ function TodoBlackflash.Initialise(
 )
 	local Checkbox = Container:Checkbox("Todo Blackflash", false)
 	local Hotkey = Container:KeyPicker("Todo Blackflash Hotkey", true)
-	local TimingSlider = Container:SliderFloat("Todo Blackflash Timing (s)", 0, 1, 0.575)
 
 	cheat.Register("onUpdate", function()
 		TodoBlackflash.Enabled = Checkbox:Get()
 		TodoBlackflash.BindEnabled = Hotkey:Get() == true
-		TodoBlackflash.Delay = TimingSlider:Get()
-
 		TodoBlackflash.Runtime()
-		TimingSlider:Visible(TodoBlackflash.Enabled)
 	end)
 end
 
