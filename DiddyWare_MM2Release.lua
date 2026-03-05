@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-02-28T02:00:20.329203900+00:00",
+	genDate = "2026-03-05T13:53:33.456512+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -145,18 +145,17 @@ do
 	end
 	function a.c()
 		return {
-			DoubleConstrainedValue = { Value = { Type = "double", Offset = 0xe0 } },
-			ScreenGui = { Enabled = {
-				Type = "bool",
-				Offset = 0x4bc,
-			} },
 			GuiObject = {
-				AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
-				Rotation = { Type = "float", Offset = 0x188 },
 				Position = { Type = "float", X = 0x508, Y = 0x510 },
-				Visible = { Type = "bool", Offset = 0x5a1 },
+				Rotation = { Type = "float", Offset = 0x188 },
 				Size = { Type = "float", X = 0x528, Y = 0x530 },
 				AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c },
+				AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
+				Visible = { Type = "bool", Offset = 0x5a5 },
+			},
+			ScreenGui = { Enabled = { Type = "bool", Offset = 0x4bc } },
+			DoubleConstrainedValue = {
+				Value = { Type = "double", Offset = 0xe0 },
 			},
 		}
 	end
@@ -461,7 +460,7 @@ do
 				b.Flags.SafetyOnFullBag,
 				b.State.GoingToCoin,
 				b.State.LastCoinGrab
-			local s = p and n.IsFullCoins and o ~= "Sheriff" and o ~= "Murderer"
+			local s = p and n.IsFullCoins
 			if s then
 				k.Position = b.SAFE_POSITION
 				return
@@ -635,10 +634,7 @@ do
 	end
 	function a.l()
 		local b, c, d, e, f, g, h =
-			{
-				Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 },
-				CachedTextSizes = {},
-			},
+			{ Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 }, CachedTextSizes = {} },
 			"Gun",
 			Color3.fromRGB(255, 255, 255),
 			a.load("j"),
