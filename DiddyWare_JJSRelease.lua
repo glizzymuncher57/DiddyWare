@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-05T17:36:53.948461900+00:00",
+	genDate = "2026-03-05T18:01:09.706751700+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -149,9 +149,9 @@ not e:DoesPlayerHaveMove(c,'Brute Force')then return end local h=g(f.Slide.
 AnimationID)if h and not b.WasSliding and not b.Waiting then b.Waiting=true end
 if b.Waiting then local i=g(f['Brute Force'].AnimationID)if not h and not i then
 b.Waiting=false b.BruteForceStarted=false elseif i then b.BruteForceStarted=true
-if i.TimePosition>=f['Brute Force'].TimePosition then print'fired brute force'
-keyboard.Click(0x32)b.Waiting=false b.BruteForceStarted=false end end end b.
-WasSliding=h end function b.Initialise(h)local i,j,k=h:Checkbox(
+print(i.TimePosition)if i.TimePosition>=f['Brute Force'].TimePosition then print
+'fired brute force'keyboard.Click(0x32)b.Waiting=false b.BruteForceStarted=false
+end end end b.WasSliding=h end function b.Initialise(h)local i,j,k=h:Checkbox(
 'Todo Blackflash',false),h:KeyPicker('Todo Blackflash Hotkey',true),h:
 SliderFloat('Todo Blackflash Wait Time',0,5,2.9)cheat.Register('onUpdate',
 function()b.Enabled=i:Get()b.BindEnabled=j:Get()==true b.Runtime()f[
@@ -255,65 +255,69 @@ AnimationTrack.Looped)elseif k=='WeightTarget'then return h(0,g(1,e('float',l+d.
 AnimationTrack.WeightTarget)))else return nil end end},{Animators={},Tracks={},
 Animations={}}local l=function(l)local m=k.Animators[l]if m then return m end
 local n=l:find_first_child_of_class'Animator'if not n then return 0 end m=n.
-Address k.Animators[l]=m return m end local m=function(m)local n,o={},l(m)if o==
-0 then return n end local p=e('ptr',o+d.Animator.AnimationTrackList)if p==0 then
-return n end local q=e('ptr',p)while q~=0 and q~=p do local r=e('ptr',q+0x10)if
-r~=0 then local s=k.Tracks[r]if not s then local t=e('ptr',r+d.AnimationTrack.
-Animation)if t~=0 then local u=e('string',t+d.Animation.AnimationId)if u~=''then
-s={track=r,Animation={AnimationId=u,Name=k.Animations[u]or'Unknown'}}
-setmetatable(s,j)k.Tracks[r]=s end end end if s then n[#n+1]=s end end q=e('ptr'
-,q)end return n end function k.Initialise(n)cheat.register('onUpdate',function()
-if not c then return end local o=c:ReturnLocalPlayer()if not o then return end
-local p=o.Humanoid if not p then return end o.Animations=m(p)end)end return k
-end function a.q()local b,c,d=a.load'c',memory.read,{}function d.Read(e,f)return
-c(f.Type,e.Address+(f.Offset or 0x0))end function d.GetFramePosition(e)return d.
-ReadVector2(e,b.GuiObject.AbsolutePosition)end function d.GetFrameSize(e)return
-d.ReadVector2(e,b.GuiObject.AbsoluteSize)end function d.GetFrameCenter(e)local f
-,g=d.ReadVector2(e,b.GuiObject.AbsolutePosition),d.ReadVector2(e,b.GuiObject.
-AbsoluteSize)return f+(g/2)end function d.ReadVector2(e,f)local g=e.Address
-return Vector3.new(c(f.Type,g+f.X),c(f.Type,g+f.Y),0)end function d.
-GetFrameRotation(e)return d.Read(e,b.GuiObject.Rotation)end function d.
-IsFrameVisible(e)return d.Read(e,b.GuiObject.Visible)end return d end function a
-.r()local b,c=a.load'q',0 local d=function(d,e,f)local g,h,j=math.huge,(f.X*0.05
-)for k,l in pairs(d:GetChildren())do local m,n=b.GetFrameCenter(l),b.
-GetFrameSize(l.Top)local o=m.X+(n.X/2)local p=o+h>e.X if p then local q=m.X-e.X
-if q<g then j=l g=q end end end return j end return function(e)if not e then
-return end local f=e.Screen.Game local g,h=f.Guy,utility.GetTickCount()if b.
-IsFrameVisible(g.Explode)then return end local j,k=b.GetFrameSize(f),b.
-GetFrameCenter(g)local l=d(f.Walls,k,j)if not l then return end local m,n=l.Top,
-l.Bottom local o,p,q=b.GetFramePosition(m),b.GetFrameSize(m),b.GetFramePosition(
-n)local r,s=o.Y+p.Y,q.Y local t=s-r local u,v=r+t*0.5,t*0.1 local w=u+v if k.Y>w
-and h-c>25 then mouse.Click'leftmouse'c=h end end end function a.s()local b=a.
-load'q'local c=function(c,d)local e,f=c.BG1.Floor,c.Food if not e or not f then
-print"Minigame Critical Error | Couldn't find floor or food!"return nil end
-local g,h=b.GetFramePosition(e),b.GetFrameSize(e)local j,k,l,m=h.X*0.15,(math.
-huge)for n,o in pairs(f:GetChildren())do local p=b.GetFrameCenter(o)local q,r=
-math.abs(p.X-d.X),g.Y-p.Y local s=o.Name=='Speed'and q>j if not s then if r<k
-then l=o m=p k=r end end end return l,m end return function(d)if not d then
-return end local e=d.Screen.Game local f=e.Guy if b.IsFrameVisible(f.Explode)
-then return end local g=b.GetFrameCenter(f)local h,j=c(e,g)if not h or not j
-then return end local k=j.X-g.X if math.abs(k)>=20 then if k<0 then keyboard.
-click'a'else keyboard.click'd'end end end end function a.t()local b,c,d={Enabled
-=false,FlightGame=false,CatchGame=false,GameUI=nil,GameType=nil},a.load'a',{
-FlightGame=a.load'r',CatchGame=a.load's'}local e,f=function(e)local f=d[b.
-GameType]return f and f(e)or nil end,function(e,f,g)local h=e:Get()b.Enabled=h
-if h then b.FlightGame=f:Get()b.CatchGame=g:Get()end f:Visible(h)g:Visible(h)end
-function b.Initialise(g)local h,j,k=g:Checkbox('Minigames Enabled',false),g:
-Checkbox('Flight Game',false),g:Checkbox('Catch Game',false)cheat.Register(
-'onUpdate',function()f(h,j,k)if not utility.GetMenuState()and b.Enabled and b.
-GameUI and b.GameType and b[b.GameType]==true then e(b.GameUI)end end)cheat.
-Register('onSlowUpdate',function()if not b.Enabled then return end b.GameUI=c.
-LocalInfo.PlayerGui:FindFirstChild'DeviceUI'if b.GameUI then local l=b.GameUI:
-FindFirstChild'DeviceSystem'local m=l:FindFirstChild'Wall'and'FlightGame'or l:
-FindFirstChild'Food'and'CatchGame'or nil b.GameType=m else b.GameType=nil end
-end)end return b end function a.u()return function()function math.floor(b)return
-b-(b%1)end function math.clamp(b,c,d)return math.max(c,math.min(d,b))end end end
-end local b,c,d,e,f,g,h,j,k,l,m,n,o,p,q=a.load'b',a.load'd',a.load'g',a.load'h',
-a.load'i',a.load'j',a.load'k',a.load'l',a.load'm',a.load'o',a.load'e',a.load'p',
-a.load't',a.load'f',a.load'u'local r=function()local r=p.NewTab('DiddyWare_JJS',
-'DiddyWare')local s,t,u,v=r:Container('DiddyWare_JJSC1','Main',{autosize=true,
-next=true}),r:Container('DiddyWare_JJSC2','Visuals',{autosize=true}),r:
-Container('DiddyWare_JJSC3','Settings',{autosize=true,next=true}),r:Container(
-'DiddyWare_JJSC4','Misc',{autosize=true})q()m.Initialise(u)l.Initialise(u)d.
-Initialise(s)f.Initialise(s)e.Initialise(s)c.Initialise(s)b.Initialise(s)g.
-Initialise(t)j.Initialise(t)h.Initialise(t)k.Initialise(u)o.Initialise(v)end r() print("this is updated")
+Address k.Animators[l]=m return m end local m,n=function(m)local n,o={},l(m)if o
+==0 then print'no animator'return n end local p=e('ptr',o+d.Animator.
+AnimationTrackList)if p==0 then print'bad list'return n end local q=e('ptr',p)
+while q~=0 and q~=p do local r=e('ptr',q+0x10)if r~=0 then local s=k.Tracks[r]if
+not s then local t=e('ptr',r+d.AnimationTrack.Animation)if t~=0 then local u=e(
+'string',t+d.Animation.AnimationId)if u~=''then s={track=r,Animation={
+AnimationId=u,Name=k.Animations[u]or'Unknown'}}setmetatable(s,j)k.Tracks[r]=s
+end end end if s then n[#n+1]=s end end q=e('ptr',q)end return n end,function()
+local m=game.DataModel:GetDescendants()for n=1,#m do local o=m[n]if o:is_a
+'Animation'then local p=e('string',o.Address+d.Animation.AnimationId)if p~=''
+then k.Animations[p]=o.Name end end end end function k.Initialise(o)n()cheat.
+register('onUpdate',function()if not c then return end local p=c:
+ReturnLocalPlayer()if not p then return end local q=p.Humanoid if not q then
+return end p.Animations=m(q)end)end return k end function a.q()local b,c,d=a.
+load'c',memory.read,{}function d.Read(e,f)return c(f.Type,e.Address+(f.Offset or
+0x0))end function d.GetFramePosition(e)return d.ReadVector2(e,b.GuiObject.
+AbsolutePosition)end function d.GetFrameSize(e)return d.ReadVector2(e,b.
+GuiObject.AbsoluteSize)end function d.GetFrameCenter(e)local f,g=d.ReadVector2(e
+,b.GuiObject.AbsolutePosition),d.ReadVector2(e,b.GuiObject.AbsoluteSize)return f
++(g/2)end function d.ReadVector2(e,f)local g=e.Address return Vector3.new(c(f.
+Type,g+f.X),c(f.Type,g+f.Y),0)end function d.GetFrameRotation(e)return d.Read(e,
+b.GuiObject.Rotation)end function d.IsFrameVisible(e)return d.Read(e,b.GuiObject
+.Visible)end return d end function a.r()local b,c=a.load'q',0 local d=function(d
+,e,f)local g,h,j=math.huge,(f.X*0.05)for k,l in pairs(d:GetChildren())do local m
+,n=b.GetFrameCenter(l),b.GetFrameSize(l.Top)local o=m.X+(n.X/2)local p=o+h>e.X
+if p then local q=m.X-e.X if q<g then j=l g=q end end end return j end return
+function(e)if not e then return end local f=e.Screen.Game local g,h=f.Guy,
+utility.GetTickCount()if b.IsFrameVisible(g.Explode)then return end local j,k=b.
+GetFrameSize(f),b.GetFrameCenter(g)local l=d(f.Walls,k,j)if not l then return
+end local m,n=l.Top,l.Bottom local o,p,q=b.GetFramePosition(m),b.GetFrameSize(m)
+,b.GetFramePosition(n)local r,s=o.Y+p.Y,q.Y local t=s-r local u,v=r+t*0.5,t*0.1
+local w=u+v if k.Y>w and h-c>25 then mouse.Click'leftmouse'c=h end end end
+function a.s()local b=a.load'q'local c=function(c,d)local e,f=c.BG1.Floor,c.Food
+if not e or not f then print
+"Minigame Critical Error | Couldn't find floor or food!"return nil end local g,h
+=b.GetFramePosition(e),b.GetFrameSize(e)local j,k,l,m=h.X*0.15,(math.huge)for n,
+o in pairs(f:GetChildren())do local p=b.GetFrameCenter(o)local q,r=math.abs(p.X-
+d.X),g.Y-p.Y local s=o.Name=='Speed'and q>j if not s then if r<k then l=o m=p k=
+r end end end return l,m end return function(d)if not d then return end local e=
+d.Screen.Game local f=e.Guy if b.IsFrameVisible(f.Explode)then return end local
+g=b.GetFrameCenter(f)local h,j=c(e,g)if not h or not j then return end local k=j
+.X-g.X if math.abs(k)>=20 then if k<0 then keyboard.click'a'else keyboard.click
+'d'end end end end function a.t()local b,c,d={Enabled=false,FlightGame=false,
+CatchGame=false,GameUI=nil,GameType=nil},a.load'a',{FlightGame=a.load'r',
+CatchGame=a.load's'}local e,f=function(e)local f=d[b.GameType]return f and f(e)
+or nil end,function(e,f,g)local h=e:Get()b.Enabled=h if h then b.FlightGame=f:
+Get()b.CatchGame=g:Get()end f:Visible(h)g:Visible(h)end function b.Initialise(g)
+local h,j,k=g:Checkbox('Minigames Enabled',false),g:Checkbox('Flight Game',false
+),g:Checkbox('Catch Game',false)cheat.Register('onUpdate',function()f(h,j,k)if
+not utility.GetMenuState()and b.Enabled and b.GameUI and b.GameType and b[b.
+GameType]==true then e(b.GameUI)end end)cheat.Register('onSlowUpdate',function()
+if not b.Enabled then return end b.GameUI=c.LocalInfo.PlayerGui:FindFirstChild
+'DeviceUI'if b.GameUI then local l=b.GameUI:FindFirstChild'DeviceSystem'local m=
+l:FindFirstChild'Wall'and'FlightGame'or l:FindFirstChild'Food'and'CatchGame'or
+nil b.GameType=m else b.GameType=nil end end)end return b end function a.u()
+return function()function math.floor(b)return b-(b%1)end function math.clamp(b,c
+,d)return math.max(c,math.min(d,b))end end end end local b,c,d,e,f,g,h,j,k,l,m,n
+,o,p,q=a.load'b',a.load'd',a.load'g',a.load'h',a.load'i',a.load'j',a.load'k',a.
+load'l',a.load'm',a.load'o',a.load'e',a.load'p',a.load't',a.load'f',a.load'u'
+local r=function()local r=p.NewTab('DiddyWare_JJS','DiddyWare')local s,t,u,v=r:
+Container('DiddyWare_JJSC1','Main',{autosize=true,next=true}),r:Container(
+'DiddyWare_JJSC2','Visuals',{autosize=true}),r:Container('DiddyWare_JJSC3',
+'Settings',{autosize=true,next=true}),r:Container('DiddyWare_JJSC4','Misc',{
+autosize=true})q()m.Initialise(u)l.Initialise(u)d.Initialise(s)f.Initialise(s)e.
+Initialise(s)c.Initialise(s)b.Initialise(s)g.Initialise(t)j.Initialise(t)h.
+Initialise(t)k.Initialise(u)o.Initialise(v)n.Initialise(u)end r()
