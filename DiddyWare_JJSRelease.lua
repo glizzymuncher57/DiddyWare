@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-05T14:07:28.257893200+00:00",
+	genDate = "2026-03-05T14:16:46.674479800+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -249,39 +249,41 @@ memory.read,math.floor,math.min,math.max local j,k={__index=function(j,k)local l
 TimePosition)*100)/100 elseif k=='Speed'then return f(e('float',l+d.
 AnimationTrack.Speed)*100)/100 elseif k=='Looped'then return e('bool',l+d.
 AnimationTrack.Looped)elseif k=='WeightTarget'then return h(0,g(1,e('float',l+d.
-AnimationTrack.WeightTarget)))else return nil end end},{Animators={},Tracks={},
-Animations={}}local l=function(l)local m=k.Animators[l]if m then return m end
-local n=l:find_first_child_of_class'Animator'if not n then return 0 end m=n.
-Address k.Animations[l]=m return m end local m,n=function(m)local n,o={},l(m)if
-o==0 then return n end local p=e('ptr',o+d.Animator.AnimationTrackList)if p==0
-then return n end local q=e('ptr',p)while q~=0 and q~=p do local r=e('ptr',q+
-0x10)if r~=0 then local s=k.Tracks[r]if not s then local t=e('ptr',r+d.
-AnimationTrack.Animation)if t~=0 then local u=e('string',t+d.Animation.
-AnimationId)if u~=''then s={track=r,Animation={AnimationId=u,Name=k.Animations[u
-]or'Unknown'}}setmetatable(s,j)k.Tracks[r]=s end end end if s then n[#n+1]=s end
-end q=e('ptr',q)end return n end,function()local m=game.DataModel:
-GetDescendants()for n=1,#m do local o=m[n]if o:is_a'Animation'then local p=e(
-'string',o.Address+d.Animation.AnimationId)if p~=''then k.Animations[p]=o.Name
-end end end end function k.Initialise(o)local p=getmetatable(game.DataModel)
-local q=p.__index p.__index=function(r,s)if s=='get_animator'or s=='GetAnimator'
-then return l elseif s=='get_playing_animation_tracks'or s==
-'GetPlayingAnimationTracks'then return m elseif s=='get_animations'or s==
-'GetAnimations'then return n end return q(r,s)end n()cheat.register('onUpdate',
-function()if not c then return end local r=c:ReturnLocalPlayer()if not r then
-return end local s=r.Humanoid if not s then return end r.Animations=s:
-get_playing_animation_tracks()end)end return k end function a.q()local b,c,d=a.
-load'c',memory.read,{}function d.Read(e,f)return c(f.Type,e.Address+(f.Offset or
-0x0))end function d.GetFramePosition(e)return d.ReadVector2(e,b.GuiObject.
-AbsolutePosition)end function d.GetFrameSize(e)return d.ReadVector2(e,b.
-GuiObject.AbsoluteSize)end function d.GetFrameCenter(e)local f,g=d.ReadVector2(e
-,b.GuiObject.AbsolutePosition),d.ReadVector2(e,b.GuiObject.AbsoluteSize)return f
-+(g/2)end function d.ReadVector2(e,f)local g=e.Address return Vector3.new(c(f.
-Type,g+f.X),c(f.Type,g+f.Y),0)end function d.GetFrameRotation(e)return d.Read(e,
-b.GuiObject.Rotation)end function d.IsFrameVisible(e)return d.Read(e,b.GuiObject
-.Visible)end return d end function a.r()local b,c=a.load'q',0 local d=function(d
-,e,f)local g,h,j=math.huge,(f.X*0.05)for k,l in pairs(d:GetChildren())do local m
-,n=b.GetFrameCenter(l),b.GetFrameSize(l.Top)local o=m.X+(n.X/2)local p=o+h>e.X
-if p then local q=m.X-e.X if q<g then j=l g=q end end end return j end return
+AnimationTrack.WeightTarget)))end end},{Animators={},Tracks={},Animations={}}
+local l=function(l)local m=k.Animators[l]if m then return m end local n=l:
+find_first_child_of_class'Animator'if not n then return 0 end m=n.Address k.
+Animators[l]=m return m end local m,n=function(m)local n,o={},l(m)if o==0 then
+return n end local p=e('ptr',o+d.Animator.AnimationTrackList)if p==0 then return
+n end local q=e('ptr',p)while q~=0 and q~=p do local r=e('ptr',q+0x10)if r~=0
+then local s=k.Tracks[r]if not s then local t=e('ptr',r+d.AnimationTrack.
+Animation)if t~=0 then local u=e('string',t+d.Animation.AnimationId)if u~=''then
+s={track=r,Animation={AnimationId=u,Name=k.Animations[u]or'Unknown'}}
+setmetatable(s,j)k.Tracks[r]=s end end end if s then n[#n+1]=s end end q=e('ptr'
+,q)end return n end,function()local m={game.DataModel}while#m>0 do local n=table
+.remove(m)if n:is_a'Animation'then local o=e('string',n.Address+d.Animation.
+AnimationId)if o~=''then k.Animations[o]=n.Name end end local o=n:GetChildren()
+for p=1,#o do m[#m+1]=o[p]end coroutine.yield()end end function k.Initialise(o)
+local p=getmetatable(game.DataModel)local q=p.__index p.__index=function(r,s)if
+s=='get_animator'or s=='GetAnimator'then return l elseif s==
+'get_playing_animation_tracks'or s=='GetPlayingAnimationTracks'then return m
+elseif s=='get_animations'or s=='GetAnimations'then return n end return q(r,s)
+end local r=coroutine.create(n)coroutine.resume(r)cheat.register('onUpdate',
+function()if coroutine.status(r)~='dead'then pcall(coroutine.resume,r)end if not
+c then return end local s=c:ReturnLocalPlayer()if not s then return end local t=
+s.Humanoid if not t then return end s.Animations=t:get_playing_animation_tracks(
+)end)end return k end function a.q()local b,c,d=a.load'c',memory.read,{}function
+d.Read(e,f)return c(f.Type,e.Address+(f.Offset or 0x0))end function d.
+GetFramePosition(e)return d.ReadVector2(e,b.GuiObject.AbsolutePosition)end
+function d.GetFrameSize(e)return d.ReadVector2(e,b.GuiObject.AbsoluteSize)end
+function d.GetFrameCenter(e)local f,g=d.ReadVector2(e,b.GuiObject.
+AbsolutePosition),d.ReadVector2(e,b.GuiObject.AbsoluteSize)return f+(g/2)end
+function d.ReadVector2(e,f)local g=e.Address return Vector3.new(c(f.Type,g+f.X),
+c(f.Type,g+f.Y),0)end function d.GetFrameRotation(e)return d.Read(e,b.GuiObject.
+Rotation)end function d.IsFrameVisible(e)return d.Read(e,b.GuiObject.Visible)end
+return d end function a.r()local b,c=a.load'q',0 local d=function(d,e,f)local g,
+h,j=math.huge,(f.X*0.05)for k,l in pairs(d:GetChildren())do local m,n=b.
+GetFrameCenter(l),b.GetFrameSize(l.Top)local o=m.X+(n.X/2)local p=o+h>e.X if p
+then local q=m.X-e.X if q<g then j=l g=q end end end return j end return
 function(e)if not e then return end local f=e.Screen.Game local g,h=f.Guy,
 utility.GetTickCount()if b.IsFrameVisible(g.Explode)then return end local j,k=b.
 GetFrameSize(f),b.GetFrameCenter(g)local l=d(f.Walls,k,j)if not l then return
