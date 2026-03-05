@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-05T14:05:00.571879300+00:00",
+	genDate = "2026-03-05T14:07:28.257893200+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -319,6 +319,6 @@ local r=function()local r=p.NewTab('DiddyWare_JJS','DiddyWare')local s,t,u,v=r:
 Container('DiddyWare_JJSC1','Main',{autosize=true,next=true}),r:Container(
 'DiddyWare_JJSC2','Visuals',{autosize=true}),r:Container('DiddyWare_JJSC3',
 'Settings',{autosize=true,next=true}),r:Container('DiddyWare_JJSC4','Misc',{
-autosize=true})q()m.Initialise(u)n.Initialise(u)l.Initialise(u)d.Initialise(s)f.
-Initialise(s)e.Initialise(s)c.Initialise(s)b.Initialise(s)g.Initialise(t)j.
-Initialise(t)h.Initialise(t)k.Initialise(u)o.Initialise(v)end r() print("domer")
+autosize=true})q()m.Initialise(u)l.Initialise(u)d.Initialise(s)f.Initialise(s)e.
+Initialise(s)c.Initialise(s)b.Initialise(s)g.Initialise(t)j.Initialise(t)h.
+Initialise(t)k.Initialise(u)o.Initialise(v)print'no animation tracker'end r()
