@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-05T14:22:45.783180600+00:00",
+	genDate = "2026-03-05T14:28:37.158612800+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -22,14 +22,7 @@ do
 		return {
 			Font = "ConsolasBold",
 			DebugMode = false,
-			LocalInfo = {
-				Player = nil,
-				PlayerGui = nil,
-				Character = nil,
-				MinigameUI = nil,
-				SelectedCharacter = nil,
-				Ping = 0,
-			},
+			LocalInfo = { Player = nil, PlayerGui = nil, Character = nil, MinigameUI = nil, SelectedCharacter = nil, Ping = 0 },
 			Players = {},
 			Folders = { Items = {}, Domains = {} },
 			ClosestDomain = { Instance = nil, Distance = math.huge },
@@ -621,7 +614,11 @@ do
 				CooldownBackgroundColour = Color3.fromRGB(0, 0, 0),
 				CooldownBackgroundAlpha = 0,
 				EvasiveBarColour = Color3.fromRGB(121, 74, 148),
-			}, a.load("a"), Color3.new(0, 0, 0), Color3.new(1, 1, 1), function(b)
+			},
+			a.load("a"),
+			Color3.new(0, 0, 0),
+			Color3.new(1, 1, 1),
+			function(b)
 				if type(b) ~= "table" then
 					return Color3.fromRGB(255, 255, 255)
 				end
