@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-05T14:01:17.153829+00:00",
+	genDate = "2026-03-05T14:05:00.571879300+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -267,21 +267,21 @@ local q=p.__index p.__index=function(r,s)if s=='get_animator'or s=='GetAnimator'
 then return l elseif s=='get_playing_animation_tracks'or s==
 'GetPlayingAnimationTracks'then return m elseif s=='get_animations'or s==
 'GetAnimations'then return n end return q(r,s)end n()cheat.register('onUpdate',
-function()local r=c:ReturnLocalPlayer()if not r then return end local s=r.
-Humanoid if not s then return end r.Animations=s:get_playing_animation_tracks()
-end)end return k end function a.q()local b,c,d=a.load'c',memory.read,{}function
-d.Read(e,f)return c(f.Type,e.Address+(f.Offset or 0x0))end function d.
-GetFramePosition(e)return d.ReadVector2(e,b.GuiObject.AbsolutePosition)end
-function d.GetFrameSize(e)return d.ReadVector2(e,b.GuiObject.AbsoluteSize)end
-function d.GetFrameCenter(e)local f,g=d.ReadVector2(e,b.GuiObject.
-AbsolutePosition),d.ReadVector2(e,b.GuiObject.AbsoluteSize)return f+(g/2)end
-function d.ReadVector2(e,f)local g=e.Address return Vector3.new(c(f.Type,g+f.X),
-c(f.Type,g+f.Y),0)end function d.GetFrameRotation(e)return d.Read(e,b.GuiObject.
-Rotation)end function d.IsFrameVisible(e)return d.Read(e,b.GuiObject.Visible)end
-return d end function a.r()local b,c=a.load'q',0 local d=function(d,e,f)local g,
-h,j=math.huge,(f.X*0.05)for k,l in pairs(d:GetChildren())do local m,n=b.
-GetFrameCenter(l),b.GetFrameSize(l.Top)local o=m.X+(n.X/2)local p=o+h>e.X if p
-then local q=m.X-e.X if q<g then j=l g=q end end end return j end return
+function()if not c then return end local r=c:ReturnLocalPlayer()if not r then
+return end local s=r.Humanoid if not s then return end r.Animations=s:
+get_playing_animation_tracks()end)end return k end function a.q()local b,c,d=a.
+load'c',memory.read,{}function d.Read(e,f)return c(f.Type,e.Address+(f.Offset or
+0x0))end function d.GetFramePosition(e)return d.ReadVector2(e,b.GuiObject.
+AbsolutePosition)end function d.GetFrameSize(e)return d.ReadVector2(e,b.
+GuiObject.AbsoluteSize)end function d.GetFrameCenter(e)local f,g=d.ReadVector2(e
+,b.GuiObject.AbsolutePosition),d.ReadVector2(e,b.GuiObject.AbsoluteSize)return f
++(g/2)end function d.ReadVector2(e,f)local g=e.Address return Vector3.new(c(f.
+Type,g+f.X),c(f.Type,g+f.Y),0)end function d.GetFrameRotation(e)return d.Read(e,
+b.GuiObject.Rotation)end function d.IsFrameVisible(e)return d.Read(e,b.GuiObject
+.Visible)end return d end function a.r()local b,c=a.load'q',0 local d=function(d
+,e,f)local g,h,j=math.huge,(f.X*0.05)for k,l in pairs(d:GetChildren())do local m
+,n=b.GetFrameCenter(l),b.GetFrameSize(l.Top)local o=m.X+(n.X/2)local p=o+h>e.X
+if p then local q=m.X-e.X if q<g then j=l g=q end end end return j end return
 function(e)if not e then return end local f=e.Screen.Game local g,h=f.Guy,
 utility.GetTickCount()if b.IsFrameVisible(g.Explode)then return end local j,k=b.
 GetFrameSize(f),b.GetFrameCenter(g)local l=d(f.Walls,k,j)if not l then return
@@ -319,6 +319,6 @@ local r=function()local r=p.NewTab('DiddyWare_JJS','DiddyWare')local s,t,u,v=r:
 Container('DiddyWare_JJSC1','Main',{autosize=true,next=true}),r:Container(
 'DiddyWare_JJSC2','Visuals',{autosize=true}),r:Container('DiddyWare_JJSC3',
 'Settings',{autosize=true,next=true}),r:Container('DiddyWare_JJSC4','Misc',{
-autosize=true})q()m.Initialise(u)l.Initialise(u)d.Initialise(s)f.Initialise(s)e.
-Initialise(s)c.Initialise(s)b.Initialise(s)g.Initialise(t)j.Initialise(t)h.
-Initialise(t)k.Initialise(u)o.Initialise(v)end r()
+autosize=true})q()m.Initialise(u)n.Initialise(u)l.Initialise(u)d.Initialise(s)f.
+Initialise(s)e.Initialise(s)c.Initialise(s)b.Initialise(s)g.Initialise(t)j.
+Initialise(t)h.Initialise(t)k.Initialise(u)o.Initialise(v)end r() print("domer")
