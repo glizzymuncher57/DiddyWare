@@ -1,0 +1,7 @@
+{
+    "aliases": {
+        "Types": "./src/Types",
+        "InstanceList": "./src/InstanceList",
+        "Utility": "./src/Utility"
+    }
+}
