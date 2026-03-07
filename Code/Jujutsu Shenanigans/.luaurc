@@ -1,8 +1,9 @@
 {
     "aliases": {
-        "modules": "./src/modules",
-        "features": "./src/features",
-        "utility": "./src/utility",
-        "gui": "./src/gui"
+        "game": "./src/Game",
+        "features": "./src/Features",
+        "utility": "./src/Utility",
+        "interface": "./src/Interface",
+        "core": "./src/Core"
     }
 }
