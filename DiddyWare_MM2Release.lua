@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-12T20:39:34.412173400+00:00",
+	genDate = "2026-03-19T13:56:07.452337900+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -42,16 +42,16 @@ return setmetatable({Ref=g},f)end function b.NewReference(g,h,i)return e(g,h,i)
 end return b end function a.b()return{Font='ConsolasBold',CachedMap=nil,
 CachedCoinContainer=nil,CachedGunDrop=nil,ActiveCoins={},TrackedPlayers={},
 CurrentMurderer=nil,CurrentSheriff=nil}end function a.c()return{version=
-'version-b130242ed064436f',Animator={AnimationTrackList={Type='pointer',Offset=
-0x858}},GuiObject={AbsolutePosition={Type='float',X=0x110,Y=0x114},Visible={Type
-='bool',Offset=0x5a5},Position={Type='float',X=0x508,Y=0x510},Rotation={Type=
-'float',Offset=0x188},Size={Type='float',X=0x528,Y=0x530},AbsoluteSize={Type=
-'float',X=0x118,Y=0x11c}},Animation={AnimationId={Type='string',Offset=0xd0}},
-ScreenGui={Enabled={Type='bool',Offset=0x4bc}},DoubleConstrainedValue={Value={
-Type='double',Offset=0xe0}},AnimationTrack={Looped={Type='bool',Offset=0xf5},
-Speed={Type='float',Offset=0xe4},TimePosition={Type='float',Offset=0xe8},
-Animation={Type='pointer',Offset=0xd0}}}end function a.d()local b,c=a.load'c',{}
-function c.GetFramePosition(d)local e=d.Address return Vector3.new(memory.read(
+'version-ae421f0582e54718',Animation={AnimationId={Type='string',Offset=0xd0}},
+ScreenGui={Enabled={Type='bool',Offset=0x4cc}},DoubleConstrainedValue={Value={
+Type='double',Offset=0xe0}},Animator={AnimationTrackList={Type='pointer',Offset=
+0x868}},GuiObject={Position={Type='float',X=0x518,Y=0x520},Rotation={Type=
+'float',Offset=0x188},Size={Type='float',X=0x538,Y=0x540},AbsoluteSize={Type=
+'float',X=0x118,Y=0x11c},AbsolutePosition={Type='float',X=0x110,Y=0x114},Visible
+={Type='bool',Offset=0x5b5}},AnimationTrack={Looped={Type='bool',Offset=0xf5},
+Animation={Type='pointer',Offset=0xd0},Speed={Type='float',Offset=0xe4},
+TimePosition={Type='float',Offset=0xe8}}}end function a.d()local b,c=a.load'c',{
+}function c.GetFramePosition(d)local e=d.Address return Vector3.new(memory.read(
 'float',e+b.GuiObject.Position.X),memory.read('float',e+b.GuiObject.Position.Y),
 0)end function c.GetFrameSize(d)local e=d.Address return Vector3.new(memory.
 read('float',e+b.GuiObject.Size.X),memory.read('float',e+b.GuiObject.Size.Y),0)
