@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-12T20:38:52.864731300+00:00",
+	genDate = "2026-03-19T13:55:21.004448700+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -28,17 +28,17 @@ ipairs(d)do cheat.Register(g,function(...)e(g,...)end)end end return b end
 function a.d()local b,c={},memory.Read function b.Read(d,e)return c(e.Type,d+e.
 Offset)end function b.ReadVector2(d,e)local f,g=c(e.Type,d+e.X),c(e.Type,d+e.Y)
 return Vector3.new(f,g,0)end return b end function a.e()return{version=
-'version-b130242ed064436f',Animator={AnimationTrackList={Type='pointer',Offset=
-0x858}},GuiObject={AbsolutePosition={Type='float',X=0x110,Y=0x114},Visible={Type
-='bool',Offset=0x5a5},Position={Type='float',X=0x508,Y=0x510},Rotation={Type=
-'float',Offset=0x188},Size={Type='float',X=0x528,Y=0x530},AbsoluteSize={Type=
-'float',X=0x118,Y=0x11c}},Animation={AnimationId={Type='string',Offset=0xd0}},
-ScreenGui={Enabled={Type='bool',Offset=0x4bc}},DoubleConstrainedValue={Value={
-Type='double',Offset=0xe0}},AnimationTrack={Looped={Type='bool',Offset=0xf5},
-Speed={Type='float',Offset=0xe4},TimePosition={Type='float',Offset=0xe8},
-Animation={Type='pointer',Offset=0xd0}}}end function a.f()local b,c,d,e,f=a.load
-'a',a.load'c',a.load'b',utility.getTickCount,utility.getMousePos local g,h,i,j,k
-,l,m,n,o,p,q,r,s,t,u,v,w={Messages=b:Register('DM.Messages',{})},20,{Active=
+'version-ae421f0582e54718',Animation={AnimationId={Type='string',Offset=0xd0}},
+ScreenGui={Enabled={Type='bool',Offset=0x4cc}},DoubleConstrainedValue={Value={
+Type='double',Offset=0xe0}},Animator={AnimationTrackList={Type='pointer',Offset=
+0x868}},GuiObject={Position={Type='float',X=0x518,Y=0x520},Rotation={Type=
+'float',Offset=0x188},Size={Type='float',X=0x538,Y=0x540},AbsoluteSize={Type=
+'float',X=0x118,Y=0x11c},AbsolutePosition={Type='float',X=0x110,Y=0x114},Visible
+={Type='bool',Offset=0x5b5}},AnimationTrack={Looped={Type='bool',Offset=0xf5},
+Animation={Type='pointer',Offset=0xd0},Speed={Type='float',Offset=0xe4},
+TimePosition={Type='float',Offset=0xe8}}}end function a.f()local b,c,d,e,f=a.
+load'a',a.load'c',a.load'b',utility.getTickCount,utility.getMousePos local g,h,i
+,j,k,l,m,n,o,p,q,r,s,t,u,v,w={Messages=b:Register('DM.Messages',{})},20,{Active=
 false,OffsetX=0,OffsetY=0},{info={label='INFO',color=Color3.new(0.4,0.8,1)},warn
 ={label='WARN',color=Color3.new(1,0.85,0.2)},error={label='ERROR',color=Color3.
 new(1,0.3,0.3)},ok={label='OK',color=Color3.new(0.3,1,0.5)}},Color3.new(1,1,1),
