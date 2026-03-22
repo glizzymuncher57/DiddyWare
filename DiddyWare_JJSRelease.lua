@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-21T20:19:25.466179500+00:00",
+	genDate = "2026-03-22T00:26:10.424082900+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -1097,10 +1097,14 @@ do
 		function b:Initialise()
 			c.Add("onUpdate", function()
 				k()
-				local l = utility.GetTickCount()
-				for m, n in pairs(h) do
-					if (l - n) > 1000 then
-						h[m] = nil
+			end)
+			c.Add("onSlowUpdate", function()
+				if h and type(h) == "table" and next(h) then
+					local l = utility.GetTickCount()
+					for m, n in pairs(h) do
+						if (l - n) > 1000 then
+							h[m] = nil
+						end
 					end
 				end
 			end)
