@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-22T00:47:59.826359900+00:00",
+	genDate = "2026-03-22T12:40:04.311287700+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -449,9 +449,9 @@ Initialise()end return aa end function a.z()local aa,ab,ac={},'Combat_DiddyWare'
 ,'Combat'function aa:Initialise(ad)local ae=ad:Container(ab,ac,{autosize=true,
 next=true})ae:Checkbox'Auto Blackflash'ae:KeyPicker('Auto Blackflash Hotkey',
 true)ae:SliderFloat('Auto Blackflash Timing',0,1,0.285,{Debug=true})ae:
-SliderFloat('Auto Todo Blackflash Time Position',0,5,2.9,{Debug=true})ae:
+SliderFloat('Auto Todo Blackflash Time Position',0,5,2.8,{Debug=true})ae:
 Checkbox'Auto Todo Perfect Swap'ae:KeyPicker('Auto Todo Perfect Swap Hotkey',
-true)ae:SliderFloat('Auto Todo Perfect Swap Time Position',0,1,0.65,{Debug=true}
+true)ae:SliderFloat('Auto Todo Perfect Swap Time Position',0,1,0.55,{Debug=true}
 )ae:Checkbox'Auto Mahoraga Earthquake'ae:SliderFloat(
 'Auto Mahoraga Earthquake Time Position',0,1,0.8,{Debug=true})ae:Checkbox
 'Auto Nanami Ratio'ae:SliderFloat('Auto Nanami Ratio GUI Scale',0,1,0.3,{Debug=
