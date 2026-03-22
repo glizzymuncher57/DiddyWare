@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-22T00:34:39.251394500+00:00",
+	genDate = "2026-03-22T00:47:59.826359900+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -250,12 +250,13 @@ k(0x32)i.Waiting=false i.BruteForceStarted=false end end end i.WasSliding=n end
 function b:Initialise()c.Add('onUpdate',n)end return b end function a.q()local b
 ,c,d,e,f,g,h={},a.load'c',a.load'a',a.load'b',a.load'i',a.load'h',a.load'f'local
 i,j,k,l=d:Register('TodoSwapState',{Waiting=false,WasClapping=false}),d:
-Register('TodoSwapWhitelistedAnimations',{Clap1=true,Clap2=true,Clap3=true}),
+Register('TodoSwapWhitelistedAnimations',{['rbxassetid://116040503139675']=true,
+['rbxassetid://91074768993486']=true,['rbxassetid://131358603583212']=true}),
 mouse.Click,function(i)if not e.GetValue'Debug Mode'then return end h.
 AddDebugMessage(i,'info',1000)end local m=function()local m=f:GetLocalPlayer()
 local n=m.Animations if not n then return nil end for o=1,#n do local p=n[o]if j
-[p.Animation.Name]then return p end end return nil end local n=function()if not
-e.GetValue'Auto Todo Perfect Swap'then return end if e.GetValue
+[p.Animation.AnimationId]then return p end end return nil end local n=function()
+if not e.GetValue'Auto Todo Perfect Swap'then return end if e.GetValue
 'Auto Todo Perfect Swap Hotkey'~=true then return end if g.LocalPlayer.Data.
 Character~='Todo'then return end local n=m()if f:GetLocalPlayer().Ultimate<4 and
 not n and not i.Waiting then return end if n and not i.WasClapping and not i.
