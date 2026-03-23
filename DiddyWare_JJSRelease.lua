@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-23T16:18:12.350836500+00:00",
+	genDate = "2026-03-23T19:53:37.661318700+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -306,19 +306,19 @@ do
 		local b, c, d, e, f, g, h, i =
 			a.load("b"), a.load("a"), a.load("c"), a.load("d"), a.load("e"), a.load("f"), memory.read, math.floor
 		local j, k, l =
-			{
-				Animators = c:Register("AMAnimators", {}),
-				Animations = c:Register("AMAnimations", {}),
-				Tracks = c:Register("AMTracks", {}),
-				_ScanState = { Queue = {}, Index = 1, Done = false, StoredCallback = nil },
-			},
+			{ Animations = c:Register("AMAnimations", {}), _ScanState = {
+				Queue = {},
+				Index = 1,
+				Done = false,
+				StoredCallback = nil,
+			} },
 			{
 				__index = function(j, k)
 					local l = j.Track
 					if k == "TimePosition" then
 						return i(e.Read(l, f.AnimationTrack.TimePosition) * 100) / 100
 					elseif k == "Speed" then
-						return i(e.Read(l + f.AnimationTrack.Speed) * 100) / 100
+						return i(e.Read(l, f.AnimationTrack.Speed) * 100) / 100
 					elseif k == "Looped" then
 						return e.Read(l, f.AnimationTrack.Looped)
 					else
@@ -327,15 +327,11 @@ do
 				end,
 			},
 			function(j, k, l)
-				if b.GetValue("Debug Mode") then
-					if not j then
-						return
-					end
-					j = tostring(j)
-					g.AddDebugMessage("[AM]:" .. j, k, l)
+				if b.GetValue("Debug Mode") and j then
+					g.AddDebugMessage("[AM]:" .. tostring(j), k, l)
 				end
 			end
-		local m, n, o =
+		local m, n =
 			function()
 				if j._ScanState.Done then
 					return
@@ -355,7 +351,6 @@ do
 						local r = e.Read(q.Address, f.Animation.AnimationId)
 						if r ~= "" then
 							o[r] = q.Name
-							l("Cached Animation " .. tostring(r), "info", 3000)
 						end
 					end
 					local r = q:GetChildren()
@@ -365,51 +360,36 @@ do
 					n = n + 1
 				end
 				j._ScanState.Index = n
-			end, function(m)
-				local n = j.Animators[m]
-				if n then
-					return n
-				end
-				local o = m:FindFirstChildOfClass("Animator")
-				if not o then
-					return 0
-				end
-				n = o.Address
-				j.Animators[m] = n
-				return n
 			end
-		function j:GetPlayingAnimationTracks(p)
-			local q, r = {}, o(p)
-			if r == 0 then
-				l("Animator doesn't exist for " .. p, "warning", 1000)
+		function j:GetPlayingAnimationTracks(o, p)
+			if not p or not p.Player.Name or not o then
+				return {}
+			end
+			local q, r = {}, p.Animator
+			if not r then
+				l("Animator missing for " .. p.Player.Name, "warning", 1000)
 				return q
 			end
-			local s = e.Read(r, f.Animator.AnimationTrackList)
+			local s = e.Read(r.Address, f.Animator.AnimationTrackList)
 			if s == 0 then
-				l("Potentially Wrong Animation Track List Offset.", "warning", 1000)
+				l("Wrong AnimationTrackList offset for " .. p.Player.Name, "warning", 1000)
 				return q
 			end
 			local t = h("pointer", s)
 			while t ~= 0 and t ~= s do
 				local u = h("pointer", t + 0x10)
 				if u ~= 0 then
-					local v = j.Tracks[u]
-					if not v then
-						local w = e.Read(u, f.AnimationTrack.Animation)
-						if w ~= 0 then
-							local x = e.Read(w, f.Animation.AnimationId)
-							if x ~= "" then
-								v = {
-									Track = u,
-									Animation = { AnimationId = x, Name = j.Animations[x] or "Unknown" },
-								}
-								setmetatable(v, k)
-								j.Tracks[u] = v
-							end
+					local v = e.Read(u, f.AnimationTrack.Animation)
+					if v ~= 0 then
+						local w = e.Read(v, f.Animation.AnimationId)
+						if w ~= "" then
+							local x = { Track = u, Animation = {
+								AnimationId = w,
+								Name = j.Animations[w] or "Unknown",
+							} }
+							setmetatable(x, k)
+							q[#q + 1] = x
 						end
-					end
-					if v then
-						q[#q + 1] = v
 					end
 				end
 				t = h("pointer", t)
@@ -452,12 +432,11 @@ do
 		local j = i:FindFirstChild("Network")
 		local k = j.ServerStatsItem
 		local l, m, n, o, p =
-			k["Data Ping"], c:Register("LastUse_PlayerScanner", {}), c:Register("CooldownStarts_PlayerScanner", {}), {
-				LastCooldownUpdate = 0,
-				LastAnimationUpdate = 0,
-				LastLocalUpdate = 0,
-				LastRebuild = 0,
-			}, function(l, m, n)
+			k["Data Ping"],
+			c:Register("LastUse_PlayerScanner", {}),
+			c:Register("CooldownStarts_PlayerScanner", {}),
+			{ LastCooldownUpdate = 0, LastAnimationUpdate = 0, LastLocalUpdate = 0, LastRebuild = 0 },
+			function(l, m, n)
 				local o = l:GetAttribute(m)
 				return o and o.Value or n
 			end
@@ -482,22 +461,24 @@ do
 					g.AddDebugMessage("[PlayerScanner]: Aborted " .. q.Name .. ", Missing Humanoid or Moveset", "warning", 1000)
 					return
 				end
-				local x = q.Name
-				local y = d.Players[x]
-				local z, A, B, C = y and y.Moves or nil, {}, {}, w:GetChildren()
-				for D = 1, #C do
-					local E = C[D]
-					local F = E.Name
-					local G = z and z[F]
-					local H = { Name = F, Key = p(E, "Key", D), Cooldown = E.Value or 0, Instance = E, MoveKey = x .. F, IsOnCooldown = G and G.IsOnCooldown or false, Remaining = G and G.Remaining or 0 }
-					A[D] = H
-					B[F] = H
+				local x, y = v:FindFirstChildOfClass("Animator"), q.Name
+				local z = d.Players[y]
+				local A, B, C, D = z and z.Moves or nil, {}, {}, w:GetChildren()
+				for E = 1, #D do
+					local F = D[E]
+					local G = F.Name
+					local H = A and A[G]
+					local I = { Name = G, Key = p(F, "Key", E), Cooldown = F.Value or 0, Instance = F, MoveKey = y .. G, IsOnCooldown = H and H.IsOnCooldown or false, Remaining = H and H.Remaining or 0 }
+					B[E] = I
+					C[G] = I
 				end
-				table.sort(A, function(D, E)
-					return D.Key < E.Key
+				table.sort(B, function(E, F)
+					return E.Key < F.Key
 				end)
-				local D, E = (t.Position - s.Position).Magnitude > 20, h:FindFirstChild(x)
-				r[x] = { Player = q, Character = u, Humanoid = v, RootPart = t, Head = s, Exploiting = D, SelectedMoveset = p(u, "Moveset", "[???]"), Evade = p(u, "Evade", 50), Ultimate = E and p(E, "Ultimate", 0) or 0, Ragdolled = p(u, "Ragdoll", 0), Moves = B, OrderedMoves = A, Animations = b:GetPlayingAnimationTracks(v) }
+				local E, F = (t.Position - s.Position).Magnitude > 20, h:FindFirstChild(y)
+				local G = { Player = q, Character = u, Humanoid = v, Animator = x, RootPart = t, Head = s, Exploiting = E, SelectedMoveset = p(u, "Moveset", "[???]"), Evade = p(u, "Evade", 50), Ultimate = F and p(F, "Ultimate", 0) or 0, Ragdolled = p(u, "Ragdoll", 0), Moves = C, OrderedMoves = B }
+				r[y] = G
+				G.Animations = b:GetPlayingAnimationTracks(v, G)
 			end, function()
 				local q, r = d.LocalPlayer, game.LocalPlayer
 				q.Entity = entity.GetLocalPlayer()
@@ -508,7 +489,7 @@ do
 				q.Data.Ping = l.Value
 			end, function()
 				for q, r in pairs(d.Players) do
-					r.Animations = b:GetPlayingAnimationTracks(r.Humanoid)
+					r.Animations = b:GetPlayingAnimationTracks(r.Humanoid, r)
 				end
 			end, function(q, r)
 				local s = q.Instance
@@ -921,7 +902,7 @@ do
 		local b, c, d, e, f, g, h =
 			{}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("f"), entity.GetLocalPlayer()
 		local i, j, k, l, m =
-			d:Register("TodoBlackflashState", { WasSliding = false, Waiting = false, BruteForceStarted = false }),
+			d:Register("TodoBlackflashState", { Waiting = false, BruteForceFired = false }),
 			d:Register(
 				"TodoBlackflashAnimationsTable",
 				{ Slide = "rbxassetid://100081544058065", ["Brute Force"] = "rbxassetid://123167492985370" }
@@ -938,7 +919,7 @@ do
 					return
 				end
 				local j = f:GetLocalPlayer()
-				local k = j.Animations
+				local k = j and j.Animations or nil
 				if not k then
 					return nil
 				end
@@ -959,31 +940,28 @@ do
 			if not f:DoesPlayerHaveMove(h, "Brute Force") then
 				return
 			end
-			local n = m(j.Slide)
-			if n and not i.WasSliding and not i.Waiting then
-				l("Queued Todo Blackflash - Waiting for brute force")
+			local n, o = m(j.Slide), m(j["Brute Force"])
+			if i.BruteForceFired and not o then
+				i.BruteForceFired = false
+			end
+			if n and not i.Waiting and not i.BruteForceFired then
+				l("Queued Todo Blackflash - Waiting for Brute Force")
 				i.Waiting = true
 			end
-			if i.Waiting then
-				local o = m(j["Brute Force"])
-				if not n and not o then
-					l("Cancelled Blackflash, Animation Ended.")
+			if i.Waiting and not n and not o then
+				i.Waiting = false
+				i.BruteForceFired = false
+				l("Cancelled Blackflash, Animation Ended.")
+			end
+			if i.Waiting and o and not i.BruteForceFired then
+				local p, q = o.TimePosition, e.GetValue("Auto Todo Blackflash Time Position")
+				if p >= q then
+					k(0x32)
+					l("Triggered Todo Blackflash at TimePosition: " .. tostring(p))
+					i.BruteForceFired = true
 					i.Waiting = false
-					i.BruteForceStarted = false
-				elseif o then
-					i.BruteForceStarted = true
-					local p = o.TimePosition
-					local q = tostring(p)
-					l("Brute Force Time Position: " .. q)
-					if p >= e.GetValue("Auto Todo Blackflash Time Position") then
-						l("Triggered Todo Blackflash at: " .. q)
-						k(0x32)
-						i.Waiting = false
-						i.BruteForceStarted = false
-					end
 				end
 			end
-			i.WasSliding = n
 		end
 		function b:Initialise()
 			c.Add("onUpdate", n)
@@ -993,7 +971,7 @@ do
 	function a.q()
 		local b, c, d, e, f, g, h = {}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("h"), a.load("f")
 		local i, j, k, l =
-			d:Register("TodoSwapState", { Waiting = false, WasClapping = false }),
+			d:Register("TodoSwapState", { Waiting = false, Fired = false }),
 			d:Register("TodoSwapWhitelistedAnimations", { Clap1 = true, Clap2 = true, Clap3 = true }),
 			mouse.Click,
 			function(i)
@@ -1004,7 +982,7 @@ do
 			end
 		local m = function()
 			local m = f:GetLocalPlayer()
-			local n = m.Animations
+			local n = m and m.Animations or nil
 			if not n then
 				return nil
 			end
@@ -1027,24 +1005,26 @@ do
 				return
 			end
 			local n = m()
-			if not n and not i.Waiting then
+			if not n then
+				i.Waiting = false
+				i.Fired = false
 				return
 			end
-			if n and not i.WasClapping and not i.Waiting then
+			if not i.Waiting and not i.Fired then
 				l("Detected Clap, Waiting.")
 				i.Waiting = true
+			else
+				print("Waiting: " .. tostring(i.Waiting) .. " Fired: " .. tostring(i.Fired))
 			end
-			if i.Waiting then
-				if not n then
-					i.Waiting = false
-					l("Cancelled Perfect Swap, Animation Stopped.")
-				elseif n.TimePosition >= e.GetValue("Auto Todo Perfect Swap Time Position") then
-					l("Completed Todo Perfect Swap")
+			if i.Waiting and not i.Fired then
+				local o = e.GetValue("Auto Todo Perfect Swap Time Position")
+				if n.TimePosition >= o then
 					k("leftmouse")
 					i.Waiting = false
+					i.Fired = true
+					l("Completed Todo Perfect Swap")
 				end
 			end
-			i.WasClapping = n ~= nil
 		end
 		function b:Initialise()
 			c.Add("onUpdate", n)
