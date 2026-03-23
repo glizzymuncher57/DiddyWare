@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-22T19:54:26.670235200+00:00",
+	genDate = "2026-03-23T16:18:12.350836500+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -1027,7 +1027,7 @@ do
 				return
 			end
 			local n = m()
-			if f:GetLocalPlayer().Ultimate < 4 and not n and not i.Waiting then
+			if not n and not i.Waiting then
 				return
 			end
 			if n and not i.WasClapping and not i.Waiting then
