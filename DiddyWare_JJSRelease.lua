@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-23T19:53:37.661318700+00:00",
+	genDate = "2026-03-27T01:07:24.644636600+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -129,27 +129,28 @@ do
 	end
 	function a.e()
 		return {
-			version = "version-ae421f0582e54718",
-			Animation = { AnimationId = { Type = "string", Offset = 0xd0 } },
-			ScreenGui = { Enabled = { Type = "bool", Offset = 0x4cc } },
-			DoubleConstrainedValue = { Value = {
-				Type = "double",
-				Offset = 0xe0,
-			} },
-			Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x868 } },
+			version = "version-6776addb8fbc4d17",
+			DoubleConstrainedValue = { Value = { Type = "double", Offset = 0xe0 } },
+			Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x848 } },
+			Animation = {
+				AnimationId = { Type = "string", Offset = 0xd0 },
+			},
 			GuiObject = {
-				Position = { Type = "float", X = 0x518, Y = 0x520 },
-				Rotation = { Type = "float", Offset = 0x188 },
 				Size = { Type = "float", X = 0x538, Y = 0x540 },
 				AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c },
 				AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
 				Visible = { Type = "bool", Offset = 0x5b5 },
+				Position = { Type = "float", X = 0x518, Y = 0x520 },
+				Rotation = { Type = "float", Offset = 0x188 },
+			},
+			ScreenGui = {
+				Enabled = { Type = "bool", Offset = 0x4cc },
 			},
 			AnimationTrack = {
+				TimePosition = { Type = "float", Offset = 0xe8 },
+				Speed = { Type = "float", Offset = 0xe4 },
 				Looped = { Type = "bool", Offset = 0xf5 },
 				Animation = { Type = "pointer", Offset = 0xd0 },
-				Speed = { Type = "float", Offset = 0xe4 },
-				TimePosition = { Type = "float", Offset = 0xe8 },
 			},
 		}
 	end
