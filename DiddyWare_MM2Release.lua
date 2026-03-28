@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-27T01:08:13.241119600+00:00",
+	genDate = "2026-03-28T01:13:48.375959300+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -855,39 +855,33 @@ do
 				local k = utility.GetTickCount()
 				if k - b.LastUpdate >= b.UpdateInterval then
 					h()
-				end
-			end)
-			cheat.Register("onSlowUpdate", function()
-				coroutine.resume(coroutine.create(function()
-					local k = e()
-					if not k then
-						d.CachedMap = nil
-						return
-					end
-					if not d.CachedMap or d.CachedMap ~= k.Address then
-						d.CachedMap = k
-					end
-				end))
-				coroutine.resume(coroutine.create(function()
-					local k = f()
-					if not k then
-						d.CachedCoinContainer = nil
-						return
-					end
-					if not d.CachedCoinContainer or d.CachedCoinContainer.Address ~= k.Address then
-						d.CachedCoinContainer = k
-					end
-				end))
-				coroutine.resume(coroutine.create(function()
-					local k = g()
-					if not k then
+					local l = g()
+					if not l then
 						d.CachedGunDrop = nil
 						return
 					end
-					if not d.CachedGunDrop or d.CachedGunDrop.Address ~= k.Address then
-						d.CachedGunDrop = k
+					if not d.CachedGunDrop or d.CachedGunDrop.Address ~= l.Address then
+						d.CachedGunDrop = l
 					end
-				end))
+				end
+			end)
+			cheat.Register("onSlowUpdate", function()
+				local k = e()
+				if not k then
+					d.CachedMap = nil
+					return
+				end
+				if not d.CachedMap or d.CachedMap ~= k.Address then
+					d.CachedMap = k
+				end
+				local l = f()
+				if not l then
+					d.CachedCoinContainer = nil
+					return
+				end
+				if not d.CachedCoinContainer or d.CachedCoinContainer.Address ~= l.Address then
+					d.CachedCoinContainer = l
+				end
 			end)
 		end
 		return b
