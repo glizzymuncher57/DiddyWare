@@ -232,4 +232,3 @@ return d end end return nil end end end end local b,c,d,e,f,g,h,i,j,k,l=a.load
 'DiddyWare_MM2C3','Settings',{autosize=true,next=true})k()l()b.Initialise(o)c.
 Initialise(o)d.Initialise(p)f.Initialise(p)e.Initialise(p)g.Initialise(q)h.
 Initialise(q)i.Initialise(q)end n()
-print("shitty ware v3 loaded")
