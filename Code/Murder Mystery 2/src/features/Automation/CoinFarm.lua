@@ -1,5 +1,5 @@
 local CoinFarm = {
-	SAFE_POSITION = Vector3.new(14, 505, -45),
+	SAFE_POSITION = nil,
 
 	Flags = {
 		Enabled = false,
@@ -21,6 +21,8 @@ local CoinFarm = {
 	},
 }
 
+local Workspace = game.GetService("Workspace")
+
 local EntityLocalPlayer = entity.GetLocalPlayer()
 
 local UIWrapper = require("@modules/ui/UIWrapper")
@@ -39,7 +41,7 @@ local function GetClosestCoin(LocalRole)
 		MurdererPosition = Murderer.Position
 	end
 
-	for Coin, CoinPosition in pairs(Environment.ActiveCoins) do
+	for Address, CoinPosition in pairs(Environment.ActiveCoins) do
 		local Distance = (EntityLocalPlayer.Position - CoinPosition).Magnitude
 		local MurdererDistance = nil
 
@@ -53,7 +55,7 @@ local function GetClosestCoin(LocalRole)
 		end
 
 		if SafeToGrab and Distance < ClosestDistance then
-			ClosestCoin = Coin
+			ClosestCoin = { Address = Address, Position = CoinPosition }
 			ClosestDistance = Distance
 		end
 	end
@@ -62,7 +64,7 @@ local function GetClosestCoin(LocalRole)
 end
 
 local function ValidateCoin(Coin)
-	return table.find(Environment.ActiveCoins, Coin)
+	return Environment.ActiveCoins[Coin]
 end
 
 function CoinFarm.Runtime()
@@ -102,10 +104,7 @@ function CoinFarm.Runtime()
 	local GoingForCoin = CoinFarm.State.GoingToCoin
 	local LastCoinGrab = CoinFarm.State.LastCoinGrab
 
-	local WantsSafety = SafetyOnFullBag
-		and PlayerData.IsFullCoins
-		and PlayerRole ~= "Sheriff"
-		and PlayerRole ~= "Murderer"
+	local WantsSafety = SafetyOnFullBag and PlayerData.IsFullCoins
 
 	if WantsSafety then
 		RootPart.Position = CoinFarm.SAFE_POSITION
@@ -117,14 +116,14 @@ function CoinFarm.Runtime()
 		and not PlayerData.IsFullCoins
 		and (Now - LastCoinGrab) >= CoinFarm.Flags.DelayPerCoin * 1000
 	then
-		local Coin, Distance = GetClosestCoin(PlayerRole)
-		if not Coin or not ValidateCoin(Coin) then
+		local CoinData, Distance = GetClosestCoin(PlayerRole)
+		if not CoinData or not ValidateCoin(CoinData.Address) then
 			return
 		end
 
 		local Duration = Distance / CoinFarm.Flags.TweenSpeed
 		CoinFarm.State.GoingToCoin = true
-		CoinFarm.State.CoinTween = Tween.new(RootPart, "Position", Coin.Position, Duration, Tween.Easing.Linear)
+		CoinFarm.State.CoinTween = Tween.new(RootPart, "Position", CoinData.Position, Duration, Tween.Easing.Linear)
 		return
 	end
 end
@@ -155,6 +154,8 @@ function CoinFarm.Initialise(
 		SlowFall:Set(Settings.Enabled)
 		SlowFallSpeed:Set(1)
 	end
+
+	CoinFarm.SAFE_POSITION = Workspace.Lobby.Spawns.SpawnLocation.Position
 
 	cheat.Register("onUpdate", function()
 		CoinFarm.Runtime()

@@ -93,8 +93,7 @@ function GunDrop.Initialise(
 )
 	local Enabled = Container:Checkbox("Gun Drop ESP", false)
 	local ColorPicker = Container:Colorpicker("Gun Drop ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
-
-	local ShowDistance = Container:Checkbox("Show Distance", false)
+	local ShowDistance = Container:Checkbox("Show Gun Distance", false)
 
 	cheat.Register("onPaint", GunDrop.Runtime)
 	cheat.Register("onUpdate", function()

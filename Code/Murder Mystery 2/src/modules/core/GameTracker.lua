@@ -66,38 +66,7 @@ function GameTracker.Initialise(
 		local Now = utility.GetTickCount()
 		if Now - GameTracker.LastUpdate >= GameTracker.UpdateInterval then
 			UpdateCoins()
-		end
-	end)
-
-	cheat.Register("onSlowUpdate", function()
-		coroutine.resume(coroutine.create(function()
-			local Map = GetCurrentMap()
-			if not Map then
-				Environment.CachedMap = nil
-				return
-			end
-
-			if not Environment.CachedMap or Environment.CachedMap ~= Map.Address then
-				Environment.CachedMap = Map
-			end
-		end))
-
-		coroutine.resume(coroutine.create(function()
-			local CoinContainer = GetCoinContainer()
-			if not CoinContainer then
-				Environment.CachedCoinContainer = nil
-				return
-			end
-
-			if
-				not Environment.CachedCoinContainer
-				or Environment.CachedCoinContainer.Address ~= CoinContainer.Address
-			then
-				Environment.CachedCoinContainer = CoinContainer
-			end
-		end))
-
-		coroutine.resume(coroutine.create(function()
+					
 			local GunDrop = GetGunDrop()
 			if not GunDrop then
 				Environment.CachedGunDrop = nil
@@ -107,7 +76,31 @@ function GameTracker.Initialise(
 			if not Environment.CachedGunDrop or Environment.CachedGunDrop.Address ~= GunDrop.Address then
 				Environment.CachedGunDrop = GunDrop
 			end
-		end))
+		end
+	end)
+
+	cheat.Register("onSlowUpdate", function()
+		local Map = GetCurrentMap()
+		if not Map then
+			Environment.CachedMap = nil
+			return
+		end
+
+		if not Environment.CachedMap or Environment.CachedMap ~= Map.Address then
+			Environment.CachedMap = Map
+		end
+		
+		--
+
+		local CoinContainer = GetCoinContainer()
+		if not CoinContainer then
+			Environment.CachedCoinContainer = nil
+			return
+		end
+
+		if not Environment.CachedCoinContainer or Environment.CachedCoinContainer.Address ~= CoinContainer.Address then
+			Environment.CachedCoinContainer = CoinContainer
+		end
 	end)
 end
 

@@ -90,21 +90,21 @@ function CoinESP.Initialise(
 )
 	local Enabled = Container:Checkbox("Coin ESP", false)
 	local ColorPicker = Container:Colorpicker("Coin ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
-	local ShowDistance = Container:Checkbox("Show Distance", false)
+	local ShowDistance = Container:Checkbox("Show Coin Distance", false)
 
 	cheat.Register("onPaint", CoinESP.Runtime)
 	cheat.Register("onUpdate", function()
 		local ColorRGBA = ColorPicker:Get()
 
 		CoinESP.Flags.Enabled = Enabled:Get()
+		CoinESP.Flags.ShowDistance = ShowDistance:Get()
 		CoinESP.Flags.Color = TableToRGB(ColorRGBA)
 		CoinESP.Flags.Alpha = ColorRGBA.a
-		CoinESP.Flags.ShowDistance = ShowDistance:Get()
 		ShowDistance:Visible(CoinESP.Flags.Enabled)
 
 		local SelectedFont = Environment.Font
-		CoinESP.LastFont = SelectedFont
-		if SelectedFont ~= CoinESP.LastFont or CoinESP.LastFont == nil then
+		if CoinESP.LastFont ~= SelectedFont then
+			CoinESP.LastFont = SelectedFont
 			TEXT_WIDTH, TEXT_HEIGHT = GetTextSize(ESP_TEXT)
 		end
 	end)
