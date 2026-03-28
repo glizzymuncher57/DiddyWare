@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-28T01:13:48.375959300+00:00",
+	genDate = "2026-03-28T01:35:19.709229500+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -855,33 +855,13 @@ do
 				local k = utility.GetTickCount()
 				if k - b.LastUpdate >= b.UpdateInterval then
 					h()
-					local l = g()
-					if not l then
-						d.CachedGunDrop = nil
-						return
-					end
-					if not d.CachedGunDrop or d.CachedGunDrop.Address ~= l.Address then
-						d.CachedGunDrop = l
-					end
+					d.CachedGunDrop = g()
+					b.LastUpdate = k
 				end
 			end)
 			cheat.Register("onSlowUpdate", function()
-				local k = e()
-				if not k then
-					d.CachedMap = nil
-					return
-				end
-				if not d.CachedMap or d.CachedMap ~= k.Address then
-					d.CachedMap = k
-				end
-				local l = f()
-				if not l then
-					d.CachedCoinContainer = nil
-					return
-				end
-				if not d.CachedCoinContainer or d.CachedCoinContainer.Address ~= l.Address then
-					d.CachedCoinContainer = l
-				end
+				d.CachedMap = e()
+				d.CachedCoinContainer = f()
 			end)
 		end
 		return b
@@ -935,7 +915,9 @@ local n = function()
 	local n = j.NewTab("DiddyWare_MM2", "DiddyWare")
 	local o, p, q =
 		n:Container("DiddyWare_MM2C1", "Main", { autosize = true, next = true }),
-		n:Container("DiddyWare_MM2C2", "Visuals", { autosize = true }),
+		n:Container("DiddyWare_MM2C2", "Visuals", {
+			autosize = true,
+		}),
 		n:Container("DiddyWare_MM2C3", "Settings", { autosize = true, next = true })
 	k()
 	l()
