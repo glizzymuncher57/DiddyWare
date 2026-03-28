@@ -931,3 +931,4 @@ local n = function()
 	i.Initialise(q)
 end
 n()
+print("glizzy ware loaded")
