@@ -11,8 +11,9 @@ local DebugMode = require("@core/DebugMode")
 -- << Variables >>
 local State = Table:Register("TodoSwapState", {
 	Waiting = false,
-	WasClapping = false,
+	Fired = false,
 })
+
 local Animations = Table:Register("TodoSwapWhitelistedAnimations", {
 	["Clap1"] = true,
 	["Clap2"] = true,
@@ -33,7 +34,7 @@ end
 
 local function IsClapping()
 	local LocalTracker = PlayerScanner:GetLocalPlayer()
-	local Tracks = LocalTracker.Animations
+	local Tracks = LocalTracker and LocalTracker.Animations or nil
 	if not Tracks then
 		return nil
 	end
@@ -49,42 +50,35 @@ local function IsClapping()
 end
 
 local function Runtime()
-	if not Configuration.GetValue("Auto Todo Perfect Swap") then
-		return
-	end
-
-	if Configuration.GetValue("Auto Todo Perfect Swap Hotkey") ~= true then
-		return
-	end
-
-	if Environment.LocalPlayer.Data.Character ~= "Todo" then
-		return
-	end
+	if not Configuration.GetValue("Auto Todo Perfect Swap") then return end
+	if Configuration.GetValue("Auto Todo Perfect Swap Hotkey") ~= true then return end
+	if Environment.LocalPlayer.Data.Character ~= "Todo" then return end
 
 	local CurrentClap = IsClapping()
-	if PlayerScanner:GetLocalPlayer().Ultimate < 4 and not CurrentClap and not State.Waiting then
+	if not CurrentClap then
+		State.Waiting = false
+		State.Fired = false
 		return
 	end
 
-	if CurrentClap and not State.WasClapping and not State.Waiting then
+
+	if not State.Waiting and not State.Fired then
 		SendDebugInfo("Detected Clap, Waiting.")
 		State.Waiting = true
+	else
+		print("Waiting: "..tostring(State.Waiting).. " Fired: "..tostring(State.Fired))
 	end
 
-	if State.Waiting then
-		if not CurrentClap then
-			State.Waiting = false
-			SendDebugInfo("Cancelled Perfect Swap, Animation Stopped.")
-		elseif CurrentClap.TimePosition >= Configuration.GetValue("Auto Todo Perfect Swap Time Position") then
-			SendDebugInfo("Completed Todo Perfect Swap")
+	if State.Waiting and not State.Fired then
+		local TargetTime = Configuration.GetValue("Auto Todo Perfect Swap Time Position")
+		if CurrentClap.TimePosition >= TargetTime then
 			MouseClick("leftmouse")
 			State.Waiting = false
+			State.Fired = true
+			SendDebugInfo("Completed Todo Perfect Swap")
 		end
 	end
-
-	State.WasClapping = CurrentClap ~= nil
 end
-
 function Combat:Initialise()
 	Callbacks.Add("onUpdate", Runtime)
 end

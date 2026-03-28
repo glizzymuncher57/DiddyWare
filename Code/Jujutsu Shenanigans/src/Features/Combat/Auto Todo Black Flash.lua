@@ -10,10 +10,10 @@ local DebugMode = require("@core/DebugMode")
 -- << Variables >>
 local LocalPlayer = entity.GetLocalPlayer()
 local State = Table:Register("TodoBlackflashState", {
-	WasSliding = false,
 	Waiting = false,
-	BruteForceStarted = false,
+	BruteForceFired = false,
 })
+
 local Animations = Table:Register("TodoBlackflashAnimationsTable", {
 	["Slide"] = "rbxassetid://100081544058065",
 	["Brute Force"] = "rbxassetid://123167492985370",
@@ -37,7 +37,7 @@ local function GetAnimationByID(AnimationId)
 	end
 
 	local LocalTracker = PlayerScanner:GetLocalPlayer()
-	local Tracks = LocalTracker.Animations
+	local Tracks = LocalTracker and LocalTracker.Animations or nil
 	if not Tracks then
 		return nil
 	end
@@ -51,11 +51,11 @@ local function GetAnimationByID(AnimationId)
 end
 
 local function Runtime()
-	if not Configuration.GetValue("Auto Todo Blackflash") then
+	if not Configuration.GetValue("Auto Blackflash") then
 		return
 	end
 
-	if Configuration.GetValue("Auto Todo Blackflash Hotkey") ~= true then
+	if Configuration.GetValue("Auto Blackflash Hotkey") ~= true then
 		return
 	end
 
@@ -64,32 +64,33 @@ local function Runtime()
 	end
 
 	local IsSliding = GetAnimationByID(Animations.Slide)
-	if IsSliding and not State.WasSliding and not State.Waiting then
-		SendDebugInfo("Queued Todo Blackflash - Waiting for brute force")
+	local BruteForce = GetAnimationByID(Animations["Brute Force"])
+
+	if State.BruteForceFired and not BruteForce then
+		State.BruteForceFired = false
+	end
+
+	if IsSliding and not State.Waiting and not State.BruteForceFired then
+		SendDebugInfo("Queued Todo Blackflash - Waiting for Brute Force")
 		State.Waiting = true
 	end
 
-	if State.Waiting then
-		local Brute_Force = GetAnimationByID(Animations["Brute Force"])
-		if not IsSliding and not Brute_Force then
-			SendDebugInfo("Cancelled Blackflash, Animation Ended.")
-			State.Waiting = false
-			State.BruteForceStarted = false
-		elseif Brute_Force then
-			State.BruteForceStarted = true
-			local TimePosition = Brute_Force.TimePosition
-			local StringPosition = tostring(TimePosition)
-			SendDebugInfo("Brute Force Time Position: " .. StringPosition)
-			if TimePosition >= Configuration.GetValue("Auto Todo Blackflash Time Position") then
-				SendDebugInfo("Triggered Todo Blackflash at: " .. StringPosition)
-				PressKey(0x32)
-				State.Waiting = false
-				State.BruteForceStarted = false
-			end
-		end
+	if State.Waiting and not IsSliding and not BruteForce then
+		State.Waiting = false
+		State.BruteForceFired = false
+		SendDebugInfo("Cancelled Blackflash, Animation Ended.")
 	end
 
-	State.WasSliding = IsSliding
+	if State.Waiting and BruteForce and not State.BruteForceFired then
+		local TimePosition = BruteForce.TimePosition
+		local TargetTime = Configuration.GetValue("Auto Todo Blackflash Time Position")
+		if TimePosition >= TargetTime then
+			PressKey(0x32)
+			SendDebugInfo("Triggered Todo Blackflash at TimePosition: "..tostring(TimePosition))
+			State.BruteForceFired = true
+			State.Waiting = false
+		end
+	end
 end
 
 function Combat:Initialise()

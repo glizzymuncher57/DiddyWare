@@ -61,6 +61,7 @@ local function ProcessPlayer(Player, NewPlayers)
 		return
 	end
 
+	local Animator = Humanoid:FindFirstChildOfClass("Animator")
 	local PlayerName = Player.Name
 	local OldData = Environment.Players[PlayerName]
 	local OldMoves = OldData and OldData.Moves or nil
@@ -95,10 +96,11 @@ local function ProcessPlayer(Player, NewPlayers)
 	local Exploiting = (RootPart.Position - Head.Position).Magnitude > 20
 	local PlayerInstance = Players:FindFirstChild(PlayerName)
 
-	NewPlayers[PlayerName] = {
+	local PlayerData = {
 		Player = Player,
 		Character = Character,
 		Humanoid = Humanoid,
+		Animator = Animator,
 		RootPart = RootPart,
 		Head = Head,
 		Exploiting = Exploiting,
@@ -109,8 +111,10 @@ local function ProcessPlayer(Player, NewPlayers)
 		Ragdolled = GetAttribute(Character, "Ragdoll", 0),
 		Moves = Lookup,
 		OrderedMoves = Ordered,
-		Animations = AnimationManager:GetPlayingAnimationTracks(Humanoid),
 	}
+
+	NewPlayers[PlayerName] = PlayerData
+	PlayerData.Animations = AnimationManager:GetPlayingAnimationTracks(Humanoid, PlayerData)
 end
 
 local function UpdateLocalInfo()
@@ -127,7 +131,7 @@ end
 
 local function UpdateAnimations()
 	for _, Data in pairs(Environment.Players) do
-		Data.Animations = AnimationManager:GetPlayingAnimationTracks(Data.Humanoid)
+		Data.Animations = AnimationManager:GetPlayingAnimationTracks(Data.Humanoid, Data)
 	end
 end
 
@@ -238,6 +242,10 @@ end
 
 function PlayerScanning:GetLocalPlayer()
 	return Environment.Players[Environment.LocalPlayer.Entity.Name]
+end
+
+function PlayerScanning:GetPlayers()
+	return Environment.Players
 end
 
 function PlayerScanning:Initialise()
