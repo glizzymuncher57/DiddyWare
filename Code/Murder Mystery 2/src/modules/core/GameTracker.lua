@@ -1,5 +1,5 @@
 local GameTracker = {
-	LastUpdate = 0,
+	LastUpdate = utility.GetTickCount() + 3000, -- if ur code is shit make counter measures heh.
 	UpdateInterval = 50,
 }
 
@@ -66,41 +66,14 @@ function GameTracker.Initialise(
 		local Now = utility.GetTickCount()
 		if Now - GameTracker.LastUpdate >= GameTracker.UpdateInterval then
 			UpdateCoins()
-					
-			local GunDrop = GetGunDrop()
-			if not GunDrop then
-				Environment.CachedGunDrop = nil
-				return
-			end
-
-			if not Environment.CachedGunDrop or Environment.CachedGunDrop.Address ~= GunDrop.Address then
-				Environment.CachedGunDrop = GunDrop
-			end
+			Environment.CachedGunDrop = GetGunDrop()
+			GameTracker.LastUpdate = Now
 		end
 	end)
 
 	cheat.Register("onSlowUpdate", function()
-		local Map = GetCurrentMap()
-		if not Map then
-			Environment.CachedMap = nil
-			return
-		end
-
-		if not Environment.CachedMap or Environment.CachedMap ~= Map.Address then
-			Environment.CachedMap = Map
-		end
-		
-		--
-
-		local CoinContainer = GetCoinContainer()
-		if not CoinContainer then
-			Environment.CachedCoinContainer = nil
-			return
-		end
-
-		if not Environment.CachedCoinContainer or Environment.CachedCoinContainer.Address ~= CoinContainer.Address then
-			Environment.CachedCoinContainer = CoinContainer
-		end
+		Environment.CachedMap = GetCurrentMap()
+		Environment.CachedCoinContainer = GetCoinContainer()
 	end)
 end
 
