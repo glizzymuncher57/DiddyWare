@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-28T01:35:19.709229500+00:00",
+	genDate = "2026-03-28T01:42:07.642980200+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -811,7 +811,7 @@ do
 	end
 	function a.n()
 		local b, c, d = { LastUpdate = 0, UpdateInterval = 50 }, game.GetService("Workspace"), a.load("b")
-		local e, f, g, h =
+		local e, f, g =
 			function()
 				local e
 				for f, g in pairs(c:GetChildren()) do
@@ -829,12 +829,6 @@ do
 				end
 				return e:FindFirstChild("CoinContainer")
 			end, function()
-				local e = d.CachedMap
-				if not e then
-					return nil
-				end
-				return e:FindFirstChild("GunDrop")
-			end, function()
 				local e = d.CachedCoinContainer
 				if not e then
 					return
@@ -848,15 +842,14 @@ do
 				end
 				d.ActiveCoins = f
 			end
-		function b.Initialise(i)
-			local j = i:SliderInt("Game Tracker Update Interval", 1, 100, 50)
+		function b.Initialise(h)
+			local i = h:SliderInt("Game Tracker Update Interval", 1, 100, 50)
 			cheat.Register("onUpdate", function()
-				b.UpdateInterval = j:Get()
-				local k = utility.GetTickCount()
-				if k - b.LastUpdate >= b.UpdateInterval then
-					h()
-					d.CachedGunDrop = g()
-					b.LastUpdate = k
+				b.UpdateInterval = i:Get()
+				local j = utility.GetTickCount()
+				if j - b.LastUpdate >= b.UpdateInterval then
+					g()
+					b.LastUpdate = j
 				end
 			end)
 			cheat.Register("onSlowUpdate", function()
@@ -915,9 +908,7 @@ local n = function()
 	local n = j.NewTab("DiddyWare_MM2", "DiddyWare")
 	local o, p, q =
 		n:Container("DiddyWare_MM2C1", "Main", { autosize = true, next = true }),
-		n:Container("DiddyWare_MM2C2", "Visuals", {
-			autosize = true,
-		}),
+		n:Container("DiddyWare_MM2C2", "Visuals", { autosize = true }),
 		n:Container("DiddyWare_MM2C3", "Settings", { autosize = true, next = true })
 	k()
 	l()
@@ -931,4 +922,4 @@ local n = function()
 	i.Initialise(q)
 end
 n()
-print("glizzy ware loaded")
+print("v2")
