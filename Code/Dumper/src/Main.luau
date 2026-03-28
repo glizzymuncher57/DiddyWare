@@ -77,6 +77,7 @@ end
 local function Init()
 	Animations:OnFinished(function(Returned)
 		print("--- DUMPED ANIMATION OFFSETS ---")
+		MergeOffsets(Offsets, Returned)
 		Booleans:Initialise()
 	end)
 

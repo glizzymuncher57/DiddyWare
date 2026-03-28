@@ -18,8 +18,9 @@ end
 function Dumper:GetOffsets()
 	local Offsets = {}
 	local ScanState = {}
-	local PlayerGui = game.LocalPlayer.PlayerGui
-	local StateLabel = PlayerGui:FindFirstChild("StateFrame")
+	local ReplicatedStorage = game.GetService("ReplicatedStorage");
+	local BoolState = ReplicatedStorage.BoolState
+
 	local LastValue = nil
 	local Finished = false
 
@@ -47,7 +48,7 @@ function Dumper:GetOffsets()
 			return
 		end
 
-		local CurrentValue = tonumber(StateLabel.Value)
+		local CurrentValue = tonumber(BoolState.Value)
 		if CurrentValue == nil or CurrentValue == LastValue then
 			return
 		end
