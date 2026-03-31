@@ -1,1969 +1,2717 @@
---!nocheck
---!nolint
+local __DIST __DIST={cache={}, load=function(m)if not __DIST.cache[m]then __DIST.cache[m]={c=__DIST[m]()}end return __DIST.cache[m].c end}do function __DIST.a()local TableManager = {}
+TableManager.__index = TableManager
 
-_P = {
-	genDate = "2026-03-27T01:07:24.644636600+00:00",
-	cfg = "Release",
-	vers = "",
-}
+local _registry = {}
 
-local a
-a = {
-	cache = {},
-	load = function(b)
-		if not a.cache[b] then
-			a.cache[b] = { c = a[b]() }
-		end
-		return a.cache[b].c
-	end,
-}
-do
-	function a.a()
-		local b = {}
-		b.__index = b
-		local c = {}
-		function b:Register(d, e)
-			e = e or {}
-			if type(d) ~= "string" or type(e) ~= "table" then
-				return
-			end
-			c[d] = e
-			return e
-		end
-		function b:Get(d)
-			return c[d]
-		end
-		function b:Clear(d)
-			local e = c[d]
-			if not e then
-				return
-			end
-			for f in next, e do
-				e[f] = nil
-			end
-		end
-		function b:Unload(d)
-			local e = c[d]
-			if not e then
-				return
-			end
-			for f in next, e do
-				e[f] = nil
-			end
-			c[d] = nil
-		end
-		function b:UnloadAll()
-			for d, e in next, c do
-				for f in next, e do
-					e[f] = nil
-				end
-				c[d] = nil
-			end
-		end
-		return b
+function TableManager:Register(name, tbl)
+	tbl = tbl or {}
+	if type(name) ~= "string" or type(tbl) ~= "table" then
+		return
 	end
-	function a.b()
-		local b, c = a.load("a"), {}
-		local d, e = b:Register("Configuration.Elements", {}), b:Register("Configuration.Values", {})
-		function c.Register(f, g)
-			d[f] = g
-		end
-		function c.GetValue(f)
-			return e[f]
-		end
-		function c.SetValue(f, g)
-			e[f] = g
-		end
-		return c
+
+	_registry[name] = tbl
+	return tbl
+end
+
+function TableManager:Get(name)
+	return _registry[name]
+end
+
+function TableManager:Clear(name)
+	local tbl = _registry[name]
+	if not tbl then
+		return
 	end
-	function a.c()
-		local b, c, d = {}, {}, { "onPaint", "onUpdate", "onSlowUpdate", "shutdown" }
-		for e, f in ipairs(d) do
-			c[f] = {}
-		end
-		function b.Add(e, f)
-			if type(e) ~= "string" or type(f) ~= "function" then
-				return nil
-			end
-			if not c[e] then
-				return nil
-			end
-			local g = #c[e] + 1
-			c[e][g] = f
-			return g
-		end
-		function b.Remove(e, f)
-			if c[e] then
-				c[e][f] = nil
-			end
-		end
-		function b.ClearAll()
-			for e, f in pairs(c) do
-				c[e] = {}
-			end
-		end
-		local e = function(e, ...)
-			for f, g in pairs(c[e]) do
-				g(...)
-			end
-		end
-		function b:Initialise()
-			for f, g in ipairs(d) do
-				cheat.Register(g, function(...)
-					e(g, ...)
-				end)
-			end
-		end
-		return b
-	end
-	function a.d()
-		local b, c = {}, memory.Read
-		function b.Read(d, e)
-			return c(e.Type, d + e.Offset)
-		end
-		function b.ReadVector2(d, e)
-			local f, g = c(e.Type, d + e.X), c(e.Type, d + e.Y)
-			return Vector3.new(f, g, 0)
-		end
-		return b
-	end
-	function a.e()
-		return {
-			version = "version-6776addb8fbc4d17",
-			DoubleConstrainedValue = { Value = { Type = "double", Offset = 0xe0 } },
-			Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x848 } },
-			Animation = {
-				AnimationId = { Type = "string", Offset = 0xd0 },
-			},
-			GuiObject = {
-				Size = { Type = "float", X = 0x538, Y = 0x540 },
-				AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c },
-				AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
-				Visible = { Type = "bool", Offset = 0x5b5 },
-				Position = { Type = "float", X = 0x518, Y = 0x520 },
-				Rotation = { Type = "float", Offset = 0x188 },
-			},
-			ScreenGui = {
-				Enabled = { Type = "bool", Offset = 0x4cc },
-			},
-			AnimationTrack = {
-				TimePosition = { Type = "float", Offset = 0xe8 },
-				Speed = { Type = "float", Offset = 0xe4 },
-				Looped = { Type = "bool", Offset = 0xf5 },
-				Animation = { Type = "pointer", Offset = 0xd0 },
-			},
-		}
-	end
-	function a.f()
-		local b, c, d, e, f = a.load("a"), a.load("c"), a.load("b"), utility.getTickCount, utility.getMousePos
-		local g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w =
-			{ Messages = b:Register("DM.Messages", {}) },
-			20,
-			{ Active = false, OffsetX = 0, OffsetY = 0 },
-			{
-				info = { label = "INFO", color = Color3.new(0.4, 0.8, 1) },
-				warn = { label = "WARN", color = Color3.new(1, 0.85, 0.2) },
-				error = { label = "ERROR", color = Color3.new(1, 0.3, 0.3) },
-				ok = { label = "OK", color = Color3.new(0.3, 1, 0.5) },
-			},
-			Color3.new(1, 1, 1),
-			Color3.new(0.5, 0.5, 0.5),
-			Color3.new(0.12, 0.12, 0.14),
-			Color3.new(0.08, 0.08, 0.1),
-			Color3.new(0.25, 0.25, 0.3),
-			Color3.new(0.15, 0.15, 0.18),
-			10,
-			10,
-			600,
-			16,
-			8,
-			50,
-			b:Register("DM.TextSizeCache", {})
-		local x, y, z, A =
-			function(x, y)
-				local z = x .. tostring(y)
-				local A = w[z]
-				if A then
-					return A[1], A[2]
-				end
-				local B, C = draw.GetTextSize(x, y)
-				w[z] = { B, C }
-				return B, C
-			end, function(x, y)
-				if type(y) ~= "table" then
-					return true
-				end
-				return y[x] == true
-			end, function()
-				local x, y = e(), g.Messages
-				for z = #y, 1, -1 do
-					if x >= y[z].Expiry then
-						table.remove(y, z)
-					end
-				end
-				table.sort(y, function(z, A)
-					return z.Expiry > A.Expiry
-				end)
-			end, function()
-				local x = f()
-				return x[1] >= q and x[1] <= q + s and x[2] >= r and x[2] <= r + (t + u * 2)
-			end
-		local B = function(B)
-			if not i.Active then
-				if not (A() and B) then
-					return
-				end
-				i.Active = true
-				local C = f()
-				i.OffsetX = C[1] - q
-				i.OffsetY = C[2] - r
-			else
-				if B then
-					local C = f()
-					q = C[1] - i.OffsetX
-					r = C[2] - i.OffsetY
-				else
-					i.Active = false
-				end
-			end
-		end
-		local C = function()
-			if not d.GetValue("Debug Mode") then
-				return
-			end
-			local C, D, E = d.GetValue("Show Debug Info"), d.GetValue("Font Selection"), g.Messages
-			if #E == 0 then
-				return
-			end
-			local F = 0
-			for G, H in ipairs(E) do
-				if y(H.Level, C) then
-					F = F + 1
-				end
-			end
-			if F == 0 then
-				return
-			end
-			B(keyboard.IsPressed("leftmouse"))
-			local G, H, I = e(), t + u * 2, u + t + u + (F * t) + u
-			draw.RectFilled(q, r, s, I, n, 4, 200)
-			draw.RectFilled(q, r, s, H, m, 4, 230)
-			draw.Rect(q, r, s, I, o, 1, 4, 180)
-			local J = "[ DEBUG ]"
-			local K = select(2, x(J, D))
-			draw.TextOutlined("[ DEBUG ]", q + u, r + (H / 2) - (K / 2), k, D)
-			local L = r + H
-			for M, N in ipairs(E) do
-				if y(N.Level, C) then
-					local O = j[N.Level]
-					local P = "[" .. O.label .. "]"
-					local Q, R = x(P, D)
-					local S, T = L + (t / 2) - (R / 2), N.Expiry - G
-					local U = T < v and math.max(0, T / v) or 1
-					local V = math.floor(U * U * 255)
-					draw.RectFilled(q + 1, L, s - 2, t, p, 0, math.floor(V * 0.35))
-					draw.TextOutlined(P, q + u, S, O.color, D, V)
-					draw.TextOutlined(N.Text, q + u + Q + 6, S, k, D, V)
-					if N.Count > 1 then
-						local W = "x" .. N.Count
-						local X, Y = x(W, D)
-						draw.TextOutlined(W, q + s - X - u, L + (t / 2) - (Y / 2), l, D, V)
-					end
-					L = L + t
-				end
-			end
-		end
-		function g.AddDebugMessage(D, E, F)
-			E = (E and j[E]) and E or "info"
-			F = F or 3000
-			D = tostring(D)
-			local G, H = e(), g.Messages
-			for I = 1, #H do
-				local J = H[I]
-				if J.Text == D and J.Level == E then
-					J.Count = J.Count + 1
-					J.Expiry = G + F
-					return
-				end
-			end
-			if #H >= h then
-				table.remove(H, 1)
-			end
-			H[#H + 1] = { Text = D, Level = E, Count = 1, Expiry = G + F }
-		end
-		function g.Clear()
-			local D = g.Messages
-			for E in next, D do
-				D[E] = nil
-			end
-		end
-		function g:Initialise()
-			c.Add("onSlowUpdate", z)
-			c.Add("onPaint", C)
-		end
-		return g
-	end
-	function a.g()
-		local b, c, d, e, f, g, h, i =
-			a.load("b"), a.load("a"), a.load("c"), a.load("d"), a.load("e"), a.load("f"), memory.read, math.floor
-		local j, k, l =
-			{ Animations = c:Register("AMAnimations", {}), _ScanState = {
-				Queue = {},
-				Index = 1,
-				Done = false,
-				StoredCallback = nil,
-			} },
-			{
-				__index = function(j, k)
-					local l = j.Track
-					if k == "TimePosition" then
-						return i(e.Read(l, f.AnimationTrack.TimePosition) * 100) / 100
-					elseif k == "Speed" then
-						return i(e.Read(l, f.AnimationTrack.Speed) * 100) / 100
-					elseif k == "Looped" then
-						return e.Read(l, f.AnimationTrack.Looped)
-					else
-						return nil
-					end
-				end,
-			},
-			function(j, k, l)
-				if b.GetValue("Debug Mode") and j then
-					g.AddDebugMessage("[AM]:" .. tostring(j), k, l)
-				end
-			end
-		local m, n =
-			function()
-				if j._ScanState.Done then
-					return
-				end
-				j._ScanState.Queue = { game.DataModel }
-				j._ScanState.Index = 1
-			end, function()
-				local m, n, o = j._ScanState.Queue, j._ScanState.Index, j.Animations
-				for p = 1, 250 do
-					local q = m[n]
-					if not q then
-						d.Remove("onUpdate", j._ScanState.StoredCallback)
-						l("Finished Caching Animations.", "info", 3000)
-						return
-					end
-					if q:IsA("Animation") then
-						local r = e.Read(q.Address, f.Animation.AnimationId)
-						if r ~= "" then
-							o[r] = q.Name
-						end
-					end
-					local r = q:GetChildren()
-					for s = 1, #r do
-						m[#m + 1] = r[s]
-					end
-					n = n + 1
-				end
-				j._ScanState.Index = n
-			end
-		function j:GetPlayingAnimationTracks(o, p)
-			if not p or not p.Player.Name or not o then
-				return {}
-			end
-			local q, r = {}, p.Animator
-			if not r then
-				l("Animator missing for " .. p.Player.Name, "warning", 1000)
-				return q
-			end
-			local s = e.Read(r.Address, f.Animator.AnimationTrackList)
-			if s == 0 then
-				l("Wrong AnimationTrackList offset for " .. p.Player.Name, "warning", 1000)
-				return q
-			end
-			local t = h("pointer", s)
-			while t ~= 0 and t ~= s do
-				local u = h("pointer", t + 0x10)
-				if u ~= 0 then
-					local v = e.Read(u, f.AnimationTrack.Animation)
-					if v ~= 0 then
-						local w = e.Read(v, f.Animation.AnimationId)
-						if w ~= "" then
-							local x = { Track = u, Animation = {
-								AnimationId = w,
-								Name = j.Animations[w] or "Unknown",
-							} }
-							setmetatable(x, k)
-							q[#q + 1] = x
-						end
-					end
-				end
-				t = h("pointer", t)
-			end
-			return q
-		end
-		function j:Initialise()
-			m()
-			j._ScanState.StoredCallback = d.Add("onUpdate", n)
-		end
-		return j
-	end
-	function a.h()
-		local b = a.load("a")
-		return {
-			LocalPlayer = b:Register(
-				"EnviromentLocalPlayer",
-				{
-					Player = game.LocalPlayer,
-					Entity = entity.GetLocalPlayer(),
-					PlayerGui = game.LocalPlayer.PlayerGui,
-					Data = { Character = nil, Ping = 0 },
-				}
-			),
-			Players = b:Register("EnvironmentPlayerData", {}),
-			Objects = b:Register("EnvironmentObjects", { Items = {}, Domains = {} }),
-			ClosestDomain = b:Register("EnvironmentClosestDomain", { Instance = nil, Distance = math.huge }),
-		}
-	end
-	function a.i()
-		local b, c, d, e, f, g, h, i =
-			a.load("g"),
-			a.load("a"),
-			a.load("h"),
-			a.load("c"),
-			a.load("b"),
-			a.load("f"),
-			game.GetService("Players"),
-			game.GetService("Stats")
-		local j = i:FindFirstChild("Network")
-		local k = j.ServerStatsItem
-		local l, m, n, o, p =
-			k["Data Ping"],
-			c:Register("LastUse_PlayerScanner", {}),
-			c:Register("CooldownStarts_PlayerScanner", {}),
-			{ LastCooldownUpdate = 0, LastAnimationUpdate = 0, LastLocalUpdate = 0, LastRebuild = 0 },
-			function(l, m, n)
-				local o = l:GetAttribute(m)
-				return o and o.Value or n
-			end
-		local q, r, s, t =
-			function(q, r)
-				if not q or not q.Name or q.Name == "" then
-					g.AddDebugMessage("[PlayerScanner]: Invalid Player", "warning", 1000)
-					return
-				end
-				local s, t = q:GetBoneInstance("Head"), q:GetBoneInstance("HumanoidRootPart")
-				if not s or not t then
-					g.AddDebugMessage("[PlayerScanner]: Aborted " .. q.Name .. ", Missing Bodyparts", "warning", 1000)
-					return
-				end
-				local u = t.Parent
-				if not u then
-					g.AddDebugMessage("[PlayerScanner]: Aborted " .. q.Name .. ", Character is nil", "warning", 1000)
-					return
-				end
-				local v, w = u:FindFirstChild("Humanoid"), u:FindFirstChild("Moveset")
-				if not v or not w then
-					g.AddDebugMessage("[PlayerScanner]: Aborted " .. q.Name .. ", Missing Humanoid or Moveset", "warning", 1000)
-					return
-				end
-				local x, y = v:FindFirstChildOfClass("Animator"), q.Name
-				local z = d.Players[y]
-				local A, B, C, D = z and z.Moves or nil, {}, {}, w:GetChildren()
-				for E = 1, #D do
-					local F = D[E]
-					local G = F.Name
-					local H = A and A[G]
-					local I = { Name = G, Key = p(F, "Key", E), Cooldown = F.Value or 0, Instance = F, MoveKey = y .. G, IsOnCooldown = H and H.IsOnCooldown or false, Remaining = H and H.Remaining or 0 }
-					B[E] = I
-					C[G] = I
-				end
-				table.sort(B, function(E, F)
-					return E.Key < F.Key
-				end)
-				local E, F = (t.Position - s.Position).Magnitude > 20, h:FindFirstChild(y)
-				local G = { Player = q, Character = u, Humanoid = v, Animator = x, RootPart = t, Head = s, Exploiting = E, SelectedMoveset = p(u, "Moveset", "[???]"), Evade = p(u, "Evade", 50), Ultimate = F and p(F, "Ultimate", 0) or 0, Ragdolled = p(u, "Ragdoll", 0), Moves = C, OrderedMoves = B }
-				r[y] = G
-				G.Animations = b:GetPlayingAnimationTracks(v, G)
-			end, function()
-				local q, r = d.LocalPlayer, game.LocalPlayer
-				q.Entity = entity.GetLocalPlayer()
-				q.Player = r
-				q.PlayerGui = r and q.PlayerGui or nil
-				q.MinigameInterface = q.PlayerGui and q.PlayerGui:FindFirstChild("DeviceUI") or nil
-				q.Data.Character = p(r, "Moveset", "[???]")
-				q.Data.Ping = l.Value
-			end, function()
-				for q, r in pairs(d.Players) do
-					r.Animations = b:GetPlayingAnimationTracks(r.Humanoid, r)
-				end
-			end, function(q, r)
-				local s = q.Instance
-				if not s then
-					q.IsOnCooldown = false
-					q.Remaining = 0
-					return
-				end
-				local t, u = q.MoveKey, p(s, "LastUse", 0)
-				if u ~= m[t] then
-					m[t] = u
-					n[t] = r
-				end
-				local v = n[t]
-				if v then
-					local w = r - v
-					if w < q.Cooldown then
-						q.IsOnCooldown = true
-						q.Remaining = q.Cooldown - w
-					else
-						q.IsOnCooldown = false
-						q.Remaining = 0
-					end
-				else
-					q.IsOnCooldown = false
-					q.Remaining = 0
-				end
-			end
-		local u, v =
-			function()
-				local u = utility.GetTickCount() / 1000
-				for v, w in pairs(d.Players) do
-					for x, y in pairs(w.Moves) do
-						t(y, u)
-					end
-				end
-			end, function()
-				local u, v = {}, entity.GetLocalPlayer()
-				if v then
-					q(v, u)
-				end
-				for w, x in pairs(entity.GetPlayers(false)) do
-					q(x, u)
-				end
-				d.Players = u
-			end
-		local w = function()
-			local w, x, y, z, A =
-				(f.GetValue("Rebuild Player Cache Interval (s)") or 1) * 1000,
-				f.GetValue("Update Player Cooldowns Interval (ms)") or 50,
-				f.GetValue("Update Player Animations Interval (ms)") or 10,
-				(f.GetValue("Update Local Info Interval (s)") or 1) * 1000,
-				utility.GetTickCount()
-			if (A - o.LastCooldownUpdate) >= x then
-				u()
-				o.LastCooldownUpdate = A
-			end
-			if (A - o.LastRebuild) >= w then
-				v()
-				o.LastRebuild = A
-			end
-			if (A - o.LastAnimationUpdate) >= y then
-				s()
-				o.LastAnimationUpdate = A
-			end
-			if (A - o.LastLocalUpdate) >= z then
-				r()
-				o.LastLocalUpdate = A
-			end
-		end
-		function o:DoesPlayerHaveMove(x, y)
-			if not x or not y then
-				return false
-			end
-			local z = d.Players[x.Name]
-			if not z or not z.Moves then
-				return false
-			end
-			local A = z.Moves[y]
-			if not A then
-				return false
-			end
-			return true
-		end
-		function o:GetLocalPlayer()
-			return d.Players[d.LocalPlayer.Entity.Name]
-		end
-		function o:GetPlayers()
-			return d.Players
-		end
-		function o:Initialise()
-			e.Add("onUpdate", function()
-				w()
-			end)
-		end
-		return o
-	end
-	function a.j()
-		local b = {}
-		b.__index = b
-		function b.New()
-			local c = setmetatable({}, b)
-			c.Queues = {}
-			c.Indexes = {}
-			c.Caches = {}
-			c.Callbacks = {}
-			c.Rates = {}
-			c.LastUpdate = {}
-			return c
-		end
-		function b:AddCategory(c, d, e, f)
-			self.Queues[c] = d or {}
-			self.Indexes[c] = 1
-			self.Caches[c] = {}
-			self.Rates[c] = e or 50
-			self.LastUpdate[c] = 0
-			self.Selectors = self.Selectors or {}
-			self.Selectors[c] = f
-		end
-		function b:SetCallback(c, d)
-			self.Callbacks[c] = d
-		end
-		function b:Update()
-			local c = utility.GetTickCount()
-			for d, e in pairs(self.Queues) do
-				local f, g = self.Rates[d] or 50, self.LastUpdate[d] or 0
-				if c - g >= f then
-					local h = self.Indexes[d]
-					local i = e[h]
-					if i then
-						local j, k, l = i:GetChildren(), self.Selectors and self.Selectors[d], {}
-						for m = 1, #j do
-							local n = j[m]
-							if k then
-								n = k(n)
-							end
-							if n then
-								l[n.Name] = n
-							end
-						end
-						self.Caches[d] = l
-						local m = self.Callbacks[d]
-						if m then
-							m(d, i, j)
-						end
-					end
-					h = h + 1
-					if h > #e then
-						h = 1
-					end
-					self.Indexes[d] = h
-					self.LastUpdate[d] = c
-				end
-			end
-		end
-		function b:GetCached(c)
-			local d = self.Caches[c]
-			if not d then
-				return {}
-			end
-			local e = {}
-			for f, g in pairs(d) do
-				e[#e + 1] = g
-			end
-			return e
-		end
-		function b:ClearCache(c)
-			self.Caches[c] = {}
-		end
-		function b:SetInterval(c, d)
-			self.Rates[c] = d
-		end
-		return b
-	end
-	function a.k()
-		local b, c, d, e, f = {}, a.load("h"), a.load("c"), a.load("j").New(), game.GetService("Workspace")
-		local g, h = f.Items, f.Domains
-		function b:Initialise()
-			e:AddCategory("Domains", { h }, 2000)
-			e:AddCategory("Items", { g }, 2000)
-			e:SetCallback("Domains", function(i, j, k)
-				local l, m, n, o = c.LocalPlayer.Entity.Position, math.huge
-				for p, q in pairs(k) do
-					local r = q:FindFirstChildOfClass("MeshPart")
-					local s = r.Position
-					local t = (s - l).Magnitude
-					if t < m then
-						o = s
-						n = q
-						m = t
-					end
-				end
-				c.ClosestDomain.Instance = n
-				c.ClosestDomain.Distance = m
-				c.ClosestDomain.Position = o
-			end)
-			d.Add("onUpdate", function()
-				e:Update()
-				c.Objects.Items = e:GetCached("Items")
-				c.Objects.Domains = e:GetCached("Domains")
-			end)
-		end
-		return b
-	end
-	function a.l()
-		local b, c, d, e, f, g = a.load("f"), a.load("a"), a.load("c"), a.load("b"), a.load("h"), a.load("i")
-		local h, i, j, k, l, m =
-			f.LocalPlayer.Entity,
-			utility.GetTickCount,
-			keyboard.IsPressed,
-			keyboard.Click,
-			{ Delay = 0.285, CombatState = c:Register(
-				"AutoBlackFlashState",
-				{ Waiting = false, WasDown = false, NextPressTime = 0 }
-			) },
-			function(h)
-				if not e.GetValue("Debug Mode") then
-					return
-				end
-				b.AddDebugMessage(h, "info", 1000)
-			end
-		local n = function()
-			local n, o, p = i(), j(0x33), l.CombatState
-			if o and not p.WasDown and not p.Waiting then
-				local q = e.GetValue("Auto Blackflash Timing")
-				local r = q * 1000
-				p.NextPressTime = n + r
-				p.Waiting = true
-			end
-			if p.Waiting and n >= p.NextPressTime then
-				k(0x33)
-				p.Waiting = false
-				m("Completed Yuji/Mahito Blackflash.")
-			end
-			l.WasDown = o
-		end
-		function l:Initialise()
-			d.Add("onUpdate", function(...)
-				if not e.GetValue("Auto Blackflash") then
-					return
-				end
-				if e.GetValue("Auto Blackflash Hotkey") ~= true then
-					return
-				end
-				if not g:DoesPlayerHaveMove(h, "Focus Strike") and not g:DoesPlayerHaveMove(h, "Divergent Fist") then
-					return
-				end
-				n()
-			end)
-		end
-		return l
-	end
-	function a.m()
-		local b, c, d, e, f, g =
-			{ LastClick = 0 }, a.load("h"), a.load("b"), a.load("c"), utility.GetTickCount, keyboard.Click
-		local h, i, j, k, l = c.LocalPlayer.PlayerGui, "Auto Lawyer QTE", "Auto Lawyer QTE Delay (ms)", "QTE", "QTE_PC"
-		local m = function()
-			if not d.GetValue(i) then
-				return
-			end
-			local m = f()
-			if (m - b.LastClick) < d.GetValue(j) then
-				return
-			end
-			if not h then
-				h = c.LocalPlayer.Player.PlayerGui
-				return
-			end
-			local n = h:FindFirstChild(k)
-			local o = n and n:FindFirstChild(l)
-			if not o then
-				return
-			end
-			local p = o.Value
-			if not p or p == "" then
-				return
-			end
-			g(tostring(p):lower())
-			b.LastClick = m
-		end
-		function b:Initialise()
-			e.Add("onUpdate", m)
-		end
-		return b
-	end
-	function a.n()
-		local b, c, d, e, f, g, h =
-			{}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("f"), entity.GetLocalPlayer()
-		local i, j, k, l =
-			d:Register("MahoragaTimingTable", {
-				AnimationId = "rbxassetid://85024950165903",
-			}), d:Register("MahoragaState", {
-				WasEarthquaking = false,
-				Waiting = false,
-			}), function(i)
-				if not e.GetValue("Debug Mode") then
-					return
-				end
-				g.AddDebugMessage(i, "info", 1000)
-			end, function(i)
-				local j = f:GetLocalPlayer()
-				local k = j.Animations
-				if not k then
-					return nil
-				end
-				for l = 1, #k do
-					if k[l].Animation.AnimationId == i then
-						return k[l]
-					end
-				end
-				return nil
-			end
-		local m = function()
-			if not e.GetValue("Auto Mahoraga Earthquake") then
-				return
-			end
-			if not f:DoesPlayerHaveMove(h, "Earthquake") then
-				return
-			end
-			local m = l(i.AnimationId)
-			if m and not j.WasEarthquaking and not j.Waiting then
-				j.Waiting = true
-			end
-			if j.Waiting then
-				if not m then
-					j.Waiting = false
-					return
-				end
-				local n = m.TimePosition
-				k("Current Mahoraga Earthquake Time:" .. n)
-				if n >= e.GetValue("Auto Mahoraga Earthquake Time Position") then
-					keyboard.Release(0x33)
-					j.Waiting = false
-					k("Completed Mahoraga Earthquake")
-				end
-			end
-			j.WasEarthquaking = m ~= nil
-		end
-		function b:Initialise()
-			c.Add("onUpdate", m)
-		end
-		return b
-	end
-	function a.o()
-		local b, c, d, e, f, g, h, i, j, k =
-			{ CurrentRatio = nil, PressedR = false },
-			a.load("h"),
-			a.load("c"),
-			a.load("b"),
-			a.load("e"),
-			a.load("f"),
-			entity.GetPlayers,
-			memory.Read,
-			math.abs,
-			keyboard.Click
-		local l, m, n =
-			f.ScreenGui.Enabled, f.GuiObject.Position, function(l)
-				if not e.GetValue("Debug Mode") then
-					return
-				end
-				g.AddDebugMessage(l, "info", 1000)
-			end
-		local o = function(o)
-			local p = o:GetBoneInstance("HumanoidRootPart")
-			if not p then
-				return
-			end
-			local q = p:FindFirstChild("Ratio")
-			if not q then
-				return
-			end
-			local r = q.Address
-			if not i(l.Type, r + l.Offset) then
-				return
-			end
-			local s = b.CurrentRatio
-			if not s or s ~= r then
-				b.CurrentRatio = r
-				b.PressedR = false
-			end
-			local t = q.Bar.Cursor
-			local u, v = i(m.Type, t.Address + m.Y), e.GetValue("Auto Nanami Ratio GUI Scale")
-			local w = j(u - v)
-			n("Nanami Ratio Current Distance: " .. tostring(w))
-			if w <= 0.03 and not b.PressedR then
-				b.PressedR = true
-				k("r")
-				n("Completed Nanami Ratio")
-			end
-		end
-		local p = function()
-			if not e.GetValue("Auto Nanami Ratio") then
-				return
-			end
-			if c.LocalPlayer.Data.Character ~= "Nanami" then
-				return
-			end
-			local p = h(false)
-			for q = 1, #p do
-				local r = p[q]
-				o(r)
-			end
-		end
-		function b:Initialise()
-			d.Add("onUpdate", p)
-		end
-		return b
-	end
-	function a.p()
-		local b, c, d, e, f, g, h =
-			{}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("f"), entity.GetLocalPlayer()
-		local i, j, k, l, m =
-			d:Register("TodoBlackflashState", { Waiting = false, BruteForceFired = false }),
-			d:Register(
-				"TodoBlackflashAnimationsTable",
-				{ Slide = "rbxassetid://100081544058065", ["Brute Force"] = "rbxassetid://123167492985370" }
-			),
-			keyboard.Click,
-			function(i)
-				if not e.GetValue("Debug Mode") then
-					return
-				end
-				g.AddDebugMessage(i, "info", 1000)
-			end,
-			function(i)
-				if not i then
-					return
-				end
-				local j = f:GetLocalPlayer()
-				local k = j and j.Animations or nil
-				if not k then
-					return nil
-				end
-				for l = 1, #k do
-					if k[l].Animation.AnimationId == i then
-						return k[l]
-					end
-				end
-				return nil
-			end
-		local n = function()
-			if not e.GetValue("Auto Blackflash") then
-				return
-			end
-			if e.GetValue("Auto Blackflash Hotkey") ~= true then
-				return
-			end
-			if not f:DoesPlayerHaveMove(h, "Brute Force") then
-				return
-			end
-			local n, o = m(j.Slide), m(j["Brute Force"])
-			if i.BruteForceFired and not o then
-				i.BruteForceFired = false
-			end
-			if n and not i.Waiting and not i.BruteForceFired then
-				l("Queued Todo Blackflash - Waiting for Brute Force")
-				i.Waiting = true
-			end
-			if i.Waiting and not n and not o then
-				i.Waiting = false
-				i.BruteForceFired = false
-				l("Cancelled Blackflash, Animation Ended.")
-			end
-			if i.Waiting and o and not i.BruteForceFired then
-				local p, q = o.TimePosition, e.GetValue("Auto Todo Blackflash Time Position")
-				if p >= q then
-					k(0x32)
-					l("Triggered Todo Blackflash at TimePosition: " .. tostring(p))
-					i.BruteForceFired = true
-					i.Waiting = false
-				end
-			end
-		end
-		function b:Initialise()
-			c.Add("onUpdate", n)
-		end
-		return b
-	end
-	function a.q()
-		local b, c, d, e, f, g, h = {}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("h"), a.load("f")
-		local i, j, k, l =
-			d:Register("TodoSwapState", { Waiting = false, Fired = false }),
-			d:Register("TodoSwapWhitelistedAnimations", { Clap1 = true, Clap2 = true, Clap3 = true }),
-			mouse.Click,
-			function(i)
-				if not e.GetValue("Debug Mode") then
-					return
-				end
-				h.AddDebugMessage(i, "info", 1000)
-			end
-		local m = function()
-			local m = f:GetLocalPlayer()
-			local n = m and m.Animations or nil
-			if not n then
-				return nil
-			end
-			for o = 1, #n do
-				local p = n[o]
-				if j[p.Animation.Name] then
-					return p
-				end
-			end
-			return nil
-		end
-		local n = function()
-			if not e.GetValue("Auto Todo Perfect Swap") then
-				return
-			end
-			if e.GetValue("Auto Todo Perfect Swap Hotkey") ~= true then
-				return
-			end
-			if g.LocalPlayer.Data.Character ~= "Todo" then
-				return
-			end
-			local n = m()
-			if not n then
-				i.Waiting = false
-				i.Fired = false
-				return
-			end
-			if not i.Waiting and not i.Fired then
-				l("Detected Clap, Waiting.")
-				i.Waiting = true
-			else
-				print("Waiting: " .. tostring(i.Waiting) .. " Fired: " .. tostring(i.Fired))
-			end
-			if i.Waiting and not i.Fired then
-				local o = e.GetValue("Auto Todo Perfect Swap Time Position")
-				if n.TimePosition >= o then
-					k("leftmouse")
-					i.Waiting = false
-					i.Fired = true
-					l("Completed Todo Perfect Swap")
-				end
-			end
-		end
-		function b:Initialise()
-			c.Add("onUpdate", n)
-		end
-		return b
-	end
-	function a.r()
-		local b, c, d, e, f, g = {}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("f")
-		local h, i, j =
-			d:Register("PunishM1Items", {}), function(h, i)
-				if not e.GetValue("Debug Mode") then
-					return
-				end
-				g.AddDebugMessage(h, i, 1000)
-			end, function(h)
-				local i, j = math.huge
-				for k, l in pairs(f:GetPlayers()) do
-					if l ~= h then
-						local m = (h.Player.Position - l.Player.Position).Magnitude
-						if m < i then
-							j = l
-							i = m
-						end
-					end
-				end
-				return j, i
-			end
-		local k = function()
-			if not e.GetValue("Auto Return M1") then
-				return
-			end
-			local k = f:GetLocalPlayer()
-			local l = k and k.RootPart
-			if not l then
-				i("Aborted Auto Return M1, No HRP.", "error")
-				return
-			end
-			local m = l:FindFirstChild("BlockHit")
-			if not m or h[m.Address] then
-				return
-			end
-			h[m.Address] = utility.GetTickCount()
-			local n, o = j(k)
-			if not n or not o or o > 8 then
-				return
-			end
-			keyboard.release("f")
-			mouse.click("leftmouse")
-		end
-		function b:Initialise()
-			c.Add("onUpdate", function()
-				k()
-			end)
-			c.Add("onSlowUpdate", function()
-				if h and type(h) == "table" and next(h) then
-					local l = utility.GetTickCount()
-					for m, n in pairs(h) do
-						if (l - n) > 1000 then
-							h[m] = nil
-						end
-					end
-				end
-			end)
-		end
-		return b
-	end
-	function a.s()
-		local b, c, d, e, f = {}, a.load("c"), a.load("a"), a.load("b"), a.load("h")
-		local g, h, i, j, k, l, m, n, o, p, q, r, s, t, u =
-			d:Register("PV_TextSizeCache", {}),
-			d:Register("PV_NameCache", {}),
-			d:Register("PV_ColorCache", {}),
-			Color3.new(0, 0, 0),
-			Color3.new(1, 1, 1),
-			Color3.fromRGB,
-			draw.Rect,
-			draw.RectFilled,
-			draw.ComputeConvexHull,
-			draw.Polyline,
-			draw.ConvexPolyFilled,
-			draw.TextOutlined,
-			draw.GetTextSize,
-			draw.GetPartCorners,
-			utility.WorldToScreen
-		local v, w, x, y, z =
-			function(v)
-				if type(v) ~= "table" then
-					return l(255, 255, 255)
-				end
-				local w, x, y = v.R or v.r or 255, v.G or v.g or 255, v.B or v.b or 255
-				local z = w .. "," .. x .. "," .. y
-				local A = i[z]
-				if A then
-					return A
-				end
-				local B = l(w, x, y)
-				i[z] = B
-				return B
-			end, function(v, w)
-				local x = v .. tostring(w)
-				local y = g[x]
-				if y then
-					return y[1], y[2]
-				end
-				local z, A = s(v, w)
-				g[x] = { z, A }
-				return z, A
-			end, function(v, w)
-				local x = h[v]
-				if not x then
-					x = {}
-					h[v] = x
-				end
-				local y = x[w]
-				if y then
-					return y
-				end
-				local z = string.sub(v, 1, w)
-				x[w] = z
-				return z
-			end, function(v, w)
-				local x = t(v)
-				if not x then
-					return
-				end
-				for y, z in ipairs(x) do
-					local A, B, C = u(z)
-					if C then
-						w[#w + 1] = { A, B }
-					end
-				end
-			end, function(v)
-				for w = #v, 1, -1 do
-					v[w] = nil
-				end
-			end
-		local aa = function(A, B, C, D)
-			if not A or not B or not C then
-				return
-			end
-			if not A.IsAlive then
-				return
-			end
-			local E, F = A.Position, C.EvasiveBarColor
-			local G, H = v(F), C.CooldownFillColor
-			local I, J = v(H), C.CooldownBackgroundColor
-			local K, L = v(J), C.AnimationDesyncOutlineColor
-			local M, N = v(L), C.AnimationDesyncFillColor
-			local O = v(N)
-			if C.AnimationDesyncGuides and B.Exploiting then
-				local P = B.RootPart
-				if not P then
-					return
-				end
-				y(P, D)
-				if #D >= 3 then
-					local Q = o(D)
-					if Q then
-						p(Q, M, true, 2, L.a)
-						q(Q, O, N.a)
-					end
-				end
-				z(D)
-			end
-			local P, Q, R = u(E)
-			if not R then
-				return
-			end
-			local S = A.BoundingBox
-			if not S then
-				return
-			end
-			local T, U = C.Font, B.Evade
-			if C.DrawEvasiveBar and U then
-				local V = math.clamp(U / 50, 0, 1)
-				local W, X, Y, Z = S.h * V, S.x - 8, S.y, S.h
-				n(X - 1, Y - 1, 7, Z + 2, j, 0, 255)
-				n(X, Y + Z - W, 5, W, G, 0, 255)
-				local _ = tostring(math.floor(V * 100)) .. "%"
-				local aa = w(_, T)
-				r(_, X - aa - 2, Y, k, C.Font)
-			end
-			local aa = B.OrderedMoves
-			if C.DrawCooldowns and aa then
-				local V = #aa
-				local W, X, Y = S.h / V, S.x + S.w + 2, S.y
-				for Z = 1, V do
-					local _ = aa[Z]
-					local ab, ac = _.Remaining, Y + (Z - 1) * W
-					n(X, ac, W, W, K, 0, J.a)
-					if ab > 0 then
-						local ad = ab / _.Cooldown
-						local ae = W * ad
-						n(X + W - ae, ac, ae, W, I, 0, H.a)
-					end
-					m(X, ac, W, W, k)
-					local ad = _.Name
-					local ae, af = ad, T
-					if W < 40 then
-						af = "SmallestPixel"
-					end
-					if W < 25 then
-						ae = x(ad, 1)
-					elseif W < 40 then
-						ae = x(ad, 3)
-					end
-					if W >= 15 then
-						local ag, ah = w(ae, af)
-						local ai, aj = X + (W - ag) / 2, ac + (W - ah) / 2
-						r(ae, ai, aj, k, af)
-					end
-				end
-			end
-		end
-		local ab = function()
-			if not e.GetValue("Visuals Enabled") then
-				return
-			end
-			local ab, ac, ad =
-				{
-					DrawCooldowns = e.GetValue("Draw Cooldowns"),
-					CooldownFillColor = e.GetValue("Cooldown Fill Color"),
-					CooldownBackgroundColor = e.GetValue("Cooldown Background Color"),
-					DrawEvasiveBar = e.GetValue("Draw Evasive Bar"),
-					EvasiveBarColor = e.GetValue("Evasive Fill Color"),
-					AnimationDesyncGuides = e.GetValue("Draw Animation Desync Guides"),
-					AnimationDesyncOutlineColor = e.GetValue("Animation Desync Flagged Outline"),
-					AnimationDesyncFillColor = e.GetValue("Animation Desync Flagged Fill"),
-					Font = e.GetValue("Font Selection"),
-				},
-				{},
-				entity.GetPlayers(false)
-			for ae = 1, #ad do
-				local af = ad[ae]
-				local ag = f.Players[af.Name]
-				aa(af, ag, ab, ac)
-			end
-		end
-		function b:Initialise()
-			c.Add("onPaint", function(...)
-				ab()
-			end)
-		end
-		return b
-	end
-	function a.t()
-		local aa, ab, ac, ad, ae = {}, a.load("c"), a.load("b"), a.load("a"), a.load("h")
-		local af, ag, ah, ai, aj, b, c, d, e, f =
-			ad:Register("WV_TextSizeCache", {}),
-			ad:Register("WV_ColorCache", {}),
-			ad:Register("WV_FloorCache", {}),
-			Color3.fromRGB,
-			draw.TextOutlined,
-			draw.GetTextSize,
-			utility.WorldToScreen,
-			cheat.GetWindowSize,
-			math.floor,
-			function(af, ag, ah)
-				local ai = af:GetAttribute(ag)
-				return ai and ai.Value or ah
-			end
-		local g, h, i =
-			function(g)
-				if type(g) ~= "table" then
-					return ai(255, 255, 255)
-				end
-				local h, i, j = g.R or g.r or 255, g.G or g.g or 255, g.B or g.b or 255
-				local k = h .. "," .. i .. "," .. j
-				local l = ag[k]
-				if l then
-					return l
-				end
-				local m = ai(h, i, j)
-				ag[k] = m
-				return m
-			end, function(g)
-				local h = ah[g]
-				if h then
-					return h
-				end
-				h = e(g)
-				ah[g] = h
-				return h
-			end, function(g, h)
-				local i = g .. tostring(h)
-				local j = af[i]
-				if j then
-					return j[1], j[2]
-				end
-				local k, l = b(g, h)
-				af[i] = { k, l }
-				return k, l
-			end
-		local j, k =
-			function(j)
-				if not j.Enabled then
-					return
-				end
-				local k, l = j.Font, j.Color
-				local m, n, o, p = g(l), d(), ae.ClosestDomain, ae.Objects.Domains
-				for q = 1, #p do
-					local r = p[q]
-					if r then
-						local s = f(r, "Health", 0)
-						local t = "Domain Health: " .. tostring(h(s))
-						local u, v = i(t, k)
-						local w, x, y = false
-						if o.Instance and r == o.Instance and o.Distance <= 40 then
-							x = (n / 2) - (u / 2)
-							y = 50
-							w = true
-						else
-							local z, A, B = utility.WorldToScreen(r.Position)
-							if B then
-								x = z - u / 2
-								y = A - v / 2
-								w = B
-							end
-						end
-						if w and t ~= "" then
-							aj(t, x, y, m, k, l.a)
-						end
-					end
-				end
-			end, function(j)
-				if not j.Enabled then
-					return
-				end
-				local k, l = j.Font, j.Color
-				local m, n = g(l), ae.Objects.Items
-				for o = 1, #n do
-					local p = n[o]
-					if p then
-						local q, r, s = c(p.Position)
-						if s then
-							local t = p.Name
-							local u, v = i(t, k)
-							local w, x = q - (u / 2), r - (v / 2)
-							if t ~= "" then
-								aj(t, w, x, m, k, l.a)
-							end
-						end
-					end
-				end
-			end
-		local l = function()
-			if not ac.GetValue("Visuals Enabled") then
-				return
-			end
-			local l = ac.GetValue("Font Selection")
-			j({
-				Enabled = ac.GetValue("Domain Health ESP"),
-				Color = ac.GetValue("Domain Health ESP Color"),
-				Font = l,
-			})
-			k({ Enabled = ac.GetValue("Item ESP"), Color = ac.GetValue("Item ESP Color"), Font = l })
-		end
-		function aa:Initialise()
-			ab.Add("onPaint", l)
-		end
-		return aa
-	end
-	function a.u()
-		local aa, ab, ac = a.load("d"), a.load("e"), 0
-		local ad, ae =
-			function(ad)
-				local ae = ad.Address
-				return aa.ReadVector2(ae, ab.GuiObject.AbsoluteSize)
-			end, function(ad)
-				local ae = ad.Address
-				return aa.ReadVector2(ae, ab.GuiObject.AbsolutePosition)
-			end
-		local af = function(af)
-			local ag, ah = ae(af), ad(af)
-			return ag + (ah / 2)
-		end
-		local ag = function(ag, ah, ai)
-			local aj, b, c = math.huge, (ai.X * 0.05)
-			for d, e in pairs(ag:GetChildren()) do
-				local f, g = af(e), ad(e.Top)
-				local h = f.X + (g.X / 2)
-				local i = h + b > ah.X
-				if i then
-					local j = f.X - ah.X
-					if j < aj then
-						c = e
-						aj = j
-					end
-				end
-			end
-			return c
-		end
-		return function(ah)
-			if not ah then
-				return
-			end
-			local ai = ah.Screen.Game
-			local aj, b = ai.Guy, utility.GetTickCount()
-			if aa.Read(aj.Explode.Address, ab.GuiObject.Visible) then
-				return
-			end
-			local c, d = ad(ai), af(aj)
-			local e = ag(ai.Walls, d, c)
-			if not e then
-				return
-			end
-			local f, g = e.Top, e.Bottom
-			local h, i, j = ae(f), ad(f), ae(g)
-			local k, l = h.Y + i.Y, j.Y
-			local m = l - k
-			local n, o = k + m * 0.5, m * 0.1
-			local p = n + o
-			if d.Y > p and b - ac > 25 then
-				mouse.Click("leftmouse")
-				ac = b
-			end
-		end
-	end
-	function a.v()
-		local aa, ab = a.load("d"), a.load("e")
-		local ac, ad =
-			function(ac)
-				local ad = ac.Address
-				return aa.ReadVector2(ad, ab.GuiObject.AbsoluteSize)
-			end, function(ac)
-				local ad = ac.Address
-				return aa.ReadVector2(ad, ab.GuiObject.AbsolutePosition)
-			end
-		local ae = function(ae)
-			local af, ag = ad(ae), ac(ae)
-			return af + (ag / 2)
-		end
-		local af = function(af, ag)
-			local ah, ai = af.BG1.Floor, af.Food
-			if not ah or not ai then
-				print("Minigame Critical Error | Couldn't find floor or food!")
-				return nil
-			end
-			local aj, b = ad(ah), ac(ah)
-			local c, d, e, f = b.X * 0.15, math.huge
-			for g, h in pairs(ai:GetChildren()) do
-				local i = ae(h)
-				local j, k = math.abs(i.X - ag.X), aj.Y - i.Y
-				local l = h.Name == "Speed" and j > c
-				if not l then
-					if k < d then
-						e = h
-						f = i
-						d = k
-					end
-				end
-			end
-			return e, f
-		end
-		return function(ag)
-			if not ag then
-				return
-			end
-			local ah = ag.Screen.Game
-			local ai = ah.Guy
-			if aa.Read(ai.Explode.Address, ab.GuiObject.Visible) then
-				return
-			end
-			local aj = ae(ai)
-			local b, c = af(ah, aj)
-			if not b or not c then
-				return
-			end
-			local d = c.X - aj.X
-			if math.abs(d) >= 20 then
-				if d < 0 then
-					keyboard.click("a")
-				else
-					keyboard.click("d")
-				end
-			end
-		end
-	end
-	function a.w()
-		local aa, ab, ac, ad = a.load("c"), a.load("b"), a.load("a"), {}
-		ad.DebugMode = false
-		local ae, af, ag = ac:Register("UI.Elements", {}), ac:Register("UI.DebugElements", {}), {}
-		ag.__index = ag
-		function ag:Get()
-			return ab.GetValue(self.Name)
-		end
-		function ag:Set(ah)
-			ui.setValue(self.TabRef, self.ContainerRef, self.Name, ah)
-			ab.SetValue(self.Name, ah)
-		end
-		function ag:Visible(ah)
-			ui.setVisibility(self.TabRef, self.ContainerRef, self.Name, ah)
-		end
-		function ag:OnChange(ah)
-			self._onChange = ah
-			return self
-		end
-		function ag:_Read()
-			return ui.getValue(self.TabRef, self.ContainerRef, self.Name)
-		end
-		function ag:_Poll()
-			local ah, ai = self:_Read(), ab.GetValue(self.Name)
-			if ah == ai then
-				return
-			end
-			ab.SetValue(self.Name, ah)
-			if self._onChange then
-				self._onChange(ah, ai)
-			end
-		end
-		local ah, ai =
-			function(ah, ai, aj, b)
-				local c = setmetatable({ TabRef = ah, ContainerRef = ai, Name = aj, Debug = b and b.Debug }, ag)
-				ab.Register(aj, c)
-				ae[aj] = c
-				if c.Debug then
-					c:Visible(false)
-					af[#af + 1] = c
-				end
-				return c
-			end, {}
-		ai.__index = ai
-		function ai:Checkbox(aj, b, c)
-			ui.newCheckbox(self.TabRef, self.Ref, aj, b)
-			return ah(self.TabRef, self.Ref, aj, c)
-		end
-		function ai:SliderInt(aj, b, c, d, e)
-			ui.newSliderInt(self.TabRef, self.Ref, aj, b, c, d)
-			return ah(self.TabRef, self.Ref, aj, e)
-		end
-		function ai:SliderFloat(aj, b, c, d, e)
-			ui.newSliderFloat(self.TabRef, self.Ref, aj, b, c, d)
-			return ah(self.TabRef, self.Ref, aj, e)
-		end
-		function ai:Dropdown(aj, b, c, d)
-			ui.newDropdown(self.TabRef, self.Ref, aj, b, c)
-			local e = ah(self.TabRef, self.Ref, aj, d)
-			e._Read = function(f)
-				local g = ui.getValue(f.TabRef, f.ContainerRef, aj)
-				return b[g + 1]
-			end
-			return e
-		end
-		function ai:Multiselect(aj, b, c)
-			ui.newMultiselect(self.TabRef, self.Ref, aj, b)
-			local d = ah(self.TabRef, self.Ref, aj, c)
-			d._Read = function(e)
-				local f, g = ui.getValue(e.TabRef, e.ContainerRef, aj), {}
-				for h, i in ipairs(f) do
-					if i then
-						g[b[h]] = true
-					end
-				end
-				return g
-			end
-			d._Poll = function(e)
-				local f, g = e:_Read(), ab.GetValue(e.Name)
-				local h = type(g) ~= "table"
-				if not h then
-					for i, j in ipairs(b) do
-						if f[j] ~= g[j] then
-							h = true
-							break
-						end
-					end
-				end
-				if not h then
-					return
-				end
-				ab.SetValue(e.Name, f)
-				if e._onChange then
-					e._onChange(f, g)
-				end
-			end
-			return d
-		end
-		function ai:Colorpicker(aj, b, c, d)
-			ui.newColorpicker(self.TabRef, self.Ref, aj, b, c)
-			local e = ah(self.TabRef, self.Ref, aj, d)
-			e._Read = function(f)
-				return ui.getValue(f.TabRef, f.ContainerRef, aj)
-			end
-			e.Get = function(f, g)
-				local h = ab.GetValue(f.Name)
-				if not h then
-					return nil
-				end
-				g = (tostring(g) or "table"):lower()
-				return g == "rgb" and Color3.fromRGB(h.r, h.g, h.b) or h
-			end
-			e._Poll = function(f)
-				local g, h = f:_Read(), ab.GetValue(f.Name)
-				if h and g.r == h.r and g.g == h.g and g.b == h.b and g.a == h.a then
-					return
-				end
-				ab.SetValue(f.Name, g)
-				if f._onChange then
-					f._onChange(g, h)
-				end
-			end
-			return e
-		end
-		function ai:InputText(aj, b, c)
-			ui.newInputText(self.TabRef, self.Ref, aj, b)
-			return ah(self.TabRef, self.Ref, aj, c)
-		end
-		function ai:Button(aj, b, c)
-			ui.newButton(self.TabRef, self.Ref, aj, b)
-			local d = ah(self.TabRef, self.Ref, aj, c)
-			d.Get = nil
-			d.Set = nil
-			d._Poll = function() end
-			return d
-		end
-		function ai:Listbox(aj, b, c, d)
-			ui.newListbox(self.TabRef, self.Ref, aj, b, function()
-				local e = ui.getValue(self.TabRef, self.Ref, aj)
-				local f = b[e + 1]
-				ab.SetValue(aj, f)
-				if c then
-					c(f)
-				end
-			end)
-			local e = ah(self.TabRef, self.Ref, aj, d)
-			e._Poll = function() end
-			return e
-		end
-		function ai:KeyPicker(aj, b, c)
-			ui.newHotkey(self.TabRef, self.Ref, aj, b)
-			local d = ah(self.TabRef, self.Ref, aj, c)
-			d._Read = function(e)
-				return ui.getValue(e.TabRef, e.ContainerRef, aj)
-			end
-			d.Get = function(e, f)
-				if f == "Hotkey" then
-					return ui.getHotkey(e.TabRef, e.ContainerRef, aj)
-				end
-				return ab.GetValue(e.Name)
-			end
-			return d
-		end
-		function ai:Page(aj, b)
-			local c, d = self:Dropdown(aj, b, 1), {}
-			for e, f in ipairs(b) do
-				d[f] = {}
-			end
-			local e, f, g =
-				b[1], self, function(e, f)
-					local g = d[e]
-					if not g then
-						return
-					end
-					for h = 1, #g do
-						g[h]:Visible(f)
-					end
-				end
-			for h, i in ipairs(b) do
-				g(i, h == 1)
-			end
-			c:OnChange(function(h)
-				g(e, false)
-				e = h
-				g(e, true)
-			end)
-			local h = {}
-			function h:For(i)
-				assert(d[i], "[UI.Page]: Unknown page '" .. tostring(i) .. "'")
-				return setmetatable({}, {
-					__index = function(j, k)
-						local l = ai[k]
-						if type(l) ~= "function" or k == "Page" then
-							return nil
-						end
-						return function(m, ...)
-							local n = l(f, ...)
-							d[i][#d[i] + 1] = n
-							if i ~= e then
-								n:Visible(false)
-							end
-							return n
-						end
-					end,
-				})
-			end
-			return h
-		end
-		local aj = {}
-		aj.__index = aj
-		function aj:Container(b, c, d)
-			ui.newContainer(self.Ref, b, c, d or {})
-			return setmetatable({ TabRef = self.Ref, Ref = b }, ai)
-		end
-		function ad.NewTab(b, c)
-			ui.newTab(b, c)
-			return setmetatable({ Ref = b }, aj)
-		end
-		function ad:SetDebugMode(b)
-			self.DebugMode = b
-			for c = 1, #af do
-				af[c]:Visible(b)
-			end
-		end
-		function ad:Initialise()
-			aa.Add("onUpdate", function()
-				for b, c in next, ae do
-					c:_Poll()
-				end
-			end)
-		end
-		return ad
-	end
-	function a.x()
-		local aa, ab, ac, ad, ae, af =
-			{ GameUI = nil, GameType = nil },
-			a.load("h"),
-			a.load("c"),
-			a.load("b"),
-			a.load("f"),
-			{ ["Flight Game"] = a.load("u"), ["Catch Game"] = a.load("v") }
-		local ag = function(ag)
-			if not ad.GetValue("Debug Mode") then
-				return
-			end
-			ae.AddDebugMessage(ag, "info", 1200)
-		end
-		local ah = function(ah)
-			local ai = af[aa.GameType]
-			if not ai then
-				ag("No module found for game type: " .. tostring(aa.GameType))
-				return nil
-			end
-			return ai(ah)
-		end
-		function aa.Initialise(ai)
-			ac.Add("onUpdate", function()
-				if utility.GetMenuState() then
-					return
-				end
-				if not ad.GetValue("Minigames Enabled") then
-					return
-				end
-				if not aa.GameUI then
-					return
-				end
-				if not aa.GameType then
-					return
-				end
-				if ad.GetValue(aa.GameType) ~= true then
-					return
-				end
-				ah(aa.GameUI)
-			end)
-			ac.Add("onSlowUpdate", function()
-				if not ad.GetValue("Minigames Enabled") then
-					return
-				end
-				local aj = ab.LocalPlayer.PlayerGui
-				if not aj then
-					return
-				end
-				local b = aj:FindFirstChild("DeviceUI")
-				aa.GameUI = b
-				if b then
-					local c = b:FindFirstChild("DeviceSystem")
-					if not c then
-						aa.GameType = nil
-						return
-					end
-					local d = c:FindFirstChild("Wall") and "Flight Game"
-						or c:FindFirstChild("Food") and "Catch Game"
-						or nil
-					aa.GameType = d
-				else
-					aa.GameType = nil
-				end
-			end)
-		end
-		return aa
-	end
-	function a.y()
-		local aa, ab, ac, ad, ae, af, ag, ah, ai, aj, b =
-			{},
-			a.load("l"),
-			a.load("m"),
-			a.load("n"),
-			a.load("o"),
-			a.load("p"),
-			a.load("q"),
-			a.load("r"),
-			a.load("s"),
-			a.load("t"),
-			a.load("x")
-		function aa:Initialise()
-			ab:Initialise()
-			ac:Initialise()
-			ad:Initialise()
-			ae:Initialise()
-			af:Initialise()
-			ag:Initialise()
-			ah:Initialise()
-			ai:Initialise()
-			aj:Initialise()
-			b:Initialise()
-		end
-		return aa
-	end
-	function a.z()
-		local aa, ab, ac = {}, "Combat_DiddyWare", "Combat"
-		function aa:Initialise(ad)
-			local ae = ad:Container(ab, ac, { autosize = true, next = true })
-			ae:Checkbox("Auto Blackflash")
-			ae:KeyPicker("Auto Blackflash Hotkey", true)
-			ae:SliderFloat("Auto Blackflash Timing", 0, 1, 0.285, { Debug = true })
-			ae:SliderFloat("Auto Todo Blackflash Time Position", 0, 5, 2.8, { Debug = true })
-			ae:Checkbox("Auto Todo Perfect Swap")
-			ae:KeyPicker("Auto Todo Perfect Swap Hotkey", true)
-			ae:SliderFloat("Auto Todo Perfect Swap Time Position", 0, 1, 0.55, { Debug = true })
-			ae:Checkbox("Auto Mahoraga Earthquake")
-			ae:SliderFloat("Auto Mahoraga Earthquake Time Position", 0, 1, 0.8, { Debug = true })
-			ae:Checkbox("Auto Nanami Ratio")
-			ae:SliderFloat("Auto Nanami Ratio GUI Scale", 0, 1, 0.3, { Debug = true })
-			ae:Checkbox("Auto Lawyer QTE")
-			ae:SliderInt("Auto Lawyer QTE Delay (ms)", 1, 200, 75)
-			ae:Checkbox("Auto Return M1")
-		end
-		return aa
-	end
-	function a.A()
-		local aa, ab, ac = {}, "VisualsTab_DiddyWare", "Visuals"
-		function aa:Initialise(ad)
-			local ae = ad:Container(ab, ac, { autosize = true })
-			ae:Checkbox("Visuals Enabled")
-			local af = ae:Page("Visual Types", { "Player", "World" })
-			local ag, ah = af:For("Player"), af:For("World")
-			ag:Checkbox("Draw Cooldowns")
-			ag:Colorpicker("Cooldown Fill Color", { r = 255, g = 0, b = 0, a = 180 }, true)
-			ag:Colorpicker("Cooldown Background Color", { r = 0, g = 0, b = 0, a = 200 }, true)
-			ag:Checkbox("Draw Evasive Bar")
-			ag:Colorpicker("Evasive Fill Color", { r = 121, g = 74, b = 148, a = 255 }, true)
-			ag:Checkbox("Draw Animation Desync Guides", false)
-			ag:Colorpicker("Animation Desync Flagged Outline", { r = 0, g = 0, b = 0, a = 180 }, true)
-			ag:Colorpicker("Animation Desync Flagged Fill", { r = 255, g = 0, b = 0, a = 100 }, true)
-			ah:Checkbox("Item ESP", false)
-			ah:Colorpicker("Item ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
-			ah:Checkbox("Domain Health ESP", false)
-			ah:Colorpicker("Domain Health ESP Color", {
-				r = 255,
-				g = 255,
-				b = 255,
-				a = 255,
-			}, true)
-		end
-		return aa
-	end
-	function a.B()
-		local aa, ab, ac = {}, "Minigame_DiddyWare", "Minigames"
-		function aa:Initialise(ad)
-			local ae = ad:Container(ab, ac, { autosize = true, next = true })
-			ae:Checkbox("Minigames Enabled")
-			ae:Checkbox("Flight Game")
-			ae:Checkbox("Catch Game")
-		end
-		return aa
-	end
-	function a.C()
-		local aa, ab, ac, ad = {}, a.load("w"), "Settings_DiddyWare", "Settings"
-		function aa:Initialise(ae)
-			local af = ae:Container(ac, ad, { autosize = true })
-			local ag = af:Page("Settings Menu", {
-				"Debug",
-				"Performance",
-				"Customisation",
-			})
-			local ah, ai, aj = ag:For("Debug"), ag:For("Performance"), ag:For("Customisation")
-			local b = ah:Checkbox("Debug Mode", false)
-			b:OnChange(function(c)
-				ab:SetDebugMode(c)
-			end)
-			ah:Multiselect("Show Debug Info", { "ok", "info", "warning", "error" })
-			ai:SliderFloat("Update Local Info Interval (s)", 1, 3, 1)
-			ai:SliderFloat("Rebuild Player Cache Interval (s)", 0.05, 1, 0.15)
-			ai:SliderInt("Update Player Cooldowns Interval (ms)", 1, 50, 5)
-			ai:SliderInt("Update Player Animations Interval (ms)", 1, 50, 5)
-			aj:Dropdown("Font Selection", {
-				"ConsolasBold",
-				"SmallestPixel",
-				"Verdana",
-				"Tahoma",
-			}, 1)
-		end
-		return aa
-	end
-	function a.D()
-		local aa, ab, ac, ad, ae, af = {}, a.load("w"), a.load("z"), a.load("A"), a.load("B"), a.load("C")
-		function aa:Initialise()
-			local ag = ab.NewTab("DiddyWare_JJS", "DiddyWare")
-			ac:Initialise(ag)
-			ad:Initialise(ag)
-			ae:Initialise(ag)
-			af:Initialise(ag)
-		end
-		return aa
-	end
-	function a.E()
-		return function()
-			function math.floor(aa)
-				return aa - (aa % 1)
-			end
-			function math.clamp(aa, ab, ac)
-				return math.max(ab, math.min(ac, aa))
-			end
-		end
+
+	for k in next, tbl do
+		tbl[k] = nil
 	end
 end
-local aa, ab, ac, ad, ae, af, ag, ah, ai, aj =
-	a.load("i"),
-	a.load("k"),
-	a.load("g"),
-	a.load("f"),
-	a.load("y"),
-	a.load("D"),
-	a.load("c"),
-	a.load("a"),
-	a.load("E"),
-	a.load("w")
-local b = function()
-	ai()
-	ag:Initialise()
-	aj:Initialise()
-	aa:Initialise()
-	ab:Initialise()
-	ac:Initialise()
-	ad:Initialise()
-	af:Initialise()
-	ae:Initialise()
-	ag.Add("shutdown", function()
-		ag.ClearAll()
-		ah:UnloadAll()
+
+function TableManager:Unload(name)
+	local tbl = _registry[name]
+	if not tbl then
+		return
+	end
+
+	for k in next, tbl do
+		tbl[k] = nil
+	end
+
+	_registry[name] = nil
+end
+
+function TableManager:UnloadAll()
+	for name, tbl in next, _registry do
+		for k in next, tbl do
+			tbl[k] = nil
+		end
+		_registry[name] = nil
+	end
+end
+
+return TableManager
+end function __DIST.b()
+local Table = __DIST.load('a')
+
+local Configuration = {}
+local Elements = Table:Register("Configuration.Elements", {})
+local Values = Table:Register("Configuration.Values", {})
+
+function Configuration.Register(name, element)
+	Elements[name] = element
+end
+
+function Configuration.GetValue(name)
+	return Values[name]
+end
+
+function Configuration.SetValue(name, value)
+	Values[name] = value
+end
+
+return Configuration
+end function __DIST.c()
+local Callbacks = {}
+local Registry = {}
+
+local EVENTS = { "onPaint", "onUpdate", "onSlowUpdate", "shutdown" }
+
+for _, event in ipairs(EVENTS) do
+	Registry[event] = {}
+end
+
+function Callbacks.Add(EventName, CallbackFunction)
+	if type(EventName) ~= "string" or type(CallbackFunction) ~= "function" then
+		return nil
+	end
+
+	if not Registry[EventName] then
+		return nil
+	end
+
+	local Index = #Registry[EventName] + 1
+	Registry[EventName][Index] = CallbackFunction
+	return Index
+end
+
+function Callbacks.Remove(EventName, Index)
+	if Registry[EventName] then
+		Registry[EventName][Index] = nil
+	end
+end
+
+function Callbacks.ClearAll()
+	for EventName, _ in pairs(Registry) do
+		Registry[EventName] = {}
+	end
+end
+
+local function Fire(EventName, ...)
+	for _, Callback in pairs(Registry[EventName]) do
+		Callback(...)
+	end
+end
+
+function Callbacks:Initialise()
+	for _, EventName in ipairs(EVENTS) do
+		cheat.Register(EventName, function(...)
+			Fire(EventName, ...)
+		end)
+	end
+end
+
+return Callbacks
+end function __DIST.d()
+local Memory = {}
+
+local Read = memory.Read
+
+function Memory.Read(Address, Offset)
+	return Read(Offset.Type, Address + Offset.Offset)
+end
+
+function Memory.ReadVector2(Address, Offset: { Type: string, X: number, Y: number })
+	local X = Read(Offset.Type, Address + Offset.X)
+	local Y = Read(Offset.Type, Address + Offset.Y)
+	return Vector3.new(X, Y, 0)
+end
+
+return Memory
+end function __DIST.e()
+return {
+    ['version'] = 'version-6776addb8fbc4d17',
+
+    ['DoubleConstrainedValue'] = {
+        ['Value'] = {Type = 'double', Offset = 0xE0},
+    },
+    ['Animator'] = {
+        ['AnimationTrackList'] = {Type = 'pointer', Offset = 0x848},
+    },
+    ['Animation'] = {
+        ['AnimationId'] = {Type = 'string', Offset = 0xD0},
+    },
+    ['GuiObject'] = {
+        ['Size'] = {Type = 'float', X = 0x538, Y = 0x540},
+        ['AbsoluteSize'] = {Type = 'float', X = 0x118, Y = 0x11C},
+        ['AbsolutePosition'] = {Type = 'float', X = 0x110, Y = 0x114},
+        ['Visible'] = {Type = 'bool', Offset = 0x5B5},
+        ['Position'] = {Type = 'float', X = 0x518, Y = 0x520},
+        ['Rotation'] = {Type = 'float', Offset = 0x188},
+    },
+    ['ScreenGui'] = {
+        ['Enabled'] = {Type = 'bool', Offset = 0x4CC},
+    },
+    ['AnimationTrack'] = {
+        ['TimePosition'] = {Type = 'float', Offset = 0xE8},
+        ['Speed'] = {Type = 'float', Offset = 0xE4},
+        ['Looped'] = {Type = 'bool', Offset = 0xF5},
+        ['Animation'] = {Type = 'pointer', Offset = 0xD0},
+    },
+}end function __DIST.f()-- << Imports >>
+
+local Table = __DIST.load('a')
+local Callbacks = __DIST.load('c')
+local Configuration = __DIST.load('b')
+
+-- << Locals >>
+local GetTickCount = utility.getTickCount
+local GetMousePos = utility.getMousePos
+
+-- << State >>
+local DebugMode = {
+	Messages = Table:Register("DM.Messages", {}),
+}
+
+local MAX_MESSAGES = 20
+local Drag = {
+	Active = false,
+	OffsetX = 0,
+	OffsetY = 0,
+}
+
+-- << Constants >>
+local LEVELS = {
+	info = { label = "INFO", color = Color3.new(0.4, 0.8, 1.0) },
+	warn = { label = "WARN", color = Color3.new(1.0, 0.85, 0.2) },
+	error = { label = "ERROR", color = Color3.new(1.0, 0.3, 0.3) },
+	ok = { label = "OK", color = Color3.new(0.3, 1.0, 0.5) },
+}
+local WHITE = Color3.new(1, 1, 1)
+local GREY = Color3.new(0.5, 0.5, 0.5)
+local HEADER = Color3.new(0.12, 0.12, 0.14)
+local BG = Color3.new(0.08, 0.08, 0.10)
+local BORDER = Color3.new(0.25, 0.25, 0.3)
+local ROW_BG = Color3.new(0.15, 0.15, 0.18)
+
+local PANEL_X = 10
+local PANEL_Y = 10
+local PANEL_W = 600
+local LINE_H = 16
+local PADDING = 8
+
+local FADE_DURATION = 50
+
+-- << Variables >>
+local TextSizeCache = Table:Register("DM.TextSizeCache", {})
+
+-- << Private >>
+local function GetTextSize(Text, Font)
+	local Key = Text .. tostring(Font)
+	local Cached = TextSizeCache[Key]
+	if Cached then
+		return Cached[1], Cached[2]
+	end
+	local W, H = draw.GetTextSize(Text, Font)
+	TextSizeCache[Key] = { W, H }
+	return W, H
+end
+
+local function IsLevelVisible(Level, DebugInfo)
+	if type(DebugInfo) ~= "table" then
+		return true
+	end
+	return DebugInfo[Level] == true
+end
+
+local function PruneMessages()
+	local Now = GetTickCount()
+	local Messages = DebugMode.Messages
+
+	for i = #Messages, 1, -1 do
+		if Now >= Messages[i].Expiry then
+			table.remove(Messages, i)
+		end
+	end
+
+	table.sort(Messages, function(A, B)
+		return A.Expiry > B.Expiry
 	end)
 end
-b()
+
+local function IsMouseInHeader()
+	local Mouse = GetMousePos()
+	return Mouse[1] >= PANEL_X
+		and Mouse[1] <= PANEL_X + PANEL_W
+		and Mouse[2] >= PANEL_Y
+		and Mouse[2] <= PANEL_Y + (LINE_H + PADDING * 2)
+end
+
+local function UpdateDrag(MousePressed)
+	if not Drag.Active then
+		if not (IsMouseInHeader() and MousePressed) then
+			return
+		end
+		Drag.Active = true
+		local Mouse = GetMousePos()
+		Drag.OffsetX = Mouse[1] - PANEL_X
+		Drag.OffsetY = Mouse[2] - PANEL_Y
+	else
+		if MousePressed then
+			local Mouse = GetMousePos()
+			PANEL_X = Mouse[1] - Drag.OffsetX
+			PANEL_Y = Mouse[2] - Drag.OffsetY
+		else
+			Drag.Active = false
+		end
+	end
+end
+
+local function DrawPanel()
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	local SelectedDebugInfo = Configuration.GetValue("Show Debug Info")
+	local Font = Configuration.GetValue("Font Selection")
+	local Messages = DebugMode.Messages
+
+	if #Messages == 0 then
+		return
+	end
+
+	local VisibleCount = 0
+	for _, Message in ipairs(Messages) do
+		if IsLevelVisible(Message.Level, SelectedDebugInfo) then
+			VisibleCount = VisibleCount + 1
+		end
+	end
+
+	if VisibleCount == 0 then
+		return
+	end
+
+	UpdateDrag(keyboard.IsPressed("leftmouse"))
+
+	local Now = GetTickCount()
+	local HeaderH = LINE_H + PADDING * 2
+	local H = PADDING + LINE_H + PADDING + (VisibleCount * LINE_H) + PADDING
+
+	draw.RectFilled(PANEL_X, PANEL_Y, PANEL_W, H, BG, 4, 200)
+	draw.RectFilled(PANEL_X, PANEL_Y, PANEL_W, HeaderH, HEADER, 4, 230)
+	draw.Rect(PANEL_X, PANEL_Y, PANEL_W, H, BORDER, 1, 4, 180)
+
+	local HeaderText = "[ DEBUG ]"
+	local HeaderTH = select(2, GetTextSize(HeaderText, Font))
+	draw.TextOutlined("[ DEBUG ]", PANEL_X + PADDING, PANEL_Y + (HeaderH / 2) - (HeaderTH / 2), WHITE, Font)
+
+	local RowY = PANEL_Y + HeaderH
+
+	for _, Message in ipairs(Messages) do
+		if IsLevelVisible(Message.Level, SelectedDebugInfo) then
+			local Level = LEVELS[Message.Level]
+			local Tag = "[" .. Level.label .. "]"
+			local TagW, TagH = GetTextSize(Tag, Font)
+			local RowCY = RowY + (LINE_H / 2) - (TagH / 2)
+			local Remaining = Message.Expiry - Now
+
+			local T = Remaining < FADE_DURATION and math.max(0, Remaining / FADE_DURATION) or 1
+			local Alpha = math.floor(T * T * 255)
+
+			draw.RectFilled(PANEL_X + 1, RowY, PANEL_W - 2, LINE_H, ROW_BG, 0, math.floor(Alpha * 0.35))
+
+			draw.TextOutlined(Tag, PANEL_X + PADDING, RowCY, Level.color, Font, Alpha)
+			draw.TextOutlined(Message.Text, PANEL_X + PADDING + TagW + 6, RowCY, WHITE, Font, Alpha)
+
+			if Message.Count > 1 then
+				local Badge = "x" .. Message.Count
+				local BadgeW, BadgeH = GetTextSize(Badge, Font)
+				draw.TextOutlined(
+					Badge,
+					PANEL_X + PANEL_W - BadgeW - PADDING,
+					RowY + (LINE_H / 2) - (BadgeH / 2),
+					GREY,
+					Font,
+					Alpha
+				)
+			end
+
+			RowY = RowY + LINE_H
+		end
+	end
+end
+
+-- << Public >>
+function DebugMode.AddDebugMessage(Text, Level: "ok" | "error" | "warning" | "info", Duration)
+	Level = (Level and LEVELS[Level]) and Level or "info"
+	Duration = Duration or 3000
+	Text = tostring(Text)
+
+	local Now = GetTickCount()
+	local Messages = DebugMode.Messages
+
+	for i = 1, #Messages do
+		local M = Messages[i]
+		if M.Text == Text and M.Level == Level then
+			M.Count = M.Count + 1
+			M.Expiry = Now + Duration
+			return
+		end
+	end
+
+	if #Messages >= MAX_MESSAGES then
+		table.remove(Messages, 1)
+	end
+
+	Messages[#Messages + 1] = {
+		Text = Text,
+		Level = Level,
+		Count = 1,
+		Expiry = Now + Duration,
+	}
+end
+
+function DebugMode.Clear()
+	local Messages = DebugMode.Messages
+	for k in next, Messages do
+		Messages[k] = nil
+	end
+end
+
+function DebugMode:Initialise()
+	Callbacks.Add("onSlowUpdate", PruneMessages)
+	Callbacks.Add("onPaint", DrawPanel)
+end
+
+return DebugMode
+end function __DIST.g()-- << Imports >>
+
+local Configuration = __DIST.load('b')
+local Table = __DIST.load('a')
+local Callbacks = __DIST.load('c')
+local Memory = __DIST.load('d')
+local Offsets = __DIST.load('e')
+local DebugMode = __DIST.load('f')
+
+-- << Variables >>
+local Read = memory.read
+local Floor = math.floor
+
+local AnimationManager = {
+    Animations = Table:Register("AMAnimations", {}), 
+    _ScanState = {
+        Queue = {},
+        Index = 1,
+        Done = false,
+        StoredCallback = nil,
+    },
+}
+
+local TrackMetatable = {
+    __index = function(self, key)
+        local track = self.Track
+        if key == "TimePosition" then
+            return Floor(Memory.Read(track, Offsets.AnimationTrack.TimePosition) * 100) / 100
+        elseif key == "Speed" then
+            return Floor(Memory.Read(track, Offsets.AnimationTrack.Speed) * 100) / 100
+        elseif key == "Looped" then
+            return Memory.Read(track, Offsets.AnimationTrack.Looped)
+        else
+            return nil
+        end
+    end,
+}
+
+-- << Functions >>
+local function DebugLog(Message, Level, Duration)
+    if Configuration.GetValue("Debug Mode") and Message then
+        DebugMode.AddDebugMessage("[AM]:" .. tostring(Message), Level, Duration)
+    end
+end
+
+local function StartScan()
+    if AnimationManager._ScanState.Done then return end
+    AnimationManager._ScanState.Queue = { game.DataModel }
+    AnimationManager._ScanState.Index = 1
+end
+
+local function ProcessAnimationScan()
+    local queue = AnimationManager._ScanState.Queue
+    local index = AnimationManager._ScanState.Index
+    local animations = AnimationManager.Animations
+
+    for i = 1, 250 do
+        local obj = queue[index]
+        if not obj then
+            Callbacks.Remove("onUpdate", AnimationManager._ScanState.StoredCallback)
+            DebugLog("Finished Caching Animations.", "info", 3000)
+            return
+        end
+
+        if obj:IsA("Animation") then
+            local AnimationId = Memory.Read(obj.Address, Offsets.Animation.AnimationId)
+            if AnimationId ~= "" then
+                animations[AnimationId] = obj.Name
+            end
+        end
+
+        local children = obj:GetChildren()
+        for j = 1, #children do
+            queue[#queue + 1] = children[j]
+        end
+
+        index = index + 1
+    end
+
+    AnimationManager._ScanState.Index = index
+end
+
+function AnimationManager:GetPlayingAnimationTracks(Humanoid, PlayerData)
+    if not PlayerData or not PlayerData.Player.Name or not Humanoid then return {} end
+
+    local Tracks = {}
+    local Animator = PlayerData.Animator
+    if not Animator then
+        DebugLog("Animator missing for " .. PlayerData.Player.Name, "warning", 1000)
+        return Tracks
+    end
+
+    local List = Memory.Read(Animator.Address, Offsets.Animator.AnimationTrackList)
+    if List == 0 then
+        DebugLog("Wrong AnimationTrackList offset for " .. PlayerData.Player.Name, "warning", 1000)
+        return Tracks
+    end
+
+    local Iterator = Read("pointer", List)
+    while Iterator ~= 0 and Iterator ~= List do
+        local Track = Read("pointer", Iterator + 0x10)
+        if Track ~= 0 then
+            local AnimationPtr = Memory.Read(Track, Offsets.AnimationTrack.Animation)
+            if AnimationPtr ~= 0 then
+                local AnimationId = Memory.Read(AnimationPtr, Offsets.Animation.AnimationId)
+                if AnimationId ~= "" then
+                    local StoredTrack = {
+                        Track = Track,
+                        Animation = {
+                            AnimationId = AnimationId,
+                            Name = AnimationManager.Animations[AnimationId] or "Unknown",
+                        },
+                    }
+                    setmetatable(StoredTrack, TrackMetatable)
+                    Tracks[#Tracks + 1] = StoredTrack
+                end
+            end
+        end
+        Iterator = Read("pointer", Iterator)
+    end
+	
+    return Tracks
+end
+
+function AnimationManager:Initialise()
+    StartScan()
+    AnimationManager._ScanState.StoredCallback = Callbacks.Add("onUpdate", ProcessAnimationScan)
+end
+
+return AnimationManager end function __DIST.h()
+local Table = __DIST.load('a')
+
+return {
+	LocalPlayer = Table:Register("EnviromentLocalPlayer", {
+		Player = game.LocalPlayer,
+		Entity = entity.GetLocalPlayer(),
+		PlayerGui = game.LocalPlayer.PlayerGui,
+
+		Data = {
+			Character = nil,
+			Ping = 0,
+		},
+	}),
+
+	Players = Table:Register("EnvironmentPlayerData", {}),
+	Objects = Table:Register("EnvironmentObjects", {
+		Items = {},
+		Domains = {},
+	}),
+
+	ClosestDomain = Table:Register("EnvironmentClosestDomain", {
+		Instance = nil,
+		Distance = math.huge,
+	}),
+}
+end function __DIST.i()-- << Imports >>
+
+local AnimationManager = __DIST.load('g')
+local Table = __DIST.load('a')
+local Environment = __DIST.load('h')
+local Callbacks = __DIST.load('c')
+local Configuration = __DIST.load('b')
+local DebugMode = __DIST.load('f')
+
+-- << Services >>
+local Players = game.GetService("Players")
+local Stats = game.GetService("Stats")
+
+-- << Variables >>
+local Network = Stats:FindFirstChild("Network")
+local ServerStatsItem = Network.ServerStatsItem
+local Ping = ServerStatsItem["Data Ping"]
+
+local LastUseCache = Table:Register("LastUse_PlayerScanner", {})
+local CooldownStarts = Table:Register("CooldownStarts_PlayerScanner", {})
+
+local PlayerScanning = {
+	LastCooldownUpdate = 0,
+	LastAnimationUpdate = 0,
+	LastLocalUpdate = 0,
+	LastRebuild = 0,
+}
+
+-- << Functions >>
+local function GetAttribute(Instance, AttributeName, DefaultValue)
+	local Attribute = Instance:GetAttribute(AttributeName)
+	return Attribute and Attribute.Value or DefaultValue
+end
+
+local function ProcessPlayer(Player, NewPlayers)
+	if not Player or not Player.Name or Player.Name == "" then
+		DebugMode.AddDebugMessage("[PlayerScanner]: Invalid Player", "warning", 1000)
+		return
+	end
+
+	local Head = Player:GetBoneInstance("Head")
+	local RootPart = Player:GetBoneInstance("HumanoidRootPart")
+	if not Head or not RootPart then
+		DebugMode.AddDebugMessage("[PlayerScanner]: Aborted " .. Player.Name .. ", Missing Bodyparts", "warning", 1000)
+		return
+	end
+
+	local Character = RootPart.Parent
+	if not Character then
+		DebugMode.AddDebugMessage("[PlayerScanner]: Aborted " .. Player.Name .. ", Character is nil", "warning", 1000)
+		return
+	end
+
+	local Humanoid = Character:FindFirstChild("Humanoid")
+	local Moveset = Character:FindFirstChild("Moveset")
+	if not Humanoid or not Moveset then
+		DebugMode.AddDebugMessage(
+			"[PlayerScanner]: Aborted " .. Player.Name .. ", Missing Humanoid or Moveset",
+			"warning",
+			1000
+		)
+		return
+	end
+
+	local Animator = Humanoid:FindFirstChildOfClass("Animator")
+	local PlayerName = Player.Name
+	local OldData = Environment.Players[PlayerName]
+	local OldMoves = OldData and OldData.Moves or nil
+
+	local Ordered = {}
+	local Lookup = {}
+
+	local Moves = Moveset:GetChildren()
+	for i = 1, #Moves do
+		local Move = Moves[i]
+		local MoveName = Move.Name
+		local OldMove = OldMoves and OldMoves[MoveName]
+
+		local MoveData = {
+			Name = MoveName,
+			Key = GetAttribute(Move, "Key", i),
+			Cooldown = Move.Value or 0,
+			Instance = Move,
+			MoveKey = PlayerName .. MoveName,
+			IsOnCooldown = OldMove and OldMove.IsOnCooldown or false,
+			Remaining = OldMove and OldMove.Remaining or 0,
+		}
+
+		Ordered[i] = MoveData
+		Lookup[MoveName] = MoveData
+	end
+
+	table.sort(Ordered, function(a, b)
+		return a.Key < b.Key
+	end)
+
+	local Exploiting = (RootPart.Position - Head.Position).Magnitude > 20
+	local PlayerInstance = Players:FindFirstChild(PlayerName)
+
+	local PlayerData = {
+		Player = Player,
+		Character = Character,
+		Humanoid = Humanoid,
+		Animator = Animator,
+		RootPart = RootPart,
+		Head = Head,
+		Exploiting = Exploiting,
+
+		SelectedMoveset = GetAttribute(Character, "Moveset", "[???]"),
+		Evade = GetAttribute(Character, "Evade", 50),
+		Ultimate = PlayerInstance and GetAttribute(PlayerInstance, "Ultimate", 0) or 0,
+		Ragdolled = GetAttribute(Character, "Ragdoll", 0),
+		Moves = Lookup,
+		OrderedMoves = Ordered,
+	}
+
+	NewPlayers[PlayerName] = PlayerData
+	PlayerData.Animations = AnimationManager:GetPlayingAnimationTracks(Humanoid, PlayerData)
+end
+
+local function UpdateLocalInfo()
+	local LocalInfo = Environment.LocalPlayer
+	local LocalPlayer = game.LocalPlayer
+
+	LocalInfo.Entity = entity.GetLocalPlayer()
+	LocalInfo.Player = LocalPlayer
+	LocalInfo.PlayerGui = LocalPlayer and LocalInfo.PlayerGui or nil
+	LocalInfo.MinigameInterface = LocalInfo.PlayerGui and LocalInfo.PlayerGui:FindFirstChild("DeviceUI") or nil
+	LocalInfo.Data.Character = GetAttribute(LocalPlayer, "Moveset", "[???]")
+	LocalInfo.Data.Ping = Ping.Value
+end
+
+local function UpdateAnimations()
+	for _, Data in pairs(Environment.Players) do
+		Data.Animations = AnimationManager:GetPlayingAnimationTracks(Data.Humanoid, Data)
+	end
+end
+
+local function ProcessMove(MoveData, Now)
+	local Instance = MoveData.Instance
+	if not Instance then
+		MoveData.IsOnCooldown = false
+		MoveData.Remaining = 0
+		return
+	end
+
+	local Key = MoveData.MoveKey
+	local RobloxLastUse = GetAttribute(Instance, "LastUse", 0)
+
+	if RobloxLastUse ~= LastUseCache[Key] then
+		LastUseCache[Key] = RobloxLastUse
+		CooldownStarts[Key] = Now
+	end
+
+	local Start = CooldownStarts[Key]
+	if Start then
+		local Elapsed = Now - Start
+		if Elapsed < MoveData.Cooldown then
+			MoveData.IsOnCooldown = true
+			MoveData.Remaining = MoveData.Cooldown - Elapsed
+		else
+			MoveData.IsOnCooldown = false
+			MoveData.Remaining = 0
+		end
+	else
+		MoveData.IsOnCooldown = false
+		MoveData.Remaining = 0
+	end
+end
+
+local function UpdateCooldownState()
+	local Now = utility.GetTickCount() / 1000
+
+	for _, Data in pairs(Environment.Players) do
+		for _, MoveData in pairs(Data.Moves) do
+			ProcessMove(MoveData, Now)
+		end
+	end
+end
+
+local function RebuildCache()
+	local NewPlayers = {}
+	local LocalPlayer = entity.GetLocalPlayer()
+
+	if LocalPlayer then
+		ProcessPlayer(LocalPlayer, NewPlayers)
+	end
+
+	for _, Player in pairs(entity.GetPlayers(false)) do
+		ProcessPlayer(Player, NewPlayers)
+	end
+
+	Environment.Players = NewPlayers
+end
+
+local function Runtime()
+	local RescanEvery = (Configuration.GetValue("Rebuild Player Cache Interval (s)") or 1) * 1000
+	local UpdateCooldownsEvery = Configuration.GetValue("Update Player Cooldowns Interval (ms)") or 50
+	local UpdateAnimationsEvery = Configuration.GetValue("Update Player Animations Interval (ms)") or 10
+	local UpdateLocalInfoEvery = (Configuration.GetValue("Update Local Info Interval (s)") or 1) * 1000
+
+	local Now = utility.GetTickCount()
+
+	if (Now - PlayerScanning.LastCooldownUpdate) >= UpdateCooldownsEvery then
+		UpdateCooldownState()
+		PlayerScanning.LastCooldownUpdate = Now
+	end
+
+	if (Now - PlayerScanning.LastRebuild) >= RescanEvery then
+		RebuildCache()
+		PlayerScanning.LastRebuild = Now
+	end
+
+	if (Now - PlayerScanning.LastAnimationUpdate) >= UpdateAnimationsEvery then
+		UpdateAnimations()
+		PlayerScanning.LastAnimationUpdate = Now
+	end
+
+	if (Now - PlayerScanning.LastLocalUpdate) >= UpdateLocalInfoEvery then
+		UpdateLocalInfo()
+		PlayerScanning.LastLocalUpdate = Now
+	end
+end
+
+-- << Public API >>
+function PlayerScanning:DoesPlayerHaveMove(Player, MoveName)
+	if not Player or not MoveName then
+		return false
+	end
+
+	local Data = Environment.Players[Player.Name]
+	if not Data or not Data.Moves then
+		return false
+	end
+
+	local Move = Data.Moves[MoveName]
+	if not Move then
+		return false
+	end
+
+	return true
+end
+
+function PlayerScanning:GetLocalPlayer()
+	return Environment.Players[Environment.LocalPlayer.Entity.Name]
+end
+
+function PlayerScanning:GetPlayers()
+	return Environment.Players
+end
+
+function PlayerScanning:Initialise()
+	Callbacks.Add("onUpdate", function()
+		Runtime()
+	end)
+end
+
+return PlayerScanning
+end function __DIST.j()
+local FolderScanSystem = {}
+FolderScanSystem.__index = FolderScanSystem
+
+function FolderScanSystem.New()
+	local self = setmetatable({}, FolderScanSystem)
+	self.Queues = {}
+	self.Indexes = {}
+	self.Caches = {}
+	self.Callbacks = {}
+	self.Rates = {}
+	self.LastUpdate = {}
+	return self
+end
+
+function FolderScanSystem:AddCategory(CategoryName, Folders, UpdateIntervalMs, Selector)
+	self.Queues[CategoryName] = Folders or {}
+	self.Indexes[CategoryName] = 1
+	self.Caches[CategoryName] = {}
+	self.Rates[CategoryName] = UpdateIntervalMs or 50
+	self.LastUpdate[CategoryName] = 0
+	self.Selectors = self.Selectors or {}
+	self.Selectors[CategoryName] = Selector
+end
+
+function FolderScanSystem:SetCallback(CategoryName, Fn)
+	self.Callbacks[CategoryName] = Fn
+end
+
+function FolderScanSystem:Update()
+	local Now = utility.GetTickCount()
+	for CategoryName, Folders in pairs(self.Queues) do
+		local Interval = self.Rates[CategoryName] or 50
+		local Last = self.LastUpdate[CategoryName] or 0
+		if Now - Last >= Interval then
+			local Idx = self.Indexes[CategoryName]
+			local Folder = Folders[Idx]
+			if Folder then
+				local Children = Folder:GetChildren()
+				local Selector = self.Selectors and self.Selectors[CategoryName]
+				local Cache = {}
+				for i = 1, #Children do
+					local Obj = Children[i]
+					if Selector then
+						Obj = Selector(Obj)
+					end
+					if Obj then
+						Cache[Obj.Name] = Obj
+					end
+				end
+				self.Caches[CategoryName] = Cache
+				local Cb = self.Callbacks[CategoryName]
+				if Cb then
+					Cb(CategoryName, Folder, Children)
+				end
+			end
+			Idx = Idx + 1
+			if Idx > #Folders then
+				Idx = 1
+			end
+			self.Indexes[CategoryName] = Idx
+			self.LastUpdate[CategoryName] = Now
+		end
+	end
+end
+
+function FolderScanSystem:GetCached(CategoryName)
+	local Cache = self.Caches[CategoryName]
+	if not Cache then
+		return {}
+	end
+	local List = {}
+	for _, Obj in pairs(Cache) do
+		List[#List + 1] = Obj
+	end
+	return List
+end
+
+function FolderScanSystem:ClearCache(CategoryName)
+	self.Caches[CategoryName] = {}
+end
+
+function FolderScanSystem:SetInterval(CategoryName, IntervalMs)
+	self.Rates[CategoryName] = IntervalMs
+end
+
+return FolderScanSystem
+end function __DIST.k()
+local WorldScanning = {}
+
+-- << Imports >>
+local Environment = __DIST.load('h')
+local Callbacks = __DIST.load('c')
+local Queue = __DIST.load('j').New()
+
+-- << Services >>
+local Workspace = game.GetService("Workspace")
+
+-- << Variables >>
+local Items = Workspace.Items
+local Domains = Workspace.Domains
+
+function WorldScanning:Initialise()
+	Queue:AddCategory("Domains", { Domains }, 2000)
+	Queue:AddCategory("Items", { Items }, 2000)
+	Queue:SetCallback("Domains", function(CategoryName, Folder, Children)
+		local LocalPosition = Environment.LocalPlayer.Entity.Position
+		local ClosestDomain, ClosestPosition, ClosestDistance = nil, nil, math.huge
+		for _, Domain in pairs(Children) do
+			local Inner = Domain:FindFirstChildOfClass("MeshPart")
+			local Position = Inner.Position
+			local Distance = (Position - LocalPosition).Magnitude
+			if Distance < ClosestDistance then
+				ClosestPosition = Position
+				ClosestDomain = Domain
+				ClosestDistance = Distance
+			end
+		end
+
+		Environment.ClosestDomain.Instance = ClosestDomain
+		Environment.ClosestDomain.Distance = ClosestDistance
+		Environment.ClosestDomain.Position = ClosestPosition
+	end)
+
+	Callbacks.Add("onUpdate", function()
+		Queue:Update()
+		Environment.Objects.Items = Queue:GetCached("Items")
+		Environment.Objects.Domains = Queue:GetCached("Domains")
+	end)
+end
+
+return WorldScanning
+end function __DIST.l()-- << Imports >>
+
+local DebugMode = __DIST.load('f')
+local Table = __DIST.load('a')
+local Callbacks = __DIST.load('c')
+local Configuration = __DIST.load('b')
+local Environment = __DIST.load('h')
+local PlayerScanner = __DIST.load('i')
+
+-- << Variables >>
+local EntityLocalPlayer = Environment.LocalPlayer.Entity
+
+-- << Cached Globals
+local GetTickCount = utility.GetTickCount
+local IsPressed = keyboard.IsPressed
+local Click = keyboard.Click
+
+local Combat = {
+	Delay = 0.285,
+	CombatState = Table:Register("AutoBlackFlashState", {
+		Waiting = false,
+		WasDown = false,
+		NextPressTime = 0,
+	}),
+}
+
+-- << Functions >>
+local function SendDebugInfo(Message)
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	DebugMode.AddDebugMessage(Message, "info", 1000)
+end
+
+local function Runtime()
+	local Now = GetTickCount()
+	local IsDown = IsPressed(0x33)
+	local CombatState = Combat.CombatState
+
+	if IsDown and not CombatState.WasDown and not CombatState.Waiting then
+		local BaseDelaySeconds = Configuration.GetValue("Auto Blackflash Timing")
+		local DelayMs = BaseDelaySeconds * 1000
+
+		CombatState.NextPressTime = Now + DelayMs
+		CombatState.Waiting = true
+	end
+
+	if CombatState.Waiting and Now >= CombatState.NextPressTime then
+		Click(0x33)
+		CombatState.Waiting = false
+		SendDebugInfo("Completed Yuji/Mahito Blackflash.")
+	end
+
+	Combat.WasDown = IsDown
+end
+
+function Combat:Initialise()
+	Callbacks.Add("onUpdate", function(...): ...any
+		if not Configuration.GetValue("Auto Blackflash") then
+			return
+		end
+
+		if Configuration.GetValue("Auto Blackflash Hotkey") ~= true then
+			return
+		end
+
+		if
+			not PlayerScanner:DoesPlayerHaveMove(EntityLocalPlayer, "Focus Strike")
+			and not PlayerScanner:DoesPlayerHaveMove(EntityLocalPlayer, "Divergent Fist")
+		then
+			return
+		end
+
+		Runtime()
+	end)
+end
+
+return Combat
+end function __DIST.m()
+local Combat = {
+	LastClick = 0,
+}
+-- << Imports >>
+local Environment = __DIST.load('h')
+local Configuration = __DIST.load('b')
+local Callbacks = __DIST.load('c')
+
+-- << Cached Globals >>
+local GetTickCount = utility.GetTickCount
+local Click = keyboard.Click
+
+-- << Variables >>
+local PlayerGui = Environment.LocalPlayer.PlayerGui
+
+-- << Constants >>
+local CONFIG_KEY = "Auto Lawyer QTE"
+local CONFIG_DELAY_KEY = "Auto Lawyer QTE Delay (ms)"
+local QTE_GUI = "QTE"
+local QTE_PC = "QTE_PC"
+
+local function Runtime()
+	if not Configuration.GetValue(CONFIG_KEY) then
+		return
+	end
+
+	local Now = GetTickCount()
+	if (Now - Combat.LastClick) < Configuration.GetValue(CONFIG_DELAY_KEY) then
+		return
+	end
+
+	if not PlayerGui then
+		PlayerGui = Environment.LocalPlayer.Player.PlayerGui
+		return
+	end
+
+	local QuickTime = PlayerGui:FindFirstChild(QTE_GUI)
+	local QuickTimePC = QuickTime and QuickTime:FindFirstChild(QTE_PC)
+	if not QuickTimePC then
+		return
+	end
+
+	local Text = QuickTimePC.Value
+	if not Text or Text == "" then
+		return
+	end
+
+	Click(tostring(Text):lower())
+	Combat.LastClick = Now
+end
+
+function Combat:Initialise()
+	Callbacks.Add("onUpdate", Runtime)
+end
+
+return Combat end function __DIST.n()
+local Combat = {}
+
+-- << Imports >>
+local Callbacks = __DIST.load('c')
+local Table = __DIST.load('a')
+local Configuration = __DIST.load('b')
+local PlayerScanner = __DIST.load('i')
+local DebugMode = __DIST.load('f')
+
+-- << Variables >>
+local LocalPlayer = entity.GetLocalPlayer()
+
+local Timings = Table:Register("MahoragaTimingTable", {
+	AnimationId = "rbxassetid://85024950165903",
+})
+
+local State = Table:Register("MahoragaState", {
+	WasEarthquaking = false,
+	Waiting = false,
+})
+
+-- << Functions >>
+local function SendDebugInfo(Message)
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	DebugMode.AddDebugMessage(Message, "info", 1000)
+end
+
+local function GetAnimationByID(AnimationID)
+	local LocalTracker = PlayerScanner:GetLocalPlayer()
+	local Tracks = LocalTracker.Animations
+	if not Tracks then
+		return nil
+	end
+
+	for i = 1, #Tracks do
+		if Tracks[i].Animation.AnimationId == AnimationID then
+			return Tracks[i]
+		end
+	end
+	return nil
+end
+
+local function Runtime()
+	if not Configuration.GetValue("Auto Mahoraga Earthquake") then
+		return
+	end
+
+	if not PlayerScanner:DoesPlayerHaveMove(LocalPlayer, "Earthquake") then
+		return
+	end
+
+	local IsEarthquaking = GetAnimationByID(Timings.AnimationId)
+	if IsEarthquaking and not State.WasEarthquaking and not State.Waiting then
+		State.Waiting = true
+	end
+
+	if State.Waiting then
+		if not IsEarthquaking then
+			State.Waiting = false
+			return
+		end
+
+		local TimePosition = IsEarthquaking.TimePosition
+		SendDebugInfo("Current Mahoraga Earthquake Time:" .. TimePosition)
+		if TimePosition >= Configuration.GetValue("Auto Mahoraga Earthquake Time Position") then
+			keyboard.Release(0x33)
+			State.Waiting = false
+			SendDebugInfo("Completed Mahoraga Earthquake")
+		end
+	end
+
+	State.WasEarthquaking = IsEarthquaking ~= nil
+end
+
+function Combat:Initialise()
+	Callbacks.Add("onUpdate", Runtime)
+end
+
+return Combat
+end function __DIST.o()
+local Combat = {
+	CurrentRatio = nil,
+	PressedR = false,
+}
+
+-- << Imports >>
+local Environment = __DIST.load('h')
+local Callbacks = __DIST.load('c')
+local Configuration = __DIST.load('b')
+local Offsets = __DIST.load('e')
+local DebugMode = __DIST.load('f')
+
+-- << Cached Globals >>
+local GetPlayers = entity.GetPlayers
+local Read = memory.Read
+local Abs = math.abs
+local PressKey = keyboard.Click
+
+-- << Constants >>
+local GUI_ENABLED = Offsets.ScreenGui.Enabled
+local GUI_POSITION = Offsets.GuiObject.Position
+
+-- << Functions >>
+local function SendDebugInfo(Message)
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	DebugMode.AddDebugMessage(Message, "info", 1000)
+end
+
+local function Ratio(Entity)
+	local HumanoidRootPart = Entity:GetBoneInstance("HumanoidRootPart")
+	if not HumanoidRootPart then
+		return
+	end
+
+	local RatioObject = HumanoidRootPart:FindFirstChild("Ratio")
+	if not RatioObject then
+		return
+	end
+
+	local RatioAddress = RatioObject.Address
+	if not Read(GUI_ENABLED.Type, RatioAddress + GUI_ENABLED.Offset) then
+		return
+	end
+
+	local CurrentRatio = Combat.CurrentRatio
+	if not CurrentRatio or CurrentRatio ~= RatioAddress then
+		Combat.CurrentRatio = RatioAddress
+		Combat.PressedR = false
+	end
+
+	local Cursor = RatioObject.Bar.Cursor
+	local CursorScale = Read(GUI_POSITION.Type, Cursor.Address + GUI_POSITION.Y)
+	local TargetScale = Configuration.GetValue("Auto Nanami Ratio GUI Scale")
+	local Current = Abs(CursorScale - TargetScale)
+	SendDebugInfo("Nanami Ratio Current Distance: " .. tostring(Current))
+	if Current <= 0.03 and not Combat.PressedR then
+		Combat.PressedR = true
+		PressKey("r")
+		SendDebugInfo("Completed Nanami Ratio")
+	end
+end
+
+local function OnRuntime()
+	if not Configuration.GetValue("Auto Nanami Ratio") then
+		return
+	end
+
+	if Environment.LocalPlayer.Data.Character ~= "Nanami" then
+		return
+	end
+
+	local EntityList = GetPlayers(false)
+	for i = 1, #EntityList do
+		local Entity = EntityList[i]
+		Ratio(Entity)
+	end
+end
+
+function Combat:Initialise()
+	Callbacks.Add("onUpdate", OnRuntime)
+end
+
+return Combat
+end function __DIST.p()
+local Combat = {}
+
+-- << Imports >>
+local Callbacks = __DIST.load('c')
+local Table = __DIST.load('a')
+local Configuration = __DIST.load('b')
+local PlayerScanner = __DIST.load('i')
+local DebugMode = __DIST.load('f')
+
+-- << Variables >>
+local LocalPlayer = entity.GetLocalPlayer()
+local State = Table:Register("TodoBlackflashState", {
+	Waiting = false,
+	BruteForceFired = false,
+})
+
+local Animations = Table:Register("TodoBlackflashAnimationsTable", {
+	["Slide"] = "rbxassetid://100081544058065",
+	["Brute Force"] = "rbxassetid://123167492985370",
+})
+
+-- << Cached Globals
+local PressKey = keyboard.Click
+
+-- << Functions >>
+local function SendDebugInfo(Message)
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	DebugMode.AddDebugMessage(Message, "info", 1000)
+end
+
+local function GetAnimationByID(AnimationId)
+	if not AnimationId then
+		return
+	end
+
+	local LocalTracker = PlayerScanner:GetLocalPlayer()
+	local Tracks = LocalTracker and LocalTracker.Animations or nil
+	if not Tracks then
+		return nil
+	end
+
+	for i = 1, #Tracks do
+		if Tracks[i].Animation.AnimationId == AnimationId then
+			return Tracks[i]
+		end
+	end
+	return nil
+end
+
+local function Runtime()
+	if not Configuration.GetValue("Auto Blackflash") then
+		return
+	end
+
+	if Configuration.GetValue("Auto Blackflash Hotkey") ~= true then
+		return
+	end
+
+	if not PlayerScanner:DoesPlayerHaveMove(LocalPlayer, "Brute Force") then
+		return
+	end
+
+	local IsSliding = GetAnimationByID(Animations.Slide)
+	local BruteForce = GetAnimationByID(Animations["Brute Force"])
+
+	if State.BruteForceFired and not BruteForce then
+		State.BruteForceFired = false
+	end
+
+	if IsSliding and not State.Waiting and not State.BruteForceFired then
+		SendDebugInfo("Queued Todo Blackflash - Waiting for Brute Force")
+		State.Waiting = true
+	end
+
+	if State.Waiting and not IsSliding and not BruteForce then
+		State.Waiting = false
+		State.BruteForceFired = false
+		SendDebugInfo("Cancelled Blackflash, Animation Ended.")
+	end
+
+	if State.Waiting and BruteForce and not State.BruteForceFired then
+		local TimePosition = BruteForce.TimePosition
+		local TargetTime = Configuration.GetValue("Auto Todo Blackflash Time Position")
+		if TimePosition >= TargetTime then
+			PressKey(0x32)
+			SendDebugInfo("Triggered Todo Blackflash at TimePosition: "..tostring(TimePosition))
+			State.BruteForceFired = true
+			State.Waiting = false
+		end
+	end
+end
+
+function Combat:Initialise()
+	Callbacks.Add("onUpdate", Runtime)
+end
+
+return Combat end function __DIST.q()
+local Combat = {}
+
+-- << Imports >>
+local Callbacks = __DIST.load('c')
+local Table = __DIST.load('a')
+local Configuration = __DIST.load('b')
+local PlayerScanner = __DIST.load('i')
+local Environment = __DIST.load('h')
+local DebugMode = __DIST.load('f')
+
+-- << Variables >>
+local State = Table:Register("TodoSwapState", {
+	Waiting = false,
+	Fired = false,
+	StoredClap = nil,
+})
+
+local Animations = Table:Register("TodoSwapWhitelistedAnimations", {
+	["Clap1"] = true,
+	["Clap2"] = true,
+	["Clap3"] = true,
+})
+
+-- << Cached Globals
+local MouseClick = mouse.Click
+
+-- << Functions >>
+local function SendDebugInfo(Message)
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	DebugMode.AddDebugMessage(Message, "info", 1000)
+end
+
+local function IsClapping()
+	local LocalTracker = PlayerScanner:GetLocalPlayer()
+	local Tracks = LocalTracker and LocalTracker.Animations or nil
+	if not Tracks then
+		return nil
+	end
+
+	local confirmed_animations = {}
+	for i = 1, #Tracks do
+		local Track = Tracks[i]
+		if Animations[Track.Animation.Name] then
+			confirmed_animations[#confirmed_animations + 1] = Track
+		end
+	end
+
+	local animation_instance, lowest_time_position = nil, math.huge;
+	for _, confirmed_animation in pairs(confirmed_animations) do
+		if confirmed_animation.TimePosition < lowest_time_position then
+			animation_instance = confirmed_animation;
+			lowest_time_position = confirmed_animation.TimePosition;
+		end;
+	end;
+
+	return animation_instance
+end
+
+local function Runtime()
+	if not Configuration.GetValue("Auto Todo Perfect Swap") then return end
+	if Configuration.GetValue("Auto Todo Perfect Swap Hotkey") ~= true then return end
+	if Environment.LocalPlayer.Data.Character ~= "Todo" then return end
+
+	local CurrentClap = IsClapping()
+	if not CurrentClap then
+		State.StoredClap = nil
+		State.Waiting = false
+		State.Fired = false
+		return
+	end
+
+	print(CurrentClap.Track, State.StoredClap and State.StoredClap.Track or "0xFart")
+	if State.StoredClap ~= nil and CurrentClap.Track ~= State.StoredClap.Track then
+		MouseClick("leftmouse");
+		return	
+end;
+
+	State.StoredClap = CurrentClap;
+
+	if not State.Waiting and not State.Fired then
+		SendDebugInfo("Detected Clap, Waiting.")
+		State.Waiting = true
+	end
+
+	if State.Waiting and not State.Fired then
+		local TargetTime = Configuration.GetValue("Auto Todo Perfect Swap Time Position")
+		if CurrentClap.TimePosition >= TargetTime then
+			MouseClick("leftmouse")
+			State.Waiting = false
+			State.Fired = true
+			SendDebugInfo("Completed Todo Perfect Swap")
+		end
+	end
+end
+function Combat:Initialise()
+	Callbacks.Add("onUpdate", Runtime)
+end
+
+return Combat end function __DIST.r()
+local Combat = {}
+
+-- << Imports >>
+local Callbacks = __DIST.load('c')
+local Table = __DIST.load('a')
+local Configuration = __DIST.load('b')
+local PlayerScanner = __DIST.load('i')
+local DebugMode = __DIST.load('f')
+
+-- << Variables >>
+local TrackedItems = Table:Register("PunishM1Items", {})
+
+-- << Functions >>
+local function SendDebugInfo(Message, Level)
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	DebugMode.AddDebugMessage(Message, Level, 1000)
+end
+
+local function GetClosestPlayer(LocalData)
+    local ClosestData, ClosestDistance = nil, math.huge
+
+    for _, StoredData in pairs(PlayerScanner:GetPlayers()) do
+        if StoredData ~= LocalData then
+            local Distance = (LocalData.Player.Position - StoredData.Player.Position).Magnitude
+            if Distance < ClosestDistance then
+                ClosestData = StoredData
+                ClosestDistance = Distance
+            end
+        end
+    end
+
+    return ClosestData, ClosestDistance
+end
+
+local function Runtime()
+	if not Configuration.GetValue("Auto Return M1") then
+		return
+	end
+
+    local LocalPlayer = PlayerScanner:GetLocalPlayer()
+    local RootPart = LocalPlayer and LocalPlayer.RootPart
+    if not RootPart then
+        SendDebugInfo("Aborted Auto Return M1, No HRP.", "error")
+        return
+    end
+
+    local BlockHit = RootPart:FindFirstChild("BlockHit")
+    if not BlockHit or TrackedItems[BlockHit.Address] then return end
+
+    TrackedItems[BlockHit.Address] = utility.GetTickCount()
+
+    local ClosestPlayer, ClosestDistance = GetClosestPlayer(LocalPlayer)
+    if not ClosestPlayer or not ClosestDistance or ClosestDistance > 8 then
+        return
+    end
+
+    keyboard.release("f")
+    mouse.click("leftmouse")
+    keyboard.press("f")
+end
+
+function Combat:Initialise()
+	Callbacks.Add("onUpdate", function()
+        Runtime()
+    end)
+
+	Callbacks.Add("onSlowUpdate", function()
+		if TrackedItems and type(TrackedItems) == "table" and next(TrackedItems) then
+			local Now = utility.GetTickCount()
+			for Address, TimeStored in pairs(TrackedItems) do
+				if (Now - TimeStored) > 1000 then
+					TrackedItems[Address] = nil
+				end
+			end
+		end
+	end)
+end
+
+return Combat
+end function __DIST.s()
+local Visuals = {}
+
+-- << Imports >>
+local Callbacks = __DIST.load('c')
+local Table = __DIST.load('a')
+local Configuration = __DIST.load('b')
+local Environment = __DIST.load('h')
+
+-- << Variables >>
+local TextSizeCache = Table:Register("PV_TextSizeCache", {})
+local NameCache = Table:Register("PV_NameCache", {})
+local ColorCache = Table:Register("PV_ColorCache", {})
+
+-- << Constants >>
+local COLOUR_BLACK = Color3.new(0, 0, 0)
+local COLOUR_WHITE = Color3.new(1, 1, 1)
+
+-- << Cached Globals
+local NewColorRGB = Color3.fromRGB
+local Rect = draw.Rect
+local RectFilled = draw.RectFilled
+local ComputeConvexHull = draw.ComputeConvexHull
+local Polyline = draw.Polyline
+local ConvexPolyFilled = draw.ConvexPolyFilled
+local TextOutlined = draw.TextOutlined
+local TextSize = draw.GetTextSize
+local PartCorners = draw.GetPartCorners
+local WorldToScreen = utility.WorldToScreen
+
+-- << Functions >>
+local function TableToRGB(Table)
+	if type(Table) ~= "table" then
+		return NewColorRGB(255, 255, 255)
+	end
+
+	local r = Table.R or Table.r or 255
+	local g = Table.G or Table.g or 255
+	local b = Table.B or Table.b or 255
+
+	local key = r .. "," .. g .. "," .. b
+	local cached = ColorCache[key]
+
+	if cached then
+		return cached
+	end
+
+	local color = NewColorRGB(r, g, b)
+	ColorCache[key] = color
+
+	return color
+end
+
+local function GetTextSize(Text, Font)
+	local Key = Text .. tostring(Font)
+	local Cached = TextSizeCache[Key]
+	if Cached then
+		return Cached[1], Cached[2]
+	end
+	local W, H = TextSize(Text, Font)
+	TextSizeCache[Key] = { W, H }
+	return W, H
+end
+
+local function GetNameSlice(Name, Len)
+	local Cache = NameCache[Name]
+	if not Cache then
+		Cache = {}
+		NameCache[Name] = Cache
+	end
+
+	local Cached = Cache[Len]
+	if Cached then
+		return Cached
+	end
+
+	local Result = string.sub(Name, 1, Len)
+	Cache[Len] = Result
+	return Result
+end
+
+local function AddPartPoints(part, t)
+	local corners = PartCorners(part)
+	if not corners then
+		return
+	end
+
+	for _, WorldPosition in ipairs(corners) do
+		local X, Y, OnScreen = WorldToScreen(WorldPosition)
+		if OnScreen then
+			t[#t + 1] = { X, Y }
+		end
+	end
+end
+
+local function Clear(t)
+	for i = #t, 1, -1 do
+		t[i] = nil
+	end
+end
+
+local function DrawPlayer(Player, PlayerData, Settings, ScreenPoints)
+	if not Player or not PlayerData or not Settings then
+		return
+	end
+
+	if not Player.IsAlive then
+		return
+	end
+
+	local Position = Player.Position
+
+	local EvasiveBarColor = Settings.EvasiveBarColor
+	local EvasiveBarRGB = TableToRGB(EvasiveBarColor)
+	local CooldownFillColor = Settings.CooldownFillColor
+	local CooldownFillRGB = TableToRGB(CooldownFillColor)
+	local CooldownBackgroundColor = Settings.CooldownBackgroundColor
+	local CooldownBackgroundRGB = TableToRGB(CooldownBackgroundColor)
+	local AnimationDesyncOutlineColor = Settings.AnimationDesyncOutlineColor
+	local AnimationDesyncOutlineRGB = TableToRGB(AnimationDesyncOutlineColor)
+	local AnimationDesyncFillColor = Settings.AnimationDesyncFillColor
+	local AnimationDesyncFillRGB = TableToRGB(AnimationDesyncFillColor)
+
+	if Settings.AnimationDesyncGuides and PlayerData.Exploiting then
+		local RootPart = PlayerData.RootPart
+		if not RootPart then
+			return
+		end
+
+		AddPartPoints(RootPart, ScreenPoints)
+
+		if #ScreenPoints >= 3 then
+			local Hull = ComputeConvexHull(ScreenPoints)
+			if Hull then
+				Polyline(Hull, AnimationDesyncOutlineRGB, true, 2, AnimationDesyncOutlineColor.a)
+				ConvexPolyFilled(Hull, AnimationDesyncFillRGB, AnimationDesyncFillColor.a)
+			end
+		end
+
+		Clear(ScreenPoints)
+	end
+
+	local _, _, OnScreen = WorldToScreen(Position)
+	if not OnScreen then
+		return
+	end
+
+	local BoundingBox = Player.BoundingBox
+	if not BoundingBox then
+		return
+	end
+
+	local Font = Settings.Font
+
+	local Evade = PlayerData.Evade
+
+	if Settings.DrawEvasiveBar and Evade then
+		local EvasivePct = math.clamp(Evade / 50, 0, 1)
+		local BarH = BoundingBox.h * EvasivePct
+		local BarX = BoundingBox.x - 8
+		local BarY = BoundingBox.y
+		local Height = BoundingBox.h
+
+		RectFilled(BarX - 1, BarY - 1, 7, Height + 2, COLOUR_BLACK, 0, 255)
+		RectFilled(BarX, BarY + Height - BarH, 5, BarH, EvasiveBarRGB, 0, 255)
+
+		local Text = tostring(math.floor(EvasivePct * 100)) .. "%"
+		local TextW = GetTextSize(Text, Font)
+		TextOutlined(Text, BarX - TextW - 2, BarY, COLOUR_WHITE, Settings.Font)
+	end
+
+	local OrderedMoves = PlayerData.OrderedMoves
+	if Settings.DrawCooldowns and OrderedMoves then
+		local NumberOfMoves = #OrderedMoves
+		local BoxSize = BoundingBox.h / NumberOfMoves
+		local StartX, StartY = BoundingBox.x + BoundingBox.w + 2, BoundingBox.y
+
+		for i = 1, NumberOfMoves do
+			local Move = OrderedMoves[i]
+			local RemainingTime = Move.Remaining
+			local BoxY = StartY + (i - 1) * BoxSize
+
+			RectFilled(StartX, BoxY, BoxSize, BoxSize, CooldownBackgroundRGB, 0, CooldownBackgroundColor.a)
+			--
+			if RemainingTime > 0 then
+				local Percent = RemainingTime / Move.Cooldown
+				local OverlayWidth = BoxSize * Percent
+				--
+				RectFilled(
+					StartX + BoxSize - OverlayWidth,
+					BoxY,
+					OverlayWidth,
+					BoxSize,
+					CooldownFillRGB,
+					0,
+					CooldownFillColor.a
+				)
+			end
+			Rect(StartX, BoxY, BoxSize, BoxSize, COLOUR_WHITE)
+			--
+
+			local Name = Move.Name
+			local TextToDraw = Name
+			local FontToUse = Font
+
+			if BoxSize < 40 then
+				FontToUse = "SmallestPixel"
+			end
+
+			if BoxSize < 25 then
+				TextToDraw = GetNameSlice(Name, 1)
+			elseif BoxSize < 40 then
+				TextToDraw = GetNameSlice(Name, 3)
+			end
+
+			if BoxSize >= 15 then
+				local TextWidth, TextHeight = GetTextSize(TextToDraw, FontToUse)
+				local TextX = StartX + (BoxSize - TextWidth) / 2
+				local TextY = BoxY + (BoxSize - TextHeight) / 2
+				TextOutlined(TextToDraw, TextX, TextY, COLOUR_WHITE, FontToUse)
+			end
+		end
+	end
+end
+
+local function Runtime()
+	if not Configuration.GetValue("Visuals Enabled") then
+		return
+	end
+
+	local Settings = {
+		DrawCooldowns = Configuration.GetValue("Draw Cooldowns"),
+		CooldownFillColor = Configuration.GetValue("Cooldown Fill Color"),
+		CooldownBackgroundColor = Configuration.GetValue("Cooldown Background Color"),
+		DrawEvasiveBar = Configuration.GetValue("Draw Evasive Bar"),
+		EvasiveBarColor = Configuration.GetValue("Evasive Fill Color"),
+		AnimationDesyncGuides = Configuration.GetValue("Draw Animation Desync Guides"),
+		AnimationDesyncOutlineColor = Configuration.GetValue("Animation Desync Flagged Outline"),
+		AnimationDesyncFillColor = Configuration.GetValue("Animation Desync Flagged Fill"),
+		Font = Configuration.GetValue("Font Selection"),
+	}
+
+	local ScreenPoints = {}
+
+	local EntityList = entity.GetPlayers(false)
+	for i = 1, #EntityList do
+		local Entity = EntityList[i]
+		local Data = Environment.Players[Entity.Name]
+		DrawPlayer(Entity, Data, Settings, ScreenPoints)
+	end
+end
+
+function Visuals:Initialise()
+	Callbacks.Add("onPaint", function(...): ...any
+		Runtime()
+	end)
+end
+
+return Visuals
+end function __DIST.t()
+local Visuals = {}
+
+-- << Imports >>
+local Callbacks = __DIST.load('c')
+local Configuration = __DIST.load('b')
+local Table = __DIST.load('a')
+local Environment = __DIST.load('h')
+
+-- << Variables >>
+local TextSizeCache = Table:Register("WV_TextSizeCache", {})
+local ColorCache = Table:Register("WV_ColorCache", {})
+local FloorCache = Table:Register("WV_FloorCache", {})
+
+-- << Cached Globals
+local NewColorRGB = Color3.fromRGB
+local TextOutlined = draw.TextOutlined
+local TextSize = draw.GetTextSize
+local WorldToScreen = utility.WorldToScreen
+local GetWindowSize = cheat.GetWindowSize
+local MathFloor = math.floor
+
+-- << Functions >>
+local function GetAttribute(Instance, AttributeName, DefaultValue)
+	local Attribute = Instance:GetAttribute(AttributeName)
+	return Attribute and Attribute.Value or DefaultValue
+end
+
+local function TableToRGB(Table)
+	if type(Table) ~= "table" then
+		return NewColorRGB(255, 255, 255)
+	end
+
+	local r = Table.R or Table.r or 255
+	local g = Table.G or Table.g or 255
+	local b = Table.B or Table.b or 255
+
+	local key = r .. "," .. g .. "," .. b
+	local cached = ColorCache[key]
+
+	if cached then
+		return cached
+	end
+
+	local color = NewColorRGB(r, g, b)
+	ColorCache[key] = color
+
+	return color
+end
+
+local function CachedFloor(n)
+	local v = FloorCache[n]
+	if v then
+		return v
+	end
+
+	v = MathFloor(n)
+	FloorCache[n] = v
+	return v
+end
+
+local function GetTextSize(Text, Font)
+	local Key = Text .. tostring(Font)
+	local Cached = TextSizeCache[Key]
+	if Cached then
+		return Cached[1], Cached[2]
+	end
+	local W, H = TextSize(Text, Font)
+	TextSizeCache[Key] = { W, H }
+	return W, H
+end
+
+local function RenderDomains(Settings)
+	if not Settings.Enabled then
+		return
+	end
+
+	local Font = Settings.Font
+	local Color = Settings.Color
+	local ColorRGB = TableToRGB(Color)
+	--
+	local ScreenWidth = GetWindowSize()
+	local ClosestDomain = Environment.ClosestDomain
+	local Domains = Environment.Objects.Domains
+	--
+	for i = 1, #Domains do
+		local Domain = Domains[i]
+		if Domain then
+			local Health = GetAttribute(Domain, "Health", 0)
+			local HealthText = "Domain Health: " .. tostring(CachedFloor(Health))
+			local TextWidth, TextHeight = GetTextSize(HealthText, Font)
+
+			local FinalX, FinalY, FinalOnScreen = nil, nil, false
+
+			if ClosestDomain.Instance and Domain == ClosestDomain.Instance and ClosestDomain.Distance <= 40 then
+				FinalX = (ScreenWidth / 2) - (TextWidth / 2)
+				FinalY = 50
+				FinalOnScreen = true
+			else
+				local ScreenX, ScreenY, OnScreen = utility.WorldToScreen(Domain.Position)
+				if OnScreen then
+					FinalX = ScreenX - TextWidth / 2
+					FinalY = ScreenY - TextHeight / 2
+					FinalOnScreen = OnScreen
+				end
+			end
+
+			if FinalOnScreen and HealthText ~= "" then
+				TextOutlined(HealthText, FinalX, FinalY, ColorRGB, Font, Color.a)
+			end
+		end
+	end
+end
+
+local function RenderItems(Settings)
+	if not Settings.Enabled then
+		return
+	end
+
+	local Font = Settings.Font
+	local Color = Settings.Color
+	local ColorRGB = TableToRGB(Color)
+
+	local Items = Environment.Objects.Items
+	for i = 1, #Items do
+		local Item = Items[i]
+		if Item then
+			local ScreenX, ScreenY, OnScreen = WorldToScreen(Item.Position)
+			if OnScreen then
+				local Text = Item.Name
+				local TextWidth, TextHeight = GetTextSize(Text, Font)
+				local FinalX, FinalY = ScreenX - (TextWidth / 2), ScreenY - (TextHeight / 2)
+				if Text ~= "" then
+					TextOutlined(Text, FinalX, FinalY, ColorRGB, Font, Color.a)
+				end
+			end
+		end
+	end
+end
+
+local function Render()
+	if not Configuration.GetValue("Visuals Enabled") then
+		return
+	end
+
+	local Font = Configuration.GetValue("Font Selection")
+
+	RenderDomains({
+		Enabled = Configuration.GetValue("Domain Health ESP"),
+		Color = Configuration.GetValue("Domain Health ESP Color"),
+		Font = Font,
+	})
+
+	RenderItems({
+		Enabled = Configuration.GetValue("Item ESP"),
+		Color = Configuration.GetValue("Item ESP Color"),
+		Font = Font,
+	})
+end
+
+function Visuals:Initialise()
+	Callbacks.Add("onPaint", Render)
+end
+
+return Visuals
+end function __DIST.u()
+local MemoryFunctions = __DIST.load('d')
+local Offsets = __DIST.load('e')
+local LastClick = 0
+
+local function GetFrameSize(Frame)
+	local Address = Frame.Address
+	return MemoryFunctions.ReadVector2(Address, Offsets.GuiObject.AbsoluteSize)
+end
+
+local function GetFramePosition(Frame)
+	local Address = Frame.Address
+	return MemoryFunctions.ReadVector2(Address, Offsets.GuiObject.AbsolutePosition)
+end
+
+local function GetFrameCenter(Frame)
+	local Position, Size = GetFramePosition(Frame), GetFrameSize(Frame)
+	return Position + (Size / 2)
+end
+
+local function GetClosestWall(Walls, GuyCenter, GameSize)
+	local ClosestWall, ClosestDistance = nil, math.huge
+	local Buffer = GameSize.X * 0.05
+
+	for _, Wall in pairs(Walls:GetChildren()) do
+		local WallCenter = GetFrameCenter(Wall)
+		local WallSize = GetFrameSize(Wall.Top)
+		local WallRightEdge = WallCenter.X + (WallSize.X / 2)
+
+		local IsWallAhead = WallRightEdge + Buffer > GuyCenter.X
+
+		if IsWallAhead then
+			local Distance = WallCenter.X - GuyCenter.X
+			if Distance < ClosestDistance then
+				ClosestWall = Wall
+				ClosestDistance = Distance
+			end
+		end
+	end
+
+	return ClosestWall
+end
+
+return function(Interface)
+	if not Interface then
+		return
+	end
+
+	local GameUI = Interface.Screen.Game
+	local Guy = GameUI.Guy
+	local Now = utility.GetTickCount()
+
+	if MemoryFunctions.Read(Guy.Explode.Address, Offsets.GuiObject.Visible) then
+		return
+	end
+
+	local GameSize = GetFrameSize(GameUI)
+	local GuyCenter = GetFrameCenter(Guy)
+
+	local ClosestWall = GetClosestWall(GameUI.Walls, GuyCenter, GameSize)
+	if not ClosestWall then
+		return
+	end
+
+	local Top, Bottom = ClosestWall.Top, ClosestWall.Bottom
+
+	local TopPosition, TopSize = GetFramePosition(Top), GetFrameSize(Top)
+	local BottomPosition = GetFramePosition(Bottom)
+
+	local Bottom_TopPipe = TopPosition.Y + TopSize.Y
+	local Top_BottomPipe = BottomPosition.Y
+	local Gap = Top_BottomPipe - Bottom_TopPipe
+
+	local GapCenterY = Bottom_TopPipe + Gap * 0.5
+	local Threshold = Gap * 0.1
+	local TargetY = GapCenterY + Threshold
+
+	if GuyCenter.Y > TargetY and Now - LastClick > 25 then
+		mouse.Click("leftmouse")
+		LastClick = Now
+	end
+end
+end function __DIST.v()
+local MemoryFunctions = __DIST.load('d')
+local Offsets = __DIST.load('e')
+
+local function GetFrameSize(Frame)
+	local Address = Frame.Address
+	return MemoryFunctions.ReadVector2(Address, Offsets.GuiObject.AbsoluteSize)
+end
+
+local function GetFramePosition(Frame)
+	local Address = Frame.Address
+	return MemoryFunctions.ReadVector2(Address, Offsets.GuiObject.AbsolutePosition)
+end
+
+local function GetFrameCenter(Frame)
+	local Position, Size = GetFramePosition(Frame), GetFrameSize(Frame)
+	return Position + (Size / 2)
+end
+
+local function GetClosestFoodToFloor(Interface, GuyCenter)
+	local Floor = Interface.BG1.Floor
+	local Food = Interface.Food
+
+	if not Floor or not Food then
+		print("Minigame Critical Error | Couldn't find floor or food!")
+		return nil
+	end
+
+	local FloorPosition = GetFramePosition(Floor)
+	local FloorSize = GetFrameSize(Floor)
+	local SpeedThreshold = FloorSize.X * 0.15
+	local ClosestFood, ClosestFoodPosition, ClosestDistance = nil, nil, math.huge
+
+	for _, Child in pairs(Food:GetChildren()) do
+		local Position = GetFrameCenter(Child)
+		local DistanceX = math.abs(Position.X - GuyCenter.X)
+		local DistanceY = FloorPosition.Y - Position.Y
+
+		local ValidSpeed = Child.Name == "Speed" and DistanceX > SpeedThreshold
+		if not ValidSpeed then
+			if DistanceY < ClosestDistance then
+				ClosestFood = Child
+				ClosestFoodPosition = Position
+				ClosestDistance = DistanceY
+			end
+		end
+	end
+
+	return ClosestFood, ClosestFoodPosition
+end
+
+return function(Interface)
+	if not Interface then
+		return
+	end
+
+	local GameUI = Interface.Screen.Game
+	local Guy = GameUI.Guy
+
+	if MemoryFunctions.Read(Guy.Explode.Address, Offsets.GuiObject.Visible) then
+		return
+	end
+
+	local GuyCenter = GetFrameCenter(Guy)
+	local ClosestFood, FoodPosition = GetClosestFoodToFloor(GameUI, GuyCenter)
+	if not ClosestFood or not FoodPosition then
+		return
+	end
+
+	local dx = FoodPosition.X - GuyCenter.X
+	if math.abs(dx) >= 20 then
+		if dx < 0 then
+			keyboard.click("a")
+		else
+			keyboard.click("d")
+		end
+	end
+end
+end function __DIST.w()-- << Imports >>
+
+local Callbacks = __DIST.load('c')
+local Configuration = __DIST.load('b')
+local Table = __DIST.load('a')
+
+-- << State >>
+local Library = {}
+Library.DebugMode = false
+local Elements = Table:Register("UI.Elements", {})
+local DebugElements = Table:Register("UI.DebugElements", {})
+
+-- << Element Object >>
+local Element = {}
+Element.__index = Element
+
+function Element:Get()
+	return Configuration.GetValue(self.Name)
+end
+
+function Element:Set(value)
+	ui.setValue(self.TabRef, self.ContainerRef, self.Name, value)
+	Configuration.SetValue(self.Name, value)
+end
+
+function Element:Visible(state)
+	ui.setVisibility(self.TabRef, self.ContainerRef, self.Name, state)
+end
+
+function Element:OnChange(Callback)
+	self._onChange = Callback
+	return self
+end
+
+function Element:_Read()
+	return ui.getValue(self.TabRef, self.ContainerRef, self.Name)
+end
+
+function Element:_Poll()
+	local New = self:_Read()
+	local Old = Configuration.GetValue(self.Name)
+
+	if New == Old then
+		return
+	end
+
+	Configuration.SetValue(self.Name, New)
+
+	if self._onChange then
+		self._onChange(New, Old)
+	end
+end
+
+-- << Private >>
+local function MakeElement(TabRef, ContainerRef, Name, Options)
+	local Elem = setmetatable({
+		TabRef = TabRef,
+		ContainerRef = ContainerRef,
+		Name = Name,
+		Debug = Options and Options.Debug,
+	}, Element)
+
+	Configuration.Register(Name, Elem)
+	Elements[Name] = Elem
+
+	if Elem.Debug then
+		Elem:Visible(false)
+		DebugElements[#DebugElements + 1] = Elem
+	end
+
+	return Elem
+end
+
+-- << Container Object >>
+local Container = {}
+Container.__index = Container
+
+function Container:Checkbox(Name, InLine, Options)
+	ui.newCheckbox(self.TabRef, self.Ref, Name, InLine)
+	return MakeElement(self.TabRef, self.Ref, Name, Options)
+end
+
+function Container:SliderInt(Name, Min, Max, Default, Options)
+	ui.newSliderInt(self.TabRef, self.Ref, Name, Min, Max, Default)
+	return MakeElement(self.TabRef, self.Ref, Name, Options)
+end
+
+function Container:SliderFloat(Name, Min, Max, Default, Options)
+	ui.newSliderFloat(self.TabRef, self.Ref, Name, Min, Max, Default)
+	return MakeElement(self.TabRef, self.Ref, Name, Options)
+end
+
+function Container:Dropdown(Name, Options, DefaultIndex, UIOptions)
+	ui.newDropdown(self.TabRef, self.Ref, Name, Options, DefaultIndex)
+	local Elem = MakeElement(self.TabRef, self.Ref, Name, UIOptions)
+	Elem._Read = function(self)
+		local Index = ui.getValue(self.TabRef, self.ContainerRef, Name)
+		return Options[Index + 1]
+	end
+	return Elem
+end
+
+function Container:Multiselect(Name, Options, UIOptions)
+	ui.newMultiselect(self.TabRef, self.Ref, Name, Options)
+	local Elem = MakeElement(self.TabRef, self.Ref, Name, UIOptions)
+	Elem._Read = function(self)
+		local States = ui.getValue(self.TabRef, self.ContainerRef, Name)
+		local Selected = {}
+		for i, State in ipairs(States) do
+			if State then
+				Selected[Options[i] ] = true
+			end
+		end
+		return Selected
+	end
+
+	Elem._Poll = function(self)
+		local New = self:_Read()
+		local Old = Configuration.GetValue(self.Name)
+		local Changed = type(Old) ~= "table"
+
+		if not Changed then
+			for _, Option in ipairs(Options) do
+				if New[Option] ~= Old[Option] then
+					Changed = true
+					break
+				end
+			end
+		end
+
+		if not Changed then
+			return
+		end
+
+		Configuration.SetValue(self.Name, New)
+
+		if self._onChange then
+			self._onChange(New, Old)
+		end
+	end
+	return Elem
+end
+
+function Container:Colorpicker(Name, DefaultColor, InLine, Options)
+	ui.newColorpicker(self.TabRef, self.Ref, Name, DefaultColor, InLine)
+	local Elem = MakeElement(self.TabRef, self.Ref, Name, Options)
+	Elem._Read = function(self)
+		return ui.getValue(self.TabRef, self.ContainerRef, Name)
+	end
+	Elem.Get = function(self, Type)
+		local Color = Configuration.GetValue(self.Name)
+		if not Color then
+			return nil
+		end
+		Type = (tostring(Type) or "table"):lower()
+		return Type == "rgb" and Color3.fromRGB(Color.r, Color.g, Color.b) or Color
+	end
+
+	Elem._Poll = function(self)
+		local New = self:_Read()
+		local Old = Configuration.GetValue(self.Name)
+		if Old and New.r == Old.r and New.g == Old.g and New.b == Old.b and New.a == Old.a then
+			return
+		end
+		Configuration.SetValue(self.Name, New)
+		if self._onChange then
+			self._onChange(New, Old)
+		end
+	end
+	return Elem
+end
+
+function Container:InputText(Name, DefaultText, Options)
+	ui.newInputText(self.TabRef, self.Ref, Name, DefaultText)
+	return MakeElement(self.TabRef, self.Ref, Name, Options)
+end
+
+function Container:Button(Name, Callback, Options)
+	ui.newButton(self.TabRef, self.Ref, Name, Callback)
+	local Elem = MakeElement(self.TabRef, self.Ref, Name, Options)
+	Elem.Get = nil
+	Elem.Set = nil
+	Elem._Poll = function() end
+	return Elem
+end
+
+function Container:Listbox(Name, Options, Callback, UIOptions)
+	ui.newListbox(self.TabRef, self.Ref, Name, Options, function()
+		local Index = ui.getValue(self.TabRef, self.Ref, Name)
+		local Selected = Options[Index + 1]
+		Configuration.SetValue(Name, Selected)
+		if Callback then
+			Callback(Selected)
+		end
+	end)
+	local Elem = MakeElement(self.TabRef, self.Ref, Name, UIOptions)
+	Elem._Poll = function() end
+	return Elem
+end
+
+function Container:KeyPicker(Name, InLine, Options)
+	ui.newHotkey(self.TabRef, self.Ref, Name, InLine)
+	local Elem = MakeElement(self.TabRef, self.Ref, Name, Options)
+	Elem._Read = function(self)
+		return ui.getValue(self.TabRef, self.ContainerRef, Name)
+	end
+	Elem.Get = function(self, ReturnType)
+		if ReturnType == "Hotkey" then
+			return ui.getHotkey(self.TabRef, self.ContainerRef, Name)
+		end
+		return Configuration.GetValue(self.Name)
+	end
+	return Elem
+end
+
+function Container:Page(Name, Pages)
+	local Dropdown = self:Dropdown(Name, Pages, 1)
+
+	local PageElements = {}
+	for _, PageName in ipairs(Pages) do
+		PageElements[PageName] = {}
+	end
+
+	local ActivePage = Pages[1]
+	local RealContainer = self
+
+	local function ApplyVisibility(PageName, State)
+		local Elems = PageElements[PageName]
+		if not Elems then
+			return
+		end
+		for i = 1, #Elems do
+			Elems[i]:Visible(State)
+		end
+	end
+
+	for i, PageName in ipairs(Pages) do
+		ApplyVisibility(PageName, i == 1)
+	end
+
+	Dropdown:OnChange(function(New)
+		ApplyVisibility(ActivePage, false)
+		ActivePage = New
+		ApplyVisibility(ActivePage, true)
+	end)
+
+	local PageObject = {}
+
+	function PageObject:For(PageName)
+		assert(PageElements[PageName], "[UI.Page]: Unknown page '" .. tostring(PageName) .. "'")
+
+		return setmetatable({}, {
+			__index = function(_, Key)
+				local Method = Container[Key]
+				if type(Method) ~= "function" or Key == "Page" then
+					return nil
+				end
+
+				return function(_, ...)
+					local Elem = Method(RealContainer, ...)
+					PageElements[PageName][#PageElements[PageName] + 1] = Elem
+					if PageName ~= ActivePage then
+						Elem:Visible(false)
+					end
+					return Elem
+				end
+			end,
+		})
+	end
+
+	return PageObject
+end
+
+-- << Tab Object >>
+local Tab = {}
+Tab.__index = Tab
+
+function Tab:Container(ContainerRef, DisplayName, Options)
+	ui.newContainer(self.Ref, ContainerRef, DisplayName, Options or {})
+	return setmetatable({
+		TabRef = self.Ref,
+		Ref = ContainerRef,
+	}, Container)
+end
+
+-- << Root >>
+
+function Library.NewTab(TabRef, DisplayName)
+	ui.newTab(TabRef, DisplayName)
+	return setmetatable({ Ref = TabRef }, Tab)
+end
+
+function Library:SetDebugMode(State)
+	self.DebugMode = State
+	for i = 1, #DebugElements do
+		DebugElements[i]:Visible(State)
+	end
+end
+
+function Library:Initialise()
+	Callbacks.Add("onUpdate", function()
+		for _, Elem in next, Elements do
+			Elem:_Poll()
+		end
+	end)
+end
+
+return Library
+end function __DIST.x()
+local Minigames = {
+	GameUI = nil,
+	GameType = nil,
+}
+
+local Environment = __DIST.load('h')
+local Callbacks = __DIST.load('c')
+local Configuration = __DIST.load('b')
+local DebugMode = __DIST.load('f')
+
+local GameModules = {
+	["Flight Game"] = __DIST.load('u'),
+	["Catch Game"] = __DIST.load('v'),
+}
+
+local function DebugPrint(Message)
+	if not Configuration.GetValue("Debug Mode") then
+		return
+	end
+
+	DebugMode.AddDebugMessage(Message, "info", 1200)
+end
+
+local function MinigamePlayer(Interface)
+	local Function = GameModules[Minigames.GameType]
+
+	if not Function then
+		DebugPrint("No module found for game type: " .. tostring(Minigames.GameType))
+		return nil
+	end
+
+	return Function(Interface)
+end
+
+function Minigames.Initialise(
+	Container: typeof(__DIST.load('w').NewTab(nil, nil):Container(nil, nil, nil))
+)
+	Callbacks.Add("onUpdate", function()
+		if utility.GetMenuState() then
+			return
+		end
+
+		if not Configuration.GetValue("Minigames Enabled") then
+			return
+		end
+
+		if not Minigames.GameUI then
+			return
+		end
+
+		if not Minigames.GameType then
+			return
+		end
+
+		if Configuration.GetValue(Minigames.GameType) ~= true then
+			return
+		end
+
+		MinigamePlayer(Minigames.GameUI)
+	end)
+
+	Callbacks.Add("onSlowUpdate", function()
+		if not Configuration.GetValue("Minigames Enabled") then
+			return
+		end
+
+		local PlayerGui = Environment.LocalPlayer.PlayerGui
+		if not PlayerGui then
+			return
+		end
+
+		local DeviceUI = PlayerGui:FindFirstChild("DeviceUI")
+		Minigames.GameUI = DeviceUI
+
+		if DeviceUI then
+			local System = DeviceUI:FindFirstChild("DeviceSystem")
+			if not System then
+				Minigames.GameType = nil
+				return
+			end
+
+			local GameType = System:FindFirstChild("Wall") and "Flight Game"
+				or System:FindFirstChild("Food") and "Catch Game"
+				or nil
+
+			Minigames.GameType = GameType
+		else
+			Minigames.GameType = nil
+		end
+	end)
+end
+
+return Minigames
+end function __DIST.y()
+local Features = {}
+
+local AutoBlackFlash = __DIST.load('l')
+local AutoLawyerQTE = __DIST.load('m')
+local AutoMahoragaEarthquake = __DIST.load('n')
+local AutoNanamiQTE = __DIST.load('o')
+local AutoTodoBlackFlash = __DIST.load('p')
+local AutoTodoPerfectSwap = __DIST.load('q')
+local AutoReturnM1 = __DIST.load('r')
+local PlayerVisuals = __DIST.load('s')
+local WorldVisuals = __DIST.load('t')
+local MinigameModule = __DIST.load('x')
+
+function Features:Initialise()
+	AutoBlackFlash:Initialise()
+	AutoLawyerQTE:Initialise()
+	AutoMahoragaEarthquake:Initialise()
+	AutoNanamiQTE:Initialise()
+	AutoTodoBlackFlash:Initialise()
+	AutoTodoPerfectSwap:Initialise()
+	AutoReturnM1:Initialise()
+	PlayerVisuals:Initialise()
+	WorldVisuals:Initialise()
+	MinigameModule:Initialise()
+end
+
+return Features
+end function __DIST.z()
+local Container = {}
+
+local ContainerReference = "Combat_DiddyWare"
+local ContainerName = "Combat"
+
+function Container:Initialise(Tab: typeof(__DIST.load('w').NewTab(nil, nil)))
+	local Container = Tab:Container(ContainerReference, ContainerName, { autosize = true, next = true })
+	Container:Checkbox("Auto Blackflash")
+	Container:KeyPicker("Auto Blackflash Hotkey", true)
+	Container:SliderFloat("Auto Blackflash Timing", 0, 1, 0.285, { Debug = true })
+	Container:SliderFloat("Auto Todo Blackflash Time Position", 0, 5, 2.8, { Debug = true })
+
+	Container:Checkbox("Auto Todo Perfect Swap")
+	Container:KeyPicker("Auto Todo Perfect Swap Hotkey", true)
+	Container:SliderFloat("Auto Todo Perfect Swap Time Position", 0, 1, 0.55, { Debug = true })
+
+	Container:Checkbox("Auto Mahoraga Earthquake")
+	Container:SliderFloat("Auto Mahoraga Earthquake Time Position", 0, 1, 0.8, { Debug = true })
+
+	Container:Checkbox("Auto Nanami Ratio")
+	Container:SliderFloat("Auto Nanami Ratio GUI Scale", 0, 1, 0.3, { Debug = true })
+
+	Container:Checkbox("Auto Lawyer QTE")
+	Container:SliderInt("Auto Lawyer QTE Delay (ms)", 1, 200, 75)
+
+	Container:Checkbox("Auto Return M1")
+end
+
+return Container
+end function __DIST.A()
+local Container = {}
+
+local ContainerReference = "VisualsTab_DiddyWare"
+local ContainerName = "Visuals"
+
+function Container:Initialise(Tab: typeof(__DIST.load('w').NewTab(nil, nil)))
+	local Container = Tab:Container(ContainerReference, ContainerName, { autosize = true })
+	Container:Checkbox("Visuals Enabled")
+	local MainPage = Container:Page("Visual Types", { "Player", "World" })
+	local PlayerPage = MainPage:For("Player")
+	local WorldPage = MainPage:For("World")
+	PlayerPage:Checkbox("Draw Cooldowns")
+	PlayerPage:Colorpicker("Cooldown Fill Color", { r = 255, g = 0, b = 0, a = 180 }, true)
+	PlayerPage:Colorpicker("Cooldown Background Color", { r = 0, g = 0, b = 0, a = 200 }, true)
+	PlayerPage:Checkbox("Draw Evasive Bar")
+	PlayerPage:Colorpicker("Evasive Fill Color", { r = 121, g = 74, b = 148, a = 255 }, true)
+	PlayerPage:Checkbox("Draw Animation Desync Guides", false)
+	PlayerPage:Colorpicker("Animation Desync Flagged Outline", { r = 0, g = 0, b = 0, a = 180 }, true)
+	PlayerPage:Colorpicker("Animation Desync Flagged Fill", { r = 255, g = 0, b = 0, a = 100 }, true)
+
+	WorldPage:Checkbox("Item ESP", false)
+	WorldPage:Colorpicker("Item ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
+
+	WorldPage:Checkbox("Domain Health ESP", false)
+	WorldPage:Colorpicker("Domain Health ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
+end
+
+return Container
+end function __DIST.B()
+local Container = {}
+
+local ContainerReference = "Minigame_DiddyWare"
+local ContainerName = "Minigames"
+
+function Container:Initialise(Tab: typeof(__DIST.load('w').NewTab(nil, nil)))
+	local Container = Tab:Container(ContainerReference, ContainerName, { autosize = true, next = true })
+	Container:Checkbox("Minigames Enabled")
+	Container:Checkbox("Flight Game")
+	Container:Checkbox("Catch Game")
+end
+
+return Container
+end function __DIST.C()
+local Container = {}
+
+local UIWrapper = __DIST.load('w')
+
+local ContainerReference = "Settings_DiddyWare"
+local ContainerName = "Settings"
+
+function Container:Initialise(Tab: typeof(__DIST.load('w').NewTab(nil, nil)))
+	local Container = Tab:Container(ContainerReference, ContainerName, { autosize = true })
+	local MainPage = Container:Page("Settings Menu", { "Debug", "Performance", "Customisation" })
+	local DebugPage = MainPage:For("Debug")
+	local PerformancePage = MainPage:For("Performance")
+	local CustomisationPage = MainPage:For("Customisation")
+
+	local DebugCheckbox = DebugPage:Checkbox("Debug Mode", false)
+
+	DebugCheckbox:OnChange(function(State)
+		UIWrapper:SetDebugMode(State)
+	end)
+
+	DebugPage:Multiselect("Show Debug Info", { "ok", "info", "warning", "error" })
+	PerformancePage:SliderFloat("Update Local Info Interval (s)", 1, 3, 1)
+	PerformancePage:SliderFloat("Rebuild Player Cache Interval (s)", 0.05, 1, 0.15)
+	PerformancePage:SliderInt("Update Player Cooldowns Interval (ms)", 1, 50, 5)
+	PerformancePage:SliderInt("Update Player Animations Interval (ms)", 1, 50, 5)
+	CustomisationPage:Dropdown("Font Selection", {
+		"ConsolasBold",
+		"SmallestPixel",
+		"Verdana",
+		"Tahoma",
+	}, 1)
+end
+
+return Container
+end function __DIST.D()
+local Menu = {}
+
+local UIWrapper = __DIST.load('w')
+
+local CombatTab = __DIST.load('z')
+local VisualsTab = __DIST.load('A')
+local MinigamesTab = __DIST.load('B')
+local SettingsTab = __DIST.load('C')
+
+function Menu:Initialise()
+	local Tab = UIWrapper.NewTab("DiddyWare_JJS", "DiddyWare")
+	CombatTab:Initialise(Tab)
+	VisualsTab:Initialise(Tab)
+	MinigamesTab:Initialise(Tab)
+	SettingsTab:Initialise(Tab)
+end
+
+return Menu
+end function __DIST.E()
+return function()
+	function math.floor(x)
+		return x - (x % 1)
+	end
+
+	function math.clamp(n, min, max)
+		return math.max(min, math.min(max, n))
+	end
+end
+end end-- Game Modules
+
+local PlayerScanning = __DIST.load('i')
+local WorldScanning = __DIST.load('k')
+local AnimationManager = __DIST.load('g')
+
+-- Core Modules
+local DebugMode = __DIST.load('f')
+local Features = __DIST.load('y')
+local Menu = __DIST.load('D')
+
+-- Utility Modules
+local Callbacks = __DIST.load('c')
+local Table = __DIST.load('a')
+local Math = __DIST.load('E')
+local Library = __DIST.load('w')
+
+local function Initialise()
+	Math()
+	Callbacks:Initialise()
+	Library:Initialise()
+	PlayerScanning:Initialise()
+	WorldScanning:Initialise()
+	AnimationManager:Initialise()
+	DebugMode:Initialise()
+	Menu:Initialise()
+	Features:Initialise()
+
+	Callbacks.Add("shutdown", function()
+		Callbacks.ClearAll()
+		Table:UnloadAll()
+	end)
+end
+
+Initialise()
