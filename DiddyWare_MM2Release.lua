@@ -1,1240 +1,934 @@
-local __DIST __DIST={cache={}, load=function(m)if not __DIST.cache[m]then __DIST.cache[m]={c=__DIST[m]()}end return __DIST.cache[m].c end}do function __DIST.a()local Library = {}
+--!nocheck
+--!nolint
 
--- ============= Element Object =============
-local Element = {}
-Element.__index = Element
+_P = {
+	genDate = "2026-03-31T19:09:55.349937500+00:00",
+	cfg = "Release",
+	vers = "",
+}
 
-function Element:Get()
-	return ui.getValue(self.TabRef, self.ContainerRef, self.Name)
-end
-
-function Element:Set(value)
-	ui.setValue(self.TabRef, self.ContainerRef, self.Name, value)
-end
-
-function Element:Visible(state)
-	ui.setVisibility(self.TabRef, self.ContainerRef, self.Name, state)
-end
-
--- ============= Container Object =============
-local Container = {}
-Container.__index = Container
-
-local function MakeElement(tabRef, containerRef, name)
-	return setmetatable({
-		TabRef = tabRef,
-		ContainerRef = containerRef,
-		Name = name,
-	}, Element)
-end
-
-function Container:Checkbox(name, inLine)
-	ui.newCheckbox(self.TabRef, self.Ref, name, inLine)
-	return MakeElement(self.TabRef, self.Ref, name)
-end
-
-function Container:SliderInt(name, min, max, default)
-	ui.newSliderInt(self.TabRef, self.Ref, name, min, max, default)
-	return MakeElement(self.TabRef, self.Ref, name)
-end
-
-function Container:SliderFloat(name, min, max, default)
-	ui.newSliderFloat(self.TabRef, self.Ref, name, min, max, default)
-	return MakeElement(self.TabRef, self.Ref, name)
-end
-
-function Container:Dropdown(name, options, defaultIndex)
-	ui.newDropdown(self.TabRef, self.Ref, name, options, defaultIndex)
-	local element = MakeElement(self.TabRef, self.Ref, name)
-	element.Get = function()
-		local index = ui.getValue(self.TabRef, self.Ref, name)
-		return options[index + 1]
-	end
-	return element
-end
-
-function Container:Multiselect(name, options)
-	ui.newMultiselect(self.TabRef, self.Ref, name, options)
-	local element = MakeElement(self.TabRef, self.Ref, name)
-
-	element.Get = function()
-		local states = ui.getValue(self.TabRef, self.Ref, name)
-		local selected = {}
-		for i, state in ipairs(states) do
-			if state then
-				selected[options[i] ] = true
+local a
+a = {
+	cache = {},
+	load = function(b)
+		if not a.cache[b] then
+			a.cache[b] = { c = a[b]() }
+		end
+		return a.cache[b].c
+	end,
+}
+do
+	function a.a()
+		local b, c = {}, {}
+		c.__index = c
+		function c:Get()
+			return ui.getValue(self.TabRef, self.ContainerRef, self.Name)
+		end
+		function c:Set(d)
+			ui.setValue(self.TabRef, self.ContainerRef, self.Name, d)
+		end
+		function c:Visible(d)
+			ui.setVisibility(self.TabRef, self.ContainerRef, self.Name, d)
+		end
+		local d = {}
+		d.__index = d
+		local e = function(e, f, g)
+			return setmetatable({ TabRef = e, ContainerRef = f, Name = g }, c)
+		end
+		function d:Checkbox(f, g)
+			ui.newCheckbox(self.TabRef, self.Ref, f, g)
+			return e(self.TabRef, self.Ref, f)
+		end
+		function d:SliderInt(f, g, h, i)
+			ui.newSliderInt(self.TabRef, self.Ref, f, g, h, i)
+			return e(self.TabRef, self.Ref, f)
+		end
+		function d:SliderFloat(f, g, h, i)
+			ui.newSliderFloat(self.TabRef, self.Ref, f, g, h, i)
+			return e(self.TabRef, self.Ref, f)
+		end
+		function d:Dropdown(f, g, h)
+			ui.newDropdown(self.TabRef, self.Ref, f, g, h)
+			local i = e(self.TabRef, self.Ref, f)
+			i.Get = function()
+				local j = ui.getValue(self.TabRef, self.Ref, f)
+				return g[j + 1]
 			end
+			return i
 		end
-		return selected
+		function d:Multiselect(f, g)
+			ui.newMultiselect(self.TabRef, self.Ref, f, g)
+			local h = e(self.TabRef, self.Ref, f)
+			h.Get = function()
+				local i, j = ui.getValue(self.TabRef, self.Ref, f), {}
+				for k, l in ipairs(i) do
+					if l then
+						j[g[k]] = true
+					end
+				end
+				return j
+			end
+			return h
+		end
+		function d:Colorpicker(f, g, h)
+			ui.newColorpicker(self.TabRef, self.Ref, f, g, h)
+			local i = e(self.TabRef, self.Ref, f)
+			i.Get = function(j, k)
+				k = (tostring(k) or "table"):lower()
+				if k == "rgb" then
+					local l = ui.getValue(self.TabRef, self.Ref, f)
+					return Color3.fromRGB(l.r, l.g, l.b)
+				end
+				return ui.getValue(self.TabRef, self.Ref, f)
+			end
+			return i
+		end
+		function d:InputText(f, g)
+			ui.newInputText(self.TabRef, self.Ref, f, g)
+			return e(self.TabRef, self.Ref, f)
+		end
+		function d:Button(f, g)
+			ui.newButton(self.TabRef, self.Ref, f, g)
+			local h = e(self.TabRef, self.Ref, f)
+			h.Get = nil
+			h.Set = nil
+			return h
+		end
+		function d:Listbox(f, g, h)
+			ui.newListbox(self.TabRef, self.Ref, f, g, function()
+				if h then
+					local i = ui.getValue(self.TabRef, self.Ref, f)
+					local j = g[i + 1]
+					h(j)
+				end
+			end)
+			return e(self.TabRef, self.Ref, f)
+		end
+		function d:KeyPicker(f, g, ...)
+			ui.newHotkey(self.TabRef, self.Ref, f, g)
+			local h = e(self.TabRef, self.Ref, f)
+			h.Get = function(i, j)
+				if not j then
+					j = "Value"
+				end
+				local k = { self.TabRef, self.Ref, f }
+				return j == "Value" and ui.getValue(unpack(k)) or ui.getHotkey(unpack(k))
+			end
+			return h
+		end
+		local f = {}
+		f.__index = f
+		function f:Container(g, h, i)
+			ui.newContainer(self.Ref, g, h, i or {})
+			return setmetatable({ TabRef = self.Ref, Ref = g }, d)
+		end
+		function b.NewTab(g, h)
+			ui.newTab(g, h)
+			return setmetatable({ Ref = g }, f)
+		end
+		function b.NewReference(g, h, i)
+			return e(g, h, i)
+		end
+		return b
 	end
-
-	return element
-end
-
-function Container:Colorpicker(name, defaultColor, inLine)
-	ui.newColorpicker(self.TabRef, self.Ref, name, defaultColor, inLine)
-	local Element = MakeElement(self.TabRef, self.Ref, name)
-	Element.Get = function(_, Type)
-		Type = (tostring(Type) or "table"):lower()
-		if Type == "rgb" then
-			local color = ui.getValue(self.TabRef, self.Ref, name)
-			return Color3.fromRGB(color.r, color.g, color.b)
-		end
-
-		return ui.getValue(self.TabRef, self.Ref, name)
-	end
-	return Element
-end
-
-function Container:InputText(name, defaultText)
-	ui.newInputText(self.TabRef, self.Ref, name, defaultText)
-	return MakeElement(self.TabRef, self.Ref, name)
-end
-
-function Container:Button(name, callback)
-	ui.newButton(self.TabRef, self.Ref, name, callback)
-	local element = MakeElement(self.TabRef, self.Ref, name)
-	element.Get = nil
-	element.Set = nil
-	return element
-end
-
-function Container:Listbox(name, options, callback)
-	ui.newListbox(self.TabRef, self.Ref, name, options, function()
-		if callback then
-			local index = ui.getValue(self.TabRef, self.Ref, name)
-			local selected = options[index + 1]
-			callback(selected)
-		end
-	end)
-	return MakeElement(self.TabRef, self.Ref, name)
-end
-
-function Container:KeyPicker(name, inLine, ...)
-	ui.newHotkey(self.TabRef, self.Ref, name, inLine)
-	local Element = MakeElement(self.TabRef, self.Ref, name)
-	Element.Get = function(_, ReturnType)
-		if not ReturnType then
-			ReturnType = "Value"
-		end
-
-		local Args = { self.TabRef, self.Ref, name }
-		return ReturnType == "Value" and ui.getValue(unpack(Args)) or ui.getHotkey(unpack(Args))
-	end
-
-	return Element
-end
-
--- ============= Tab Object =============
-local Tab = {}
-Tab.__index = Tab
-
-function Tab:Container(containerRef, displayName, options)
-	ui.newContainer(self.Ref, containerRef, displayName, options or {})
-	return setmetatable({
-		TabRef = self.Ref,
-		Ref = containerRef,
-	}, Container)
-end
-
--- ============= Root =============
-function Library.NewTab(tabRef, displayName)
-	ui.newTab(tabRef, displayName)
-	return setmetatable({ Ref = tabRef }, Tab)
-end
-
-function Library.NewReference(tabRef, containerRef, name)
-	return MakeElement(tabRef, containerRef, name)
-end
-
-return Library
-end function __DIST.b()
-return {
-	Font = "ConsolasBold",
-
-	CachedMap = nil,
-	CachedCoinContainer = nil,
-	CachedGunDrop = nil,
-
-	ActiveCoins = {},
-	TrackedPlayers = {},
-	CurrentMurderer = nil,
-	CurrentSheriff = nil,
-}
-end function __DIST.c()
-return {
-    ['version'] = 'version-6776addb8fbc4d17',
-
-    ['DoubleConstrainedValue'] = {
-        ['Value'] = {Type = 'double', Offset = 0xE0},
-    },
-    ['Animator'] = {
-        ['AnimationTrackList'] = {Type = 'pointer', Offset = 0x848},
-    },
-    ['Animation'] = {
-        ['AnimationId'] = {Type = 'string', Offset = 0xD0},
-    },
-    ['GuiObject'] = {
-        ['Size'] = {Type = 'float', X = 0x538, Y = 0x540},
-        ['AbsoluteSize'] = {Type = 'float', X = 0x118, Y = 0x11C},
-        ['AbsolutePosition'] = {Type = 'float', X = 0x110, Y = 0x114},
-        ['Visible'] = {Type = 'bool', Offset = 0x5B5},
-        ['Position'] = {Type = 'float', X = 0x518, Y = 0x520},
-        ['Rotation'] = {Type = 'float', Offset = 0x188},
-    },
-    ['ScreenGui'] = {
-        ['Enabled'] = {Type = 'bool', Offset = 0x4CC},
-    },
-    ['AnimationTrack'] = {
-        ['TimePosition'] = {Type = 'float', Offset = 0xE8},
-        ['Speed'] = {Type = 'float', Offset = 0xE4},
-        ['Looped'] = {Type = 'bool', Offset = 0xF5},
-        ['Animation'] = {Type = 'pointer', Offset = 0xD0},
-    },
-}end function __DIST.d()
-local Offsets = __DIST.load('c')
-
-local MemoryFunctions = {}
-
-function MemoryFunctions.GetFramePosition(Frame)
-	local Address = Frame.Address
-	return Vector3.new(
-		memory.read("float", Address + Offsets.GuiObject.Position.X),
-		memory.read("float", Address + Offsets.GuiObject.Position.Y),
-		0
-	)
-end
-
-function MemoryFunctions.GetFrameSize(Frame)
-	local Address = Frame.Address
-	return Vector3.new(
-		memory.read("float", Address + Offsets.GuiObject.Size.X),
-		memory.read("float", Address + Offsets.GuiObject.Size.Y),
-		0
-	)
-end
-
-function MemoryFunctions.GetFrameCenter(Frame)
-	local Position = MemoryFunctions.GetFramePosition(Frame)
-	local Size = MemoryFunctions.GetFrameSize(Frame)
-	return Position + (Size / 2)
-end
-
-function MemoryFunctions.GetFrameRotation(Frame)
-	return memory.read("float", Frame.Address + Offsets.GuiObject.Rotation.Offset)
-end
-
-function MemoryFunctions.IsFrameVisible(Frame)
-	return memory.read("bool", Frame.Address + Offsets.GuiObject.Visible.Offset)
-end
-
-return MemoryFunctions
-end function __DIST.e()
-local PlayerTracker = {
-	LastUpdate = 0,
-	UpdateInterval = 50,
-}
-
-local Players = game.GetService("Players")
-local EntityLocalPlayer = entity.GetLocalPlayer()
-
-local LocalPlayer = game.LocalPlayer
-local PlayerGui = LocalPlayer.PlayerGui
-
-local Environment = __DIST.load('b')
-local MemoryFunctions = __DIST.load('d')
-
--- Priv Funcs
-local function GetAttribute(Instance, AttributeName, DefaultValue)
-	local Attribute = Instance:GetAttribute(AttributeName)
-	return Attribute and Attribute.Value or DefaultValue
-end
-
-local function UpdatePlayer(EntityPlayer)
-	if not EntityPlayer then
-		return
-	end
-
-	if not Environment.TrackedPlayers[EntityPlayer.Name] then
-		local Player = Players:FindFirstChild(EntityPlayer.Name)
-		if not Player then
-			return
-		end
-
-		Environment.TrackedPlayers[EntityPlayer.Name] = {
-			EntityInstance = EntityPlayer,
-			PlayerInstance = Player,
-			IsAlive = nil,
+	function a.b()
+		return {
+			Font = "ConsolasBold",
+			CachedMap = nil,
+			CachedCoinContainer = nil,
+			CachedGunDrop = nil,
+			ActiveCoins = {},
+			TrackedPlayers = {},
+			CurrentMurderer = nil,
+			CurrentSheriff = nil,
 		}
 	end
-
-	local Data = Environment.TrackedPlayers[EntityPlayer.Name]
-	if not Data then
-		return
+	function a.c()
+		return {
+			version = "version-6776addb8fbc4d17",
+			DoubleConstrainedValue = { Value = { Type = "double", Offset = 0xe0 } },
+			Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x848 } },
+			Animation = {
+				AnimationId = { Type = "string", Offset = 0xd0 },
+			},
+			GuiObject = {
+				Size = { Type = "float", X = 0x538, Y = 0x540 },
+				AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c },
+				AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
+				Visible = { Type = "bool", Offset = 0x5b5 },
+				Position = { Type = "float", X = 0x518, Y = 0x520 },
+				Rotation = { Type = "float", Offset = 0x188 },
+			},
+			ScreenGui = {
+				Enabled = { Type = "bool", Offset = 0x4cc },
+			},
+			AnimationTrack = {
+				TimePosition = { Type = "float", Offset = 0xe8 },
+				Speed = { Type = "float", Offset = 0xe4 },
+				Looped = { Type = "bool", Offset = 0xf5 },
+				Animation = { Type = "pointer", Offset = 0xd0 },
+			},
+		}
 	end
-
-	local HumanoidRootPart = EntityPlayer:GetBoneInstance("HumanoidRootPart")
-	local Character = HumanoidRootPart and HumanoidRootPart.Parent or nil
-	local Backpack = Data.PlayerInstance.Backpack
-
-	Data.IsAlive = GetAttribute(Data.PlayerInstance, "Alive", false)
-	Data.IsMurderer = (Backpack and Backpack:FindFirstChild("Knife"))
-		or (Character and Character:FindFirstChild("Knife")) and true
-		or false
-
-	Data.IsSheriff = (Backpack and Backpack:FindFirstChild("Gun"))
-		or (Character and Character:FindFirstChild("Gun")) and true
-		or false
-
-	Data.IsInnocent = not Data.IsMurderer and not Data.IsSheriff
-
-	if Data.IsSheriff then
-		Environment.CurrentSheriff = EntityPlayer
-	end
-
-	if Data.IsMurderer then
-		Environment.CurrentMurderer = EntityPlayer
-	end
-
-	if EntityPlayer.Name == EntityLocalPlayer.Name then
-		local MainUI = PlayerGui:FindFirstChild("MainGUI")
-		if not MainUI then
-			Data.IsFullCoins = false
-			return
+	function a.d()
+		local b, c = a.load("c"), {}
+		function c.GetFramePosition(d)
+			local e = d.Address
+			return Vector3.new(
+				memory.read("float", e + b.GuiObject.Position.X),
+				memory.read("float", e + b.GuiObject.Position.Y),
+				0
+			)
 		end
-
-		local CoinBagContainer = MainUI.Game.CoinBags.Container
-		local BagFull = false
-		for _, Container in pairs(CoinBagContainer:GetChildren()) do
-			if Container:IsA("Frame") then
-				local IsBagFull = MemoryFunctions.IsFrameVisible(Container.Full)
-				if IsBagFull then
-					BagFull = IsBagFull
-					break
+		function c.GetFrameSize(d)
+			local e = d.Address
+			return Vector3.new(
+				memory.read("float", e + b.GuiObject.Size.X),
+				memory.read("float", e + b.GuiObject.Size.Y),
+				0
+			)
+		end
+		function c.GetFrameCenter(d)
+			local e, f = c.GetFramePosition(d), c.GetFrameSize(d)
+			return e + (f / 2)
+		end
+		function c.GetFrameRotation(d)
+			return memory.read("float", d.Address + b.GuiObject.Rotation.Offset)
+		end
+		function c.IsFrameVisible(d)
+			return memory.read("bool", d.Address + b.GuiObject.Visible.Offset)
+		end
+		return c
+	end
+	function a.e()
+		local b, c, d, e =
+			{ LastUpdate = 0, UpdateInterval = 50 },
+			game.GetService("Players"),
+			entity.GetLocalPlayer(),
+			game.LocalPlayer
+		local f, g, h, i =
+			e.PlayerGui, a.load("b"), a.load("d"), function(f, g, h)
+				local i = f:GetAttribute(g)
+				return i and i.Value or h
+			end
+		local j = function(j)
+			if not j then
+				return
+			end
+			if not g.TrackedPlayers[j.Name] then
+				local k = c:FindFirstChild(j.Name)
+				if not k then
+					return
 				end
+				g.TrackedPlayers[j.Name] = { EntityInstance = j, PlayerInstance = k, IsAlive = nil }
+			end
+			local k = g.TrackedPlayers[j.Name]
+			if not k then
+				return
+			end
+			local l = j:GetBoneInstance("HumanoidRootPart")
+			local m, n = l and l.Parent or nil, k.PlayerInstance.Backpack
+			k.IsAlive = i(k.PlayerInstance, "Alive", false)
+			k.IsMurderer = (n and n:FindFirstChild("Knife")) or (m and m:FindFirstChild("Knife")) and true or false
+			k.IsSheriff = (n and n:FindFirstChild("Gun")) or (m and m:FindFirstChild("Gun")) and true or false
+			k.IsInnocent = not k.IsMurderer and not k.IsSheriff
+			if k.IsSheriff then
+				g.CurrentSheriff = j
+			end
+			if k.IsMurderer then
+				g.CurrentMurderer = j
+			end
+			if j.Name == d.Name then
+				local o = f:FindFirstChild("MainGUI")
+				if not o then
+					k.IsFullCoins = false
+					return
+				end
+				local p, q = o.Game.CoinBags.Container, false
+				for r, s in pairs(p:GetChildren()) do
+					if s:IsA("Frame") then
+						local t = h.IsFrameVisible(s.Full)
+						if t then
+							q = t
+							break
+						end
+					end
+				end
+				k.IsFullCoins = q
 			end
 		end
-
-		Data.IsFullCoins = BagFull
-	end
-end
-
---- return @boolean - is the player alive?
-function PlayerTracker:IsPlayerAlive(Entity)
-	Entity = Entity ~= nil and Entity or EntityLocalPlayer
-	local Data = Environment.TrackedPlayers[Entity.Name]
-	if not Data then
-		return false
-	end
-
-	return Data.IsAlive
-end
-
---- return @string - whats the player's role?
-function PlayerTracker:GetPlayerRole(Entity)
-	Entity = Entity or EntityLocalPlayer
-
-	local Data = Environment.TrackedPlayers[Entity.Name]
-	if not Data then
-		return nil
-	end
-
-	if Data.IsMurderer and Data.IsAlive then
-		return "Murderer"
-	elseif Data.IsSheriff and Data.IsAlive then
-		return "Sheriff"
-	elseif Data.IsInnocent and Data.IsAlive then
-		return "Innocent"
-	else
-		return "Spectator"
-	end
-end
-
-function PlayerTracker:GetPlayerStored(Entity)
-	Entity = Entity or EntityLocalPlayer
-
-	local Data = Environment.TrackedPlayers[Entity.Name]
-	if not Data then
-		return nil
-	end
-
-	return Data
-end
-
-function PlayerTracker:GetAlivePlayers(OnlyEnemies)
-	local Alive = {}
-	local LocalRole = self:GetPlayerRole()
-
-	for EntityName, Player in pairs(Environment.TrackedPlayers) do
-		if EntityName ~= EntityLocalPlayer.Name and Player.IsAlive then
-			if not OnlyEnemies then
-				table.insert(Alive, Player)
+		function b:IsPlayerAlive(k)
+			k = k ~= nil and k or d
+			local l = g.TrackedPlayers[k.Name]
+			if not l then
+				return false
+			end
+			return l.IsAlive
+		end
+		function b:GetPlayerRole(k)
+			k = k or d
+			local l = g.TrackedPlayers[k.Name]
+			if not l then
+				return nil
+			end
+			if l.IsMurderer and l.IsAlive then
+				return "Murderer"
+			elseif l.IsSheriff and l.IsAlive then
+				return "Sheriff"
+			elseif l.IsInnocent and l.IsAlive then
+				return "Innocent"
 			else
-				if LocalRole == "Murderer" then
-					table.insert(Alive, Player)
-				elseif LocalRole == "Sheriff" then
-					if self:GetPlayerRole(Player) == "Murderer" then
-						table.insert(Alive, Player)
+				return "Spectator"
+			end
+		end
+		function b:GetPlayerStored(k)
+			k = k or d
+			local l = g.TrackedPlayers[k.Name]
+			if not l then
+				return nil
+			end
+			return l
+		end
+		function b:GetAlivePlayers(k)
+			local l, m = {}, self:GetPlayerRole()
+			for n, o in pairs(g.TrackedPlayers) do
+				if n ~= d.Name and o.IsAlive then
+					if not k then
+						table.insert(l, o)
+					else
+						if m == "Murderer" then
+							table.insert(l, o)
+						elseif m == "Sheriff" then
+							if self:GetPlayerRole(o) == "Murderer" then
+								table.insert(l, o)
+							end
+						end
+					end
+				end
+			end
+			return l
+		end
+		function b.Initialise(k)
+			local l = k:SliderInt("Player Tracker Update Interval", 1, 100, 50)
+			cheat.Register("onUpdate", function()
+				b.UpdateInterval = l:Get()
+				local m = utility.GetTickCount()
+				if m - b.LastUpdate >= b.UpdateInterval then
+					j(d)
+					for n, o in pairs(entity.GetPlayers(false)) do
+						j(o)
+					end
+				end
+			end)
+			cheat.Register("onSlowUpdate", function()
+				local m = {}
+				m[d.Name] = true
+				for n, o in pairs(entity.GetPlayers(false)) do
+					m[o.Name] = true
+				end
+				for n, o in pairs(g.TrackedPlayers) do
+					if not m[n] then
+						g.TrackedPlayers[n] = nil
+					end
+				end
+			end)
+		end
+		return b
+	end
+	function a.f()
+		return function(b, c)
+			for d = 1, 1000 do
+				b.Position = c
+			end
+		end
+	end
+	function a.g()
+		local b = {}
+		b.__index = b
+		local c = a.load("f")
+		b.Easing = {
+			Linear = function(d)
+				return d
+			end,
+		}
+		local d = function(d, e, f)
+			if e == "Position" then
+				c(d, f)
+			else
+				d[e] = f
+			end
+		end
+		function b.new(e, f, g, h, i)
+			return setmetatable(
+				{
+					Target = e,
+					Property = f,
+					Start = e[f],
+					Goal = g,
+					Duration = h * 1000,
+					StartTime = utility.GetTickCount(),
+					Easing = i or b.Easing.Linear,
+					Finished = false,
+				},
+				b
+			)
+		end
+		function b:Step()
+			if self.Finished then
+				return true
+			end
+			local e = utility.GetTickCount()
+			local f = e - self.StartTime
+			local g = f / self.Duration
+			if g >= 1 then
+				d(self.Target, self.Property, self.Goal)
+				self.Finished = true
+				return true
+			end
+			g = self.Easing(g)
+			local h, i, j = self.Start, self.Goal
+			if type(h) == "number" then
+				j = h + (i - h) * g
+			else
+				j = h:Lerp(i, g)
+			end
+			d(self.Target, self.Property, j)
+			return false
+		end
+		function b:Cancel()
+			self.Finished = true
+		end
+		return b
+	end
+	function a.h()
+		local b, c, d, e, f, g, h =
+			{
+				SAFE_POSITION = nil,
+				Flags = { Enabled = false, SafetyOnFullBag = false, MurdererSafezone = 35, DelayPerCoin = 0.75, TweenSpeed = 35 },
+				State = {
+					GoingToCoin = false,
+					CoinTween = nil,
+					LastCoinGrab = 0,
+					LastPositionBeforeTeleport = nil,
+					LastTeleport = 0,
+					Target = nil,
+				},
+			},
+			game.GetService("Workspace"),
+			entity.GetLocalPlayer(),
+			a.load("a"),
+			a.load("b"),
+			a.load("e"),
+			a.load("g")
+		local i, j =
+			function(i)
+				local j, k, l, m, n = math.huge, i ~= "Murderer", f.CurrentMurderer
+				if k and l then
+					n = l.Position
+				end
+				for o, p in pairs(f.ActiveCoins) do
+					local q, r = (d.Position - p).Magnitude
+					if n then
+						r = (n - p).Magnitude
+					end
+					local s = true
+					if r then
+						s = r > b.Flags.MurdererSafezone
+					end
+					if s and q < j then
+						m = { Address = o, Position = p }
+						j = q
+					end
+				end
+				return m, j
+			end, function(i)
+				return f.ActiveCoins[i]
+			end
+		function b.Runtime()
+			if not b.Flags.Enabled then
+				return
+			end
+			if not g:IsPlayerAlive() then
+				return
+			end
+			local k = d:GetBoneInstance("HumanoidRootPart")
+			if not k then
+				return
+			end
+			local l, m = utility.GetTickCount(), b.State.CoinTween
+			if m then
+				local n = m:Step()
+				if n then
+					b.State.CoinTween = nil
+					b.State.GoingToCoin = false
+					b.State.LastCoinGrab = l
+				end
+				return
+			end
+			local n, o, p, q, r =
+				g:GetPlayerStored(),
+				g:GetPlayerRole(),
+				b.Flags.SafetyOnFullBag,
+				b.State.GoingToCoin,
+				b.State.LastCoinGrab
+			local s = p and n.IsFullCoins
+			if s then
+				k.Position = b.SAFE_POSITION
+				return
+			end
+			if not q and not n.IsFullCoins and (l - r) >= b.Flags.DelayPerCoin * 1000 then
+				local t, u = i(o)
+				if not t or not j(t.Address) then
+					return
+				end
+				local v = u / b.Flags.TweenSpeed
+				b.State.GoingToCoin = true
+				b.State.CoinTween = h.new(k, "Position", t.Position, v, h.Easing.Linear)
+				return
+			end
+		end
+		function b.Initialise(k)
+			local l, m, n, o, p, q, r =
+				k:Checkbox("Coin Farm", false),
+				k:Checkbox("Return to Safety when Bag is Full", false),
+				k:SliderInt("Murderer Safezne", 1, 100, 20),
+				k:SliderFloat("Delay Per Coin (s)", 0, 3, 0.55),
+				k:SliderInt("Tween Speed", 1, 100, 25),
+				e.NewReference("Exploits", "Misc", "Slow Fall"),
+				e.NewReference("Exploits", "Misc", "Fall Speed")
+			local s = function()
+				local s = b.Flags
+				s.Enabled = l:Get()
+				s.SafetyOnFullBag = m:Get()
+				s.MurdererSafezone = n:Get()
+				s.DelayPerCoin = o:Get()
+				s.TweenSpeed = p:Get()
+				m:Visible(s.Enabled)
+				n:Visible(s.Enabled)
+				o:Visible(s.Enabled)
+				p:Visible(s.Enabled)
+				q:Set(s.Enabled)
+				r:Set(1)
+			end
+			b.SAFE_POSITION = c.Lobby.Spawns.SpawnLocation.Position
+			cheat.Register("onUpdate", function()
+				b.Runtime()
+				s()
+			end)
+		end
+		return b
+	end
+	function a.i()
+		local b, c, d, e, f =
+			{
+				Flags = { Enabled = false },
+			}, a.load("b"), a.load("e"), a.load("f"), entity.GetLocalPlayer()
+		local g = function()
+			local g = f:GetBoneInstance("HumanoidRootPart")
+			if not g then
+				return
+			end
+			local h = c.CachedGunDrop
+			if not h then
+				return
+			end
+			local i = g.Position
+			e(g, h.Position)
+			e(g, i)
+		end
+		function b.Runtime()
+			if not b.Flags.Enabled then
+				return
+			end
+			if not d:IsPlayerAlive() then
+				return
+			end
+			if d:GetPlayerRole() == "Murderer" then
+				return
+			end
+			g()
+		end
+		function b.Initialise(h)
+			local i = h:Checkbox("Auto Teleport To Gun", false)
+			h:Button("Grab Gun", g)
+			cheat.Register("onUpdate", function()
+				b.Flags.Enabled = i:Get()
+				b.Runtime()
+			end)
+		end
+		return b
+	end
+	function a.j()
+		return function(b, c)
+			local d, e, f
+			d = b.X - c.X
+			e = b.Y - c.Y
+			f = b.Z - c.Z
+			return math.floor(math.sqrt(d * d + e * e + f * f))
+		end
+	end
+	function a.k()
+		local b, c, d, e =
+			{
+				Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 },
+				CachedTextSizes = {},
+				LastFont = nil,
+			},
+			"Coin"
+		local f, g, h, i, j =
+			Color3.fromRGB(255, 255, 255), a.load("b"), a.load("e"), a.load("j"), entity.GetLocalPlayer()
+		local k, l =
+			function(k)
+				local l = b.CachedTextSizes[k .. g.Font]
+				if l then
+					return l.W, l.H
+				end
+				local m, n = draw.GetTextSize(k, g.Font)
+				b.CachedTextSizes[k .. g.Font] = { W = m, H = n }
+				return m, n
+			end, function(k)
+				if type(k) ~= "table" then
+					return Color3.fromRGB(255, 255, 255)
+				end
+				local l, m, n = k.R or k.r or 255, k.G or k.g or 255, k.B or k.b or 255
+				return Color3.fromRGB(l, m, n)
+			end
+		function b.Runtime()
+			if not b.Flags.Enabled then
+				return
+			end
+			if not h:IsPlayerAlive() then
+				return
+			end
+			local m, n, o = b.Flags.ShowDistance, b.Flags.Color, b.Flags.Alpha
+			for p, q in pairs(g.ActiveCoins) do
+				local r, s, t = utility.WorldToScreen(q)
+				if t then
+					local u = ""
+					if m then
+						local v = i(j.Position, q)
+						u = " [" .. tostring(v) .. "]"
+					end
+					local v = e
+					if m and u ~= "" then
+						v = v + k(u)
+					end
+					local w, x = r - (v / 2), s - (d / 2)
+					draw.TextOutlined(c, w, x, n, g.Font, o)
+					if m and u ~= "" then
+						draw.TextOutlined(u, w + e, x, f, g.Font, o)
 					end
 				end
 			end
 		end
+		function b.Initialise(m)
+			local n, o, p =
+				m:Checkbox("Coin ESP", false),
+				m:Colorpicker("Coin ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
+				m:Checkbox("Show Coin Distance", false)
+			cheat.Register("onPaint", b.Runtime)
+			cheat.Register("onUpdate", function()
+				local q = o:Get()
+				b.Flags.Enabled = n:Get()
+				b.Flags.ShowDistance = p:Get()
+				b.Flags.Color = l(q)
+				b.Flags.Alpha = q.a
+				p:Visible(b.Flags.Enabled)
+				local r = g.Font
+				if b.LastFont ~= r then
+					b.LastFont = r
+					e, d = k(c)
+				end
+			end)
+		end
+		return b
 	end
-
-	return Alive
-end
-
-function PlayerTracker.Initialise(
-	Container: typeof(__DIST.load('a')
-.NewTab(nil, nil):Container(nil, nil, nil))
-)
-	local IntervalSlider = Container:SliderInt("Player Tracker Update Interval", 1, 100, 50)
-
-	cheat.Register("onUpdate", function()
-		PlayerTracker.UpdateInterval = IntervalSlider:Get()
-
-		local Now = utility.GetTickCount()
-		if Now - PlayerTracker.LastUpdate >= PlayerTracker.UpdateInterval then
-			UpdatePlayer(EntityLocalPlayer)
-			for _, Entity in pairs(entity.GetPlayers(false)) do
-				UpdatePlayer(Entity)
+	function a.l()
+		local b, c, d, e, f, g, h =
+			{ Flags = { Enabled = false, ShowDistance = false, Color = Color3.fromRGB(255, 255, 255), Alpha = 255 }, CachedTextSizes = {} },
+			"Gun",
+			Color3.fromRGB(255, 255, 255),
+			a.load("j"),
+			a.load("b"),
+			a.load("e"),
+			entity.GetLocalPlayer()
+		local i, j =
+			function(i)
+				local j = b.CachedTextSizes[i .. f.Font]
+				if j then
+					return j.W, j.H
+				end
+				local k, l = draw.GetTextSize(i, f.Font)
+				b.CachedTextSizes[i .. f.Font] = { W = k, H = l }
+				return k, l
+			end, function(i)
+				if type(i) ~= "table" then
+					return d
+				end
+				local j, k, l = i.R or i.r or 255, i.G or i.g or 255, i.B or i.b or 255
+				return Color3.fromRGB(j, k, l)
+			end
+		function b.Runtime()
+			if not b.Flags.Enabled then
+				return
+			end
+			if not g:IsPlayerAlive() then
+				return
+			end
+			local k, l, m, n = b.Flags.ShowDistance, b.Flags.Color, b.Flags.Alpha, f.CachedGunDrop
+			if not n then
+				return
+			end
+			local o = n.Position
+			local p, q, r = utility.WorldToScreen(o)
+			if r then
+				local s, t = i(c)
+				local u = ""
+				if k then
+					local v = e(h.Position, o)
+					u = " [" .. tostring(v) .. "]"
+				end
+				local v = s
+				if k and u ~= "" then
+					v = v + i(u)
+				end
+				local w, x = p - (v / 2), q - (t / 2)
+				draw.TextOutlined(c, w, x, l, f.Font, m)
+				if k and u ~= "" then
+					draw.TextOutlined(u, w + s, x, d, f.Font, m)
+				end
 			end
 		end
-	end)
-
-	cheat.Register("onSlowUpdate", function()
-		local EntityNames = {}
-
-		EntityNames[EntityLocalPlayer.Name] = true
-		for _, PlayerEntity in pairs(entity.GetPlayers(false)) do
-			EntityNames[PlayerEntity.Name] = true
+		function b.Initialise(k)
+			local l, m, n =
+				k:Checkbox("Gun Drop ESP", false),
+				k:Colorpicker("Gun Drop ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
+				k:Checkbox("Show Gun Distance", false)
+			cheat.Register("onPaint", b.Runtime)
+			cheat.Register("onUpdate", function()
+				local o = m:Get()
+				b.Flags.Enabled = l:Get()
+				b.Flags.Color = j(o)
+				b.Flags.Alpha = o.a
+				b.Flags.ShowDistance = n:Get()
+				n:Visible(b.Flags.Enabled)
+			end)
 		end
-
-		for EntityName, _ in pairs(Environment.TrackedPlayers) do
-			if not EntityNames[EntityName] then
-				Environment.TrackedPlayers[EntityName] = nil
+		return b
+	end
+	function a.m()
+		local b, c, d, e, f =
+			{
+				Flags = {
+					Enabled = false,
+					UseRoleColor = false,
+					Color = Color3.new(255, 255, 255),
+					Alpha = 255,
+					SelectedRoleTypes = { Innocent = false, Sheriff = false, Murderer = false },
+				},
+				CachedTextSizes = {},
+			},
+			Color3.fromRGB(255, 255, 255),
+			{
+				Innocent = Color3.new(0.117647, 0.858824, 0.117647),
+				Murderer = Color3.new(0.72549, 0.101961, 0.101961),
+				Sheriff = Color3.new(0.070588, 0.517647, 0.811765),
+			},
+			a.load("b"),
+			a.load("e")
+		local g, h =
+			function(g)
+				local h = b.CachedTextSizes[g .. e.Font]
+				if h then
+					return h.W, h.H
+				end
+				local i, j = draw.GetTextSize(g, e.Font)
+				b.CachedTextSizes[g .. e.Font] = { W = i, H = j }
+				return i, j
+			end, function(g)
+				if type(g) ~= "table" then
+					return c
+				end
+				local h, i, j = g.R or g.r or 255, g.G or g.g or 255, g.B or g.b or 255
+				return Color3.fromRGB(h, i, j)
+			end
+		local i = function(i)
+			local j = f:IsPlayerAlive(i)
+			if not j then
+				return
+			end
+			local k = f:GetPlayerRole(i)
+			local l = b.Flags.SelectedRoleTypes[k] ~= nil
+			if not l then
+				return
+			end
+			local m, n, o = utility.WorldToScreen(i.Position)
+			if not o then
+				return
+			end
+			local p = i.BoundingBox
+			if not p then
+				return
+			end
+			local q, r = g(k)
+			local s, t, u, v =
+				p.x + (p.w / 2) - (q / 2),
+				p.y + (p.h / 2) - (r / 2),
+				b.Flags.UseRoleColor and d[k] or b.Flags.Color,
+				b.Flags.Alpha
+			draw.TextOutlined(k, s, t, u, e.Font, v)
+		end
+		function b.Runtime()
+			if not b.Flags.Enabled then
+				return
+			end
+			if not f:IsPlayerAlive() then
+				return
+			end
+			for j, k in pairs(entity.GetPlayers(false)) do
+				i(k)
 			end
 		end
-	end)
-end
-
-return PlayerTracker
-end function __DIST.f()return function(Instance, NewPosition)
-	for i = 1, 1000 do
-		Instance.Position = NewPosition
-	end
-end
-end function __DIST.g()
-local Tween = {}
-Tween.__index = Tween
-
-local SetPosition = __DIST.load('f')
-
-Tween.Easing = {
-	Linear = function(t)
-		return t
-	end,
-}
-
-local function Apply(Target, Property, Value)
-	if Property == "Position" then
-		SetPosition(Target, Value)
-	else
-		Target[Property] = Value
-	end
-end
-
-function Tween.new(Target, Property, Goal, Duration, Easing)
-	return setmetatable({
-		Target = Target,
-		Property = Property,
-
-		Start = Target[Property],
-		Goal = Goal,
-
-		Duration = Duration * 1000,
-		StartTime = utility.GetTickCount(),
-
-		Easing = Easing or Tween.Easing.Linear,
-		Finished = false,
-	}, Tween)
-end
-
-function Tween:Step()
-	if self.Finished then
-		return true
-	end
-
-	local now = utility.GetTickCount()
-	local elapsed = now - self.StartTime
-
-	local Alpha = elapsed / self.Duration
-	if Alpha >= 1 then
-		Apply(self.Target, self.Property, self.Goal)
-		self.Finished = true
-		return true
-	end
-
-	Alpha = self.Easing(Alpha)
-
-	local Start = self.Start
-	local Goal = self.Goal
-
-	local Value
-	if type(Start) == "number" then
-		Value = Start + (Goal - Start) * Alpha
-	else
-		Value = Start:Lerp(Goal, Alpha)
-	end
-
-	Apply(self.Target, self.Property, Value)
-	return false
-end
-
-function Tween:Cancel()
-	self.Finished = true
-end
-
-return Tween
-end function __DIST.h()
-local CoinFarm = {
-	SAFE_POSITION = nil,
-
-	Flags = {
-		Enabled = false,
-		SafetyOnFullBag = false,
-		MurdererSafezone = 35,
-		DelayPerCoin = 0.75,
-		TweenSpeed = 35,
-	},
-
-	State = {
-		GoingToCoin = false,
-		CoinTween = nil,
-
-		LastCoinGrab = 0,
-		LastPositionBeforeTeleport = nil,
-		LastTeleport = 0,
-
-		Target = nil,
-	},
-}
-
-local Workspace = game.GetService("Workspace")
-
-local EntityLocalPlayer = entity.GetLocalPlayer()
-
-local UIWrapper = __DIST.load('a')
-local Environment = __DIST.load('b')
-local PlayerTracker = __DIST.load('e')
-local Tween = __DIST.load('g')
-
-local function GetClosestCoin(LocalRole)
-	local ClosestCoin, ClosestDistance = nil, math.huge
-
-	local IsNotMurderer = LocalRole ~= "Murderer"
-	local Murderer = Environment.CurrentMurderer
-	local MurdererPosition = nil
-
-	if IsNotMurderer and Murderer then
-		MurdererPosition = Murderer.Position
-	end
-
-	for Address, CoinPosition in pairs(Environment.ActiveCoins) do
-		local Distance = (EntityLocalPlayer.Position - CoinPosition).Magnitude
-		local MurdererDistance = nil
-
-		if MurdererPosition then
-			MurdererDistance = (MurdererPosition - CoinPosition).Magnitude
+		function b.Initialise(j)
+			local k, l, n, o =
+				j:Checkbox("Role ESP Enabled"),
+				j:Colorpicker("Role ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
+				j:Checkbox("Use Role Color", false),
+				j:Multiselect("Draw Roles", { "Innocent", "Sheriff", "Murderer" })
+			cheat.Register("onPaint", b.Runtime)
+			cheat.Register("onUpdate", function()
+				b.Flags.Enabled = k:Get()
+				local p = l:Get()
+				b.Flags.Color = h(p)
+				b.Flags.Alpha = p.a
+				b.Flags.UseRoleColor = n:Get()
+				b.Flags.SelectedRoleTypes = o:Get()
+				n:Visible(b.Flags.Enabled)
+				o:Visible(b.Flags.Enabled)
+			end)
 		end
-
-		local SafeToGrab = true
-		if MurdererDistance then
-			SafeToGrab = MurdererDistance > CoinFarm.Flags.MurdererSafezone
-		end
-
-		if SafeToGrab and Distance < ClosestDistance then
-			ClosestCoin = { Address = Address, Position = CoinPosition }
-			ClosestDistance = Distance
-		end
+		return b
 	end
-
-	return ClosestCoin, ClosestDistance
-end
-
-local function ValidateCoin(Coin)
-	return Environment.ActiveCoins[Coin]
-end
-
-function CoinFarm.Runtime()
-	if not CoinFarm.Flags.Enabled then
-		return
-	end
-
-	if not PlayerTracker:IsPlayerAlive() then
-		return
-	end
-
-	local RootPart = EntityLocalPlayer:GetBoneInstance("HumanoidRootPart")
-	if not RootPart then
-		return
-	end
-
-	local Now = utility.GetTickCount()
-
-	local CoinTween = CoinFarm.State.CoinTween
-	if CoinTween then
-		local Finished = CoinTween:Step()
-
-		if Finished then
-			CoinFarm.State.CoinTween = nil
-			CoinFarm.State.GoingToCoin = false
-			CoinFarm.State.LastCoinGrab = Now
-		end
-
-		return
-	end
-
-	local PlayerData = PlayerTracker:GetPlayerStored()
-	local PlayerRole = PlayerTracker:GetPlayerRole()
-
-	local SafetyOnFullBag = CoinFarm.Flags.SafetyOnFullBag
-
-	local GoingForCoin = CoinFarm.State.GoingToCoin
-	local LastCoinGrab = CoinFarm.State.LastCoinGrab
-
-	local WantsSafety = SafetyOnFullBag and PlayerData.IsFullCoins
-
-	if WantsSafety then
-		RootPart.Position = CoinFarm.SAFE_POSITION
-		return
-	end
-
-	if
-		not GoingForCoin
-		and not PlayerData.IsFullCoins
-		and (Now - LastCoinGrab) >= CoinFarm.Flags.DelayPerCoin * 1000
-	then
-		local CoinData, Distance = GetClosestCoin(PlayerRole)
-		if not CoinData or not ValidateCoin(CoinData.Address) then
-			return
-		end
-
-		local Duration = Distance / CoinFarm.Flags.TweenSpeed
-		CoinFarm.State.GoingToCoin = true
-		CoinFarm.State.CoinTween = Tween.new(RootPart, "Position", CoinData.Position, Duration, Tween.Easing.Linear)
-		return
-	end
-end
-
-function CoinFarm.Initialise(
-	Container: typeof(__DIST.load('a')
-.NewTab(nil, nil):Container(nil, nil, nil))
-)
-	local Enabled = Container:Checkbox("Coin Farm", false)
-	local ReturnToSafetyOnBagFull = Container:Checkbox("Return to Safety when Bag is Full", false)
-	local MurdererSafezone = Container:SliderInt("Murderer Safezne", 1, 100, 20)
-	local DelayPerCoin = Container:SliderFloat("Delay Per Coin (s)", 0, 3, 0.55)
-	local TweenSpeed = Container:SliderInt("Tween Speed", 1, 100, 25)
-	local SlowFall = UIWrapper.NewReference("Exploits", "Misc", "Slow Fall")
-	local SlowFallSpeed = UIWrapper.NewReference("Exploits", "Misc", "Fall Speed")
-
-	local function UpdateFlags()
-		local Settings = CoinFarm.Flags
-		Settings.Enabled = Enabled:Get()
-		Settings.SafetyOnFullBag = ReturnToSafetyOnBagFull:Get()
-		Settings.MurdererSafezone = MurdererSafezone:Get()
-		Settings.DelayPerCoin = DelayPerCoin:Get()
-		Settings.TweenSpeed = TweenSpeed:Get()
-
-		ReturnToSafetyOnBagFull:Visible(Settings.Enabled)
-		MurdererSafezone:Visible(Settings.Enabled)
-		DelayPerCoin:Visible(Settings.Enabled)
-		TweenSpeed:Visible(Settings.Enabled)
-		SlowFall:Set(Settings.Enabled)
-		SlowFallSpeed:Set(1)
-	end
-
-	CoinFarm.SAFE_POSITION = Workspace.Lobby.Spawns.SpawnLocation.Position
-
-	cheat.Register("onUpdate", function()
-		CoinFarm.Runtime()
-		UpdateFlags()
-	end)
-end
-
-return CoinFarm
-end function __DIST.i()local GetGunDrop = {
-	Flags = {
-		Enabled = false,
-	},
-}
-
-local Environment = __DIST.load('b')
-local PlayerTracker = __DIST.load('e')
-local SetPosition = __DIST.load('f')
-
-local EntityLocalPlayer = entity.GetLocalPlayer()
-
-local function GrabGun()
-	local HumanoidRootPart = EntityLocalPlayer:GetBoneInstance("HumanoidRootPart")
-	if not HumanoidRootPart then
-		return
-	end
-
-	local GunDrop = Environment.CachedGunDrop
-	if not GunDrop then
-		return
-	end
-
-	local OriginalPosition = HumanoidRootPart.Position
-	SetPosition(HumanoidRootPart, GunDrop.Position)
-	SetPosition(HumanoidRootPart, OriginalPosition)
-end
-
-function GetGunDrop.Runtime()
-	if not GetGunDrop.Flags.Enabled then
-		return
-	end
-
-	if not PlayerTracker:IsPlayerAlive() then
-		return
-	end
-
-	if PlayerTracker:GetPlayerRole() == "Murderer" then
-		return
-	end
-
-	GrabGun()
-end
-
-function GetGunDrop.Initialise(
-	Container: typeof(__DIST.load('a')
-.NewTab(nil, nil):Container(nil, nil, nil))
-)
-	local Enabled = Container:Checkbox("Auto Teleport To Gun", false)
-	Container:Button("Grab Gun", GrabGun)
-
-	cheat.Register("onUpdate", function()
-		GetGunDrop.Flags.Enabled = Enabled:Get()
-		GetGunDrop.Runtime()
-	end)
-end
-
-return GetGunDrop
-end function __DIST.j()return function(VectorA, VectorB)
-	local dx, dy, dz
-	dx = VectorA.X - VectorB.X
-	dy = VectorA.Y - VectorB.Y
-	dz = VectorA.Z - VectorB.Z
-
-	return math.floor(math.sqrt(dx * dx + dy * dy + dz * dz))
-end
-end function __DIST.k()
-local CoinESP = {
-	Flags = {
-		Enabled = false,
-		ShowDistance = false,
-		Color = Color3.fromRGB(255, 255, 255),
-		Alpha = 255,
-	},
-
-	CachedTextSizes = {},
-	LastFont = nil,
-}
-
-local ESP_TEXT = "Coin"
-local TEXT_WIDTH, TEXT_HEIGHT = nil
-local COLOUR_WHITE = Color3.fromRGB(255, 255, 255)
-
-local Environment = __DIST.load('b')
-local PlayerTracker = __DIST.load('e')
-local GetDistanceSqrt = __DIST.load('j')
-local EntityLocalPlayer = entity.GetLocalPlayer()
-
-local function GetTextSize(Text)
-	local TextSize = CoinESP.CachedTextSizes[Text .. Environment.Font]
-	if TextSize then
-		return TextSize.W, TextSize.H
-	end
-
-	local TextWidth, TextHeight = draw.GetTextSize(Text, Environment.Font)
-	CoinESP.CachedTextSizes[Text .. Environment.Font] = {
-		W = TextWidth,
-		H = TextHeight,
-	}
-
-	return TextWidth, TextHeight
-end
-
-local function TableToRGB(Table)
-	if type(Table) ~= "table" then
-		return Color3.fromRGB(255, 255, 255)
-	end
-
-	local R = Table.R or Table.r or 255
-	local G = Table.G or Table.g or 255
-	local B = Table.B or Table.b or 255
-	return Color3.fromRGB(R, G, B)
-end
-
-function CoinESP.Runtime()
-	if not CoinESP.Flags.Enabled then
-		return
-	end
-
-	if not PlayerTracker:IsPlayerAlive() then
-		return
-	end
-
-	local ShowDistance = CoinESP.Flags.ShowDistance
-	local Color = CoinESP.Flags.Color
-	local Alpha = CoinESP.Flags.Alpha
-
-	for _, CoinPosition in pairs(Environment.ActiveCoins) do
-		local ScreenX, ScreenY, OnScreen = utility.WorldToScreen(CoinPosition)
-		if OnScreen then
-			local DistanceText = ""
-
-			if ShowDistance then
-				local Distance = GetDistanceSqrt(EntityLocalPlayer.Position, CoinPosition)
-				DistanceText = " [" .. tostring(Distance) .. "]"
+	function a.n()
+		local b, c, d =
+			{ LastUpdate = utility.GetTickCount() + 3000, UpdateInterval = 50 },
+			game.GetService("Workspace"),
+			a.load("b")
+		local e, f, g, h =
+			function()
+				local e
+				for f, g in pairs(c:GetChildren()) do
+					local h = g:GetAttribute("MapID")
+					if h then
+						e = g
+						break
+					end
+				end
+				return e
+			end, function()
+				local e = d.CachedMap
+				if not e then
+					return nil
+				end
+				return e:FindFirstChild("CoinContainer")
+			end, function()
+				local e = d.CachedMap
+				if not e then
+					return nil
+				end
+				return e:FindFirstChild("GunDrop")
+			end, function()
+				local e = d.CachedCoinContainer
+				if not e then
+					return
+				end
+				local f = {}
+				for g, h in pairs(e:GetChildren()) do
+					local i = h:FindFirstDescendant("MainCoin")
+					if i and i.Transparency == 0 then
+						f[h.Address] = h.Position
+					end
+				end
+				d.ActiveCoins = f
 			end
-
-			local TotalWidth = TEXT_WIDTH
-			if ShowDistance and DistanceText ~= "" then
-				TotalWidth = TotalWidth + GetTextSize(DistanceText)
+		function b.Initialise(i)
+			local j = i:SliderInt("Game Tracker Update Interval", 1, 100, 50)
+			cheat.Register("onUpdate", function()
+				b.UpdateInterval = j:Get()
+				local k = utility.GetTickCount()
+				if k - b.LastUpdate >= b.UpdateInterval then
+					h()
+					d.CachedGunDrop = g()
+					b.LastUpdate = k
+				end
+			end)
+			cheat.Register("onSlowUpdate", function()
+				d.CachedMap = e()
+				d.CachedCoinContainer = f()
+			end)
+		end
+		return b
+	end
+	function a.o()
+		local b, c = {}, a.load("b")
+		function b.Initialise(d)
+			local e = d:Dropdown("Font Selection", { "ConsolasBold", "SmallestPixel", "Verdana", "Tahoma" }, 1)
+			cheat.Register("onUpdate", function()
+				c.Font = e:Get()
+			end)
+		end
+		return b
+	end
+	function a.p()
+		return function()
+			function math.floor(b)
+				return b - (b % 1)
 			end
-
-			local StartX = ScreenX - (TotalWidth / 2)
-			local StartY = ScreenY - (TEXT_HEIGHT / 2)
-
-			draw.TextOutlined(ESP_TEXT, StartX, StartY, Color, Environment.Font, Alpha)
-
-			if ShowDistance and DistanceText ~= "" then
-				draw.TextOutlined(DistanceText, StartX + TEXT_WIDTH, StartY, COLOUR_WHITE, Environment.Font, Alpha)
+			function math.clamp(b, c, d)
+				return math.max(c, math.min(d, b))
+			end
+		end
+	end
+	function a.q()
+		return function()
+			table.find = function(b, c)
+				for d, e in pairs(b) do
+					if e == c then
+						return d
+					end
+				end
+				return nil
 			end
 		end
 	end
 end
-
-function CoinESP.Initialise(
-	Container: typeof(__DIST.load('a')
-.NewTab(nil, nil):Container(nil, nil, nil))
-)
-	local Enabled = Container:Checkbox("Coin ESP", false)
-	local ColorPicker = Container:Colorpicker("Coin ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
-	local ShowDistance = Container:Checkbox("Show Coin Distance", false)
-
-	cheat.Register("onPaint", CoinESP.Runtime)
-	cheat.Register("onUpdate", function()
-		local ColorRGBA = ColorPicker:Get()
-
-		CoinESP.Flags.Enabled = Enabled:Get()
-		CoinESP.Flags.ShowDistance = ShowDistance:Get()
-		CoinESP.Flags.Color = TableToRGB(ColorRGBA)
-		CoinESP.Flags.Alpha = ColorRGBA.a
-		ShowDistance:Visible(CoinESP.Flags.Enabled)
-
-		local SelectedFont = Environment.Font
-		if CoinESP.LastFont ~= SelectedFont then
-			CoinESP.LastFont = SelectedFont
-			TEXT_WIDTH, TEXT_HEIGHT = GetTextSize(ESP_TEXT)
-		end
-	end)
+local b, c, d, e, f, g, h, i, j, k, l =
+	a.load("h"),
+	a.load("i"),
+	a.load("k"),
+	a.load("l"),
+	a.load("m"),
+	a.load("e"),
+	a.load("n"),
+	a.load("o"),
+	a.load("a"),
+	a.load("p"),
+	a.load("q")
+local n = function()
+	local n = j.NewTab("DiddyWare_MM2", "DiddyWare")
+	local o, p, q =
+		n:Container("DiddyWare_MM2C1", "Main", { autosize = true, next = true }),
+		n:Container("DiddyWare_MM2C2", "Visuals", { autosize = true }),
+		n:Container("DiddyWare_MM2C3", "Settings", { autosize = true, next = true })
+	k()
+	l()
+	b.Initialise(o)
+	c.Initialise(o)
+	d.Initialise(p)
+	f.Initialise(p)
+	e.Initialise(p)
+	g.Initialise(q)
+	h.Initialise(q)
+	i.Initialise(q)
 end
-
-return CoinESP
-end function __DIST.l()local GunDrop = {
-	Flags = {
-		Enabled = false,
-		ShowDistance = false,
-		Color = Color3.fromRGB(255, 255, 255),
-		Alpha = 255,
-	},
-
-	CachedTextSizes = {},
-}
-
-local ESP_TEXT = "Gun"
-local COLOUR_WHITE = Color3.fromRGB(255, 255, 255)
-local GetDistanceSqrt = __DIST.load('j')
-
-local Environment = __DIST.load('b')
-local PlayerTracker = __DIST.load('e')
-local EntityLocalPlayer = entity.GetLocalPlayer()
-
-local function GetTextSize(Text)
-	local TextSize = GunDrop.CachedTextSizes[Text .. Environment.Font]
-	if TextSize then
-		return TextSize.W, TextSize.H
-	end
-
-	local TextWidth, TextHeight = draw.GetTextSize(Text, Environment.Font)
-	GunDrop.CachedTextSizes[Text .. Environment.Font] = {
-		W = TextWidth,
-		H = TextHeight,
-	}
-
-	return TextWidth, TextHeight
-end
-
-local function TableToRGB(Table)
-	if type(Table) ~= "table" then
-		return COLOUR_WHITE
-	end
-
-	local R = Table.R or Table.r or 255
-	local G = Table.G or Table.g or 255
-	local B = Table.B or Table.b or 255
-	return Color3.fromRGB(R, G, B)
-end
-
-function GunDrop.Runtime()
-	if not GunDrop.Flags.Enabled then
-		return
-	end
-
-	if not PlayerTracker:IsPlayerAlive() then
-		return
-	end
-
-	local ShowDistance = GunDrop.Flags.ShowDistance
-	local Color = GunDrop.Flags.Color
-	local Alpha = GunDrop.Flags.Alpha
-
-	local GunDrop = Environment.CachedGunDrop
-	if not GunDrop then
-		return
-	end
-
-	local GunDropPosition = GunDrop.Position
-	local ScreenX, ScreenY, OnScreen = utility.WorldToScreen(GunDropPosition)
-	if OnScreen then
-		local TextWidth, TextHeight = GetTextSize(ESP_TEXT)
-
-		local DistanceText = ""
-		if ShowDistance then
-			local Distance = GetDistanceSqrt(EntityLocalPlayer.Position, GunDropPosition)
-			DistanceText = " [" .. tostring(Distance) .. "]"
-		end
-
-		local TotalWidth = TextWidth
-		if ShowDistance and DistanceText ~= "" then
-			TotalWidth = TotalWidth + GetTextSize(DistanceText)
-		end
-
-		local StartX = ScreenX - (TotalWidth / 2)
-		local StartY = ScreenY - (TextHeight / 2)
-
-		draw.TextOutlined(ESP_TEXT, StartX, StartY, Color, Environment.Font, Alpha)
-
-		if ShowDistance and DistanceText ~= "" then
-			draw.TextOutlined(DistanceText, StartX + TextWidth, StartY, COLOUR_WHITE, Environment.Font, Alpha)
-		end
-	end
-end
-
-function GunDrop.Initialise(
-	Container: typeof(__DIST.load('a')
-.NewTab(nil, nil):Container(nil, nil, nil))
-)
-	local Enabled = Container:Checkbox("Gun Drop ESP", false)
-	local ColorPicker = Container:Colorpicker("Gun Drop ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
-	local ShowDistance = Container:Checkbox("Show Gun Distance", false)
-
-	cheat.Register("onPaint", GunDrop.Runtime)
-	cheat.Register("onUpdate", function()
-		local ColorRGBA = ColorPicker:Get()
-
-		GunDrop.Flags.Enabled = Enabled:Get()
-		GunDrop.Flags.Color = TableToRGB(ColorRGBA)
-		GunDrop.Flags.Alpha = ColorRGBA.a
-		GunDrop.Flags.ShowDistance = ShowDistance:Get()
-		ShowDistance:Visible(GunDrop.Flags.Enabled)
-	end)
-end
-
-return GunDrop
-end function __DIST.m()local RoleESP = {
-	Flags = {
-		Enabled = false,
-		UseRoleColor = false,
-		Color = Color3.new(255, 255, 255),
-		Alpha = 255,
-		SelectedRoleTypes = {
-			Innocent = false,
-			Sheriff = false,
-			Murderer = false,
-		},
-	},
-	CachedTextSizes = {},
-}
-
-local COLOUR_WHITE = Color3.fromRGB(255, 255, 255)
-
-local RoleColors = {
-	Innocent = Color3.new(0.117647, 0.858824, 0.117647),
-	Murderer = Color3.new(0.72549, 0.101961, 0.101961),
-	Sheriff = Color3.new(0.070588, 0.517647, 0.811765),
-}
-
-local Environment = __DIST.load('b')
-local PlayerTracker = __DIST.load('e')
-
-local function GetTextSize(Text)
-	local TextSize = RoleESP.CachedTextSizes[Text .. Environment.Font]
-	if TextSize then
-		return TextSize.W, TextSize.H
-	end
-
-	local TextWidth, TextHeight = draw.GetTextSize(Text, Environment.Font)
-	RoleESP.CachedTextSizes[Text .. Environment.Font] = {
-		W = TextWidth,
-		H = TextHeight,
-	}
-
-	return TextWidth, TextHeight
-end
-
-local function TableToRGB(Table)
-	if type(Table) ~= "table" then
-		return COLOUR_WHITE
-	end
-
-	local R = Table.R or Table.r or 255
-	local G = Table.G or Table.g or 255
-	local B = Table.B or Table.b or 255
-	return Color3.fromRGB(R, G, B)
-end
-
-local function ProcessPlayer(Entity)
-	local IsAlive = PlayerTracker:IsPlayerAlive(Entity)
-	if not IsAlive then
-		return
-	end
-
-	local Role = PlayerTracker:GetPlayerRole(Entity)
-	local IsSelected = RoleESP.Flags.SelectedRoleTypes[Role] ~= nil
-	if not IsSelected then
-		return
-	end
-
-	local _, _, OnScreen = utility.WorldToScreen(Entity.Position)
-	if not OnScreen then
-		return
-	end
-
-	local BoundingBox = Entity.BoundingBox
-	if not BoundingBox then
-		return
-	end
-
-	local TextWidth, TextHeight = GetTextSize(Role)
-	local FinalX = BoundingBox.x + (BoundingBox.w / 2) - (TextWidth / 2)
-	local FinalY = BoundingBox.y + (BoundingBox.h / 2) - (TextHeight / 2)
-
-	local Color = RoleESP.Flags.UseRoleColor and RoleColors[Role] or RoleESP.Flags.Color
-	local Alpha = RoleESP.Flags.Alpha
-
-	draw.TextOutlined(Role, FinalX, FinalY, Color, Environment.Font, Alpha)
-end
-
-function RoleESP.Runtime()
-	if not RoleESP.Flags.Enabled then
-		return
-	end
-
-	if not PlayerTracker:IsPlayerAlive() then
-		return
-	end
-
-	for _, EntityObject in pairs(entity.GetPlayers(false)) do
-		ProcessPlayer(EntityObject)
-	end
-end
-
-function RoleESP.Initialise(
-	Container: typeof(__DIST.load('a')
-.NewTab(nil, nil):Container(nil, nil, nil))
-)
-	local Enabled = Container:Checkbox("Role ESP Enabled")
-	local Color = Container:Colorpicker("Role ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true)
-	local UseRoleColor = Container:Checkbox("Use Role Color", false)
-	local RoleTypes = Container:Multiselect("Draw Roles", {
-		"Innocent",
-		"Sheriff",
-		"Murderer",
-	})
-
-	cheat.Register("onPaint", RoleESP.Runtime)
-	cheat.Register("onUpdate", function()
-		RoleESP.Flags.Enabled = Enabled:Get()
-		local ColorRGBA = Color:Get()
-		RoleESP.Flags.Color = TableToRGB(ColorRGBA)
-		RoleESP.Flags.Alpha = ColorRGBA.a
-		RoleESP.Flags.UseRoleColor = UseRoleColor:Get()
-		RoleESP.Flags.SelectedRoleTypes = RoleTypes:Get()
-
-		UseRoleColor:Visible(RoleESP.Flags.Enabled)
-		RoleTypes:Visible(RoleESP.Flags.Enabled)
-	end)
-end
-
-return RoleESP
-end function __DIST.n()local GameTracker = {
-	LastUpdate = utility.GetTickCount() + 3000, -- if ur code is shit make counter measures heh.
-	UpdateInterval = 50,
-}
-
-local Workspace = game.GetService("Workspace")
-
-local Environment = __DIST.load('b')
-
-local function GetCurrentMap()
-	local Map = nil
-	for _, Child in pairs(Workspace:GetChildren()) do
-		local Attribute = Child:GetAttribute("MapID")
-		if Attribute then
-			Map = Child
-			break
-		end
-	end
-
-	return Map
-end
-
-local function GetCoinContainer()
-	local Map = Environment.CachedMap
-	if not Map then
-		return nil
-	end
-
-	return Map:FindFirstChild("CoinContainer")
-end
-
-local function GetGunDrop()
-	local Map = Environment.CachedMap
-	if not Map then
-		return nil
-	end
-
-	return Map:FindFirstChild("GunDrop")
-end
-
-local function UpdateCoins()
-	local Container = Environment.CachedCoinContainer
-	if not Container then
-		return
-	end
-
-	local Coins = {}
-	for _, Coin in pairs(Container:GetChildren()) do
-		local MainCoin = Coin:FindFirstDescendant("MainCoin")
-		if MainCoin and MainCoin.Transparency == 0 then
-			Coins[Coin.Address] = Coin.Position
-		end
-	end
-
-	Environment.ActiveCoins = Coins
-end
-
-function GameTracker.Initialise(
-	Container: typeof(__DIST.load('a')
-.NewTab(nil, nil):Container(nil, nil, nil))
-)
-	local IntervalSlider = Container:SliderInt("Game Tracker Update Interval", 1, 100, 50)
-
-	cheat.Register("onUpdate", function()
-		GameTracker.UpdateInterval = IntervalSlider:Get()
-
-		local Now = utility.GetTickCount()
-		if Now - GameTracker.LastUpdate >= GameTracker.UpdateInterval then
-			UpdateCoins()
-			Environment.CachedGunDrop = GetGunDrop()
-			GameTracker.LastUpdate = Now
-		end
-	end)
-
-	cheat.Register("onSlowUpdate", function()
-		Environment.CachedMap = GetCurrentMap()
-		Environment.CachedCoinContainer = GetCoinContainer()
-	end)
-end
-
-return GameTracker
-end function __DIST.o()local Customisation = {}
-
-local Environment = __DIST.load('b')
-
-function Customisation.Initialise(Container)
-	local FontSelection = Container:Dropdown("Font Selection", {
-		"ConsolasBold",
-		"SmallestPixel",
-		"Verdana",
-		"Tahoma",
-	}, 1)
-
-	cheat.Register("onUpdate", function()
-		Environment.Font = FontSelection:Get()
-	end)
-end
-
-return Customisation
-end function __DIST.p()
-return function()
-	function math.floor(x)
-		return x - (x % 1)
-	end
-
-	function math.clamp(n, min, max)
-		return math.max(min, math.min(max, n))
-	end
-end
-end function __DIST.q()
-return function()
-	table.find = function(t, val)
-		for i, v in pairs(t) do
-			if v == val then
-				return i
-			end
-		end
-		return nil
-	end
-end
-end end
-local CoinFarm = __DIST.load('h')
-local GetGun = __DIST.load('i')
-
-local CoinESP = __DIST.load('k')
-local GunDropESP = __DIST.load('l')
-local RoleESP = __DIST.load('m')
-
-local PlayerTracker = __DIST.load('e')
-local GameTracker = __DIST.load('n')
-
-local Customisation = __DIST.load('o')
-local UIWrapper = __DIST.load('a')
-
-local Math = __DIST.load('p')
-local Table = __DIST.load('q')
-
-local function Initialise()
-	local Tab = UIWrapper.NewTab("DiddyWare_MM2", "DiddyWare")
-	local Main = Tab:Container("DiddyWare_MM2C1", "Main", { autosize = true, next = true })
-	local Visuals = Tab:Container("DiddyWare_MM2C2", "Visuals", { autosize = true })
-	local Settings = Tab:Container("DiddyWare_MM2C3", "Settings", { autosize = true, next = true })
-
-	Math()
-	Table()
-	CoinFarm.Initialise(Main)
-	GetGun.Initialise(Main)
-	CoinESP.Initialise(Visuals)
-	RoleESP.Initialise(Visuals)
-	GunDropESP.Initialise(Visuals)
-	PlayerTracker.Initialise(Settings)
-	GameTracker.Initialise(Settings)
-	Customisation.Initialise(Settings)
-end
-
-Initialise()
+n()
