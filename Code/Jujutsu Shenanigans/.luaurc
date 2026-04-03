@@ -1,9 +1,0 @@
-{
-    "aliases": {
-        "game": "./src/Game",
-        "features": "./src/Features",
-        "utility": "./src/Utility",
-        "interface": "./src/Interface",
-        "core": "./src/Core"
-    }
-}

@@ -1,6 +1,0 @@
-{
-    "aliases": {
-        "modules": "./src/modules",
-        "features": "./src/features"
-    }
-}
