@@ -1,2 +1,0 @@
-# DiddyWare
-serotini bananini ddware
