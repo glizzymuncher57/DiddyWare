@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T14:51:28.767760400+00:00",
+	genDate = "2026-04-03T23:23:51.947114500+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -236,7 +236,7 @@ do
 					if not u then
 						return
 					end
-					e.killer = { name = r, character = q, root_part = s }
+					e.killer = { name = r, character = q, root_part = s, position = s.Position }
 				end
 			end, {}
 		function q:create_colour(r, s, t)
@@ -284,19 +284,17 @@ do
 	end
 	function a.g()
 		local b, c =
-			{
-				version = "version-689e359b09ad43b0",
-				ImageButton = { Image = { Type = "string", Offset = 0xcc8 } },
-				Path2D = { Visible = { Type = "bool", Offset = 0x115 } },
-				Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x850 } },
-				ScreenGui = { Enabled = { Type = "bool", Offset = 0x4cc } },
-				AnimationTrack = { Speed = { Type = "float", Offset = 0xe4 }, TimePosition = { Type = "float", Offset = 0xe8 }, Looped = { Type = "bool", Offset = 0xf5 }, Animation = { Type = "pointer", Offset = 0xd0 } },
-				Animation = { AnimationId = { Type = "string", Offset = 0xd0 } },
-				GuiObject = { Size = { Type = "float", X = 0x538, Y = 0x540 }, Position = { Type = "float", X = 0x518, Y = 0x520 }, Visible = { Type = "bool", Offset = 0x5b5 }, AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 }, Rotation = {
-					Type = "float",
-					Offset = 0x188,
-				}, AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c } },
-			}, a.load("d")
+			{ version = "version-689e359b09ad43b0", ImageButton = { Image = {
+				Type = "string",
+				Offset = 0xcc8,
+			} }, Path2D = { Visible = { Type = "bool", Offset = 0x115 } }, Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x850 } }, ScreenGui = { Enabled = {
+				Type = "bool",
+				Offset = 0x4cc,
+			} }, AnimationTrack = { Speed = { Type = "float", Offset = 0xe4 }, TimePosition = { Type = "float", Offset = 0xe8 }, Looped = { Type = "bool", Offset = 0xf5 }, Animation = { Type = "pointer", Offset = 0xd0 } }, Animation = { AnimationId = { Type = "string", Offset = 0xd0 } }, GuiObject = { Size = { Type = "float", X = 0x538, Y = 0x540 }, Position = { Type = "float", X = 0x518, Y = 0x520 }, Visible = { Type = "bool", Offset = 0x5b5 }, AbsolutePosition = {
+				Type = "float",
+				X = 0x110,
+				Y = 0x114,
+			}, Rotation = { Type = "float", Offset = 0x188 }, AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c } } }, a.load("d")
 		function b:Initialise(d)
 			http.Get(
 				[[https://raw.githubusercontent.com/glizzymuncher57/DiddyWare/refs/heads/main/shared_offsets.lua]],
@@ -369,53 +367,64 @@ do
 		end
 	end
 	function a.i()
-		local b, c, d = a.load("f"), a.load("g"), a.load("c")
-		return function(e)
-			local f = e:find_first_child("Wires")
-			if not f then
+		local b, c, d, e =
+			a.load("f"), a.load("g"), a.load("c"), function(b, c, d)
+				local e, f = c.X - b[1], c.Y - b[2]
+				local g = math.sqrt(e * e + f * f)
+				if g == 0 then
+					return
+				end
+				local h, i = (e / g) * d, (f / g) * d
+				if g < d then
+					h = e
+					i = f
+				end
+				utility.move_mouse(h, i)
+			end
+		return function(f)
+			local g = f:find_first_child("Wires")
+			if not g then
 				return false
 			end
-			local g, h = f:find_first_child("WiresEnd"), f:find_first_child("WireBoxes")
-			if not g or not h then
+			local h, i = g:find_first_child("WiresEnd"), g:find_first_child("WireBoxes")
+			if not h or not i then
 				return false
 			end
-			local i = d.GetValue("Auto Generator Mouse Speed")
-			for j = 1, 4 do
-				local k, l, m =
-					g:find_first_child(tostring(j)).Hitbox,
-					h:find_first_child(tostring(j)),
-					f:find_first_child(tostring(j))
-				if k and l and m then
-					local n, o, p =
-						l.ConnectHitbox,
-						b.read_vector2(k.Address, c.GuiObject.AbsolutePosition),
-						b.read_vector2(k.Address, c.GuiObject.AbsoluteSize)
-					local q, r, s =
-						b.read_vector2(n.Address, c.GuiObject.AbsolutePosition),
-						b.read_vector2(n.Address, c.GuiObject.AbsoluteSize),
-						o + (p / 2)
-					local t, u, v =
-						q.X + r.X, q.Y + r.Y / 2, (s.X >= q.X and s.X <= q.X + r.X and s.Y >= q.Y and s.Y <= q.Y + r.Y)
-					if not v then
-						local w, x = b.read(m.Address, c.Path2D.Visible), utility.get_mouse_pos()
-						if not w then
-							local y, z = math.clamp(s.X - x[1], -i, i), math.clamp(s.Y - x[2], -i, i)
-							utility.move_mouse(y, z)
-							x = utility.get_mouse_pos()
-							local A = (x[1] >= o.X and x[1] <= o.X + p.X and x[2] >= o.Y and x[2] <= o.Y + p.Y)
-							if A then
+			local j = d.GetValue("Auto Generator Mouse Speed") * 2
+			for k = 1, 4 do
+				local l, m, n =
+					h:find_first_child(tostring(k)).Hitbox,
+					i:find_first_child(tostring(k)),
+					g:find_first_child(tostring(k))
+				if l and m and n then
+					local o, p, q =
+						m.ConnectHitbox,
+						b.read_vector2(l.Address, c.GuiObject.AbsolutePosition),
+						b.read_vector2(l.Address, c.GuiObject.AbsoluteSize)
+					local r, s, t =
+						b.read_vector2(o.Address, c.GuiObject.AbsolutePosition),
+						b.read_vector2(o.Address, c.GuiObject.AbsoluteSize),
+						p + (q / 2)
+					local u, v, w =
+						r.X + s.X, r.Y + s.Y / 2, (t.X >= r.X and t.X <= r.X + s.X and t.Y >= r.Y and t.Y <= r.Y + s.Y)
+					if not w then
+						local x, y = b.read(n.Address, c.Path2D.Visible), utility.get_mouse_pos()
+						if not x then
+							e(y, t, j)
+							y = utility.get_mouse_pos()
+							local z = (y[1] >= p.X and y[1] <= p.X + q.X and y[2] >= p.Y and y[2] <= p.Y + q.Y)
+							if z then
 								mouse.click("leftmouse")
 							end
 							return false
 						end
-						local y, z = math.clamp(t - x[1], -i, i), math.clamp(u - x[2], -i, i)
-						utility.move_mouse(y, z)
-						local A = utility.get_mouse_pos()
-						local B = (math.abs(A[1] - t) <= 7.5 and math.abs(A[2] - u) <= 7.5)
-						if not B then
+						e(y, Vector3.new(u, v, 0), j)
+						local z = utility.get_mouse_pos()
+						local A = (math.abs(z[1] - u) <= 7.5 and math.abs(z[2] - v) <= 7.5)
+						if not A then
 							return false
 						end
-						if j == 4 then
+						if k == 4 then
 							return true
 						end
 					end
@@ -425,25 +434,37 @@ do
 		end
 	end
 	function a.j()
-		local b, c, d = a.load("f"), a.load("g"), a.load("c")
-		return function(e)
-			local f = e:find_first_child("Switch")
-			if not f then
+		local b, c, d, e =
+			a.load("f"), a.load("g"), a.load("c"), function(b, c, d)
+				local e, f = c.X - b[1], c.Y - b[2]
+				local g = math.sqrt(e * e + f * f)
+				if g == 0 then
+					return
+				end
+				local h, i = (e / g) * d, (f / g) * d
+				if g < d then
+					h = e
+					i = f
+				end
+				utility.move_mouse(h, i)
+			end
+		return function(f)
+			local g = f:find_first_child("Switch")
+			if not g then
 				return false
 			end
-			local g, h = f:find_first_child("Switches"), d.GetValue("Auto Generator Mouse Speed")
-			for i, j in pairs(g:get_children()) do
-				local k = b.read(j.Address, c.ImageButton.Image)
-				if k == "rbxassetid://133499480186899" then
-					local l, m =
-						b.read_vector2(j.Address, c.GuiObject.AbsolutePosition),
-						b.read_vector2(j.Address, c.GuiObject.AbsoluteSize)
-					local n, o = l + (m / 2), utility.get_mouse_pos()
-					local p, q = math.clamp(n.X - o[1], -h, h), math.clamp(n.Y - o[2], -h, h)
-					utility.move_mouse(p, q)
-					o = utility.get_mouse_pos()
-					local r = (o[1] >= l.X and o[1] <= l.X + m.X and o[2] >= l.Y and o[2] <= l.Y + m.Y)
-					if r then
+			local h, i = g:find_first_child("Switches"), d.GetValue("Auto Generator Mouse Speed") * 2
+			for j, k in pairs(h:get_children()) do
+				local l = b.read(k.Address, c.ImageButton.Image)
+				if l == "rbxassetid://133499480186899" then
+					local m, n =
+						b.read_vector2(k.Address, c.GuiObject.AbsolutePosition),
+						b.read_vector2(k.Address, c.GuiObject.AbsoluteSize)
+					local o, p = m + (n / 2), utility.get_mouse_pos()
+					e(p, o, i)
+					p = utility.get_mouse_pos()
+					local q = (p[1] >= m.X and p[1] <= m.X + n.X and p[2] >= m.Y and p[2] <= m.Y + n.Y)
+					if q then
 						mouse.click("leftmouse")
 						return false
 					end
@@ -454,56 +475,88 @@ do
 		end
 	end
 	function a.k()
-		local b, c, d = a.load("f"), a.load("g"), a.load("c")
-		return function(e)
-			local f = e:find_first_child("Lever")
+		local b, c, d, e, f, g, h =
+			a.load("f"), a.load("g"), a.load("c"), 1, false, function(b, c, d)
+				local e, f = c.X - b[1], c.Y - b[2]
+				local g = math.sqrt(e * e + f * f)
+				if g == 0 then
+					return
+				end
+				local h, i = (e / g) * d, (f / g) * d
+				if g < d then
+					h = e
+					i = f
+				end
+				utility.move_mouse(h, i)
+			end
+		return function(i)
+			local j = i:find_first_child("Lever")
+			if not j then
+				h = nil
+				f = false
+				mouse.release("leftmouse")
+				return false
+			end
+			local k = j:find_first_child("ProgressBar")
+			if not k then
+				h = nil
+				f = false
+				mouse.release("leftmouse")
+				return false
+			end
+			local l = k.Fill
+			local m = l and l.Bar
+			if not m then
+				h = nil
+				f = false
+				mouse.release("leftmouse")
+				return false
+			end
+			local n = memory.read("float", m.Address + c.GuiObject.Size.X)
+			if n > 0.9 then
+				h = nil
+				f = false
+				mouse.release("leftmouse")
+				return true
+			end
+			local o = j:find_first_child("Rope")
+			local p = o and o:find_first_child("Button")
+			if not p then
+				h = nil
+				f = false
+				mouse.release("leftmouse")
+				return false
+			end
+			local q = d.GetValue("Auto Generator Mouse Speed")
+			local r, s, t =
+				q * 3,
+				b.read_vector2(p.Address, c.GuiObject.AbsolutePosition),
+				b.read_vector2(p.Address, c.GuiObject.AbsoluteSize)
+			local u = s + (t / 2)
+			if not h then
+				h = u
+			end
+			local v, w =
+				b.read_vector2(j.Address, c.GuiObject.AbsolutePosition),
+				b.read_vector2(j.Address, c.GuiObject.AbsoluteSize)
+			local x, y = Vector3.new(h.X, v.Y + w.Y, 0), utility.get_mouse_pos()
 			if not f then
-				mouse.release("leftmouse")
+				g(y, u, r)
+				local z = math.sqrt((y[1] - u.X) ^ 2 + (y[2] - u.Y) ^ 2)
+				if z <= 6 then
+					f = true
+					mouse.press("leftmouse")
+				end
 				return false
 			end
-			local g = f:find_first_child("ProgressBar")
-			if not g then
-				mouse.release("leftmouse")
-				return false
+			local z = (e == 1) and x or h
+			g(y, z, r)
+			local A = utility.get_mouse_pos()
+			local B = math.abs(A[2] - z.Y) <= 5
+			if B then
+				e = -e
 			end
-			local h = g.Fill
-			local i = h and h.Bar
-			if not i then
-				mouse.release("leftmouse")
-				return false
-			end
-			local j = memory.read("float", i.Address + c.GuiObject.Size.X)
-			if j > 0.9 then
-				mouse.release("leftmouse")
-				return true
-			end
-			local k = f:find_first_child("Rope")
-			local l = k and k:find_first_child("Button")
-			if not l then
-				mouse.release("leftmouse")
-				return false
-			end
-			local m = d.GetValue("Auto Generator Mouse Speed")
-			local n, o, p =
-				m * 3,
-				b.read_vector2(l.Address, c.GuiObject.AbsolutePosition),
-				b.read_vector2(l.Address, c.GuiObject.AbsoluteSize)
-			local q, r = o + (p / 2), utility.get_mouse_pos()
-			local s = math.sqrt((r[1] - q.X) ^ 2 + (r[2] - q.Y) ^ 2)
-			if s > 15 then
-				local t, u = math.clamp(q.X - r[1], -n, n), math.clamp(q.Y - r[2], -n, n)
-				utility.move_mouse(t, u)
-				mouse.release("leftmouse")
-				return true
-			end
-			if not keyboard.is_pressed("leftmouse") then
-				mouse.press("leftmouse")
-			end
-			local t = utility.get_tick_count()
-			local u, v = q.Y + math.sin(t * 1.3) * 40 + math.sin(t * 4.2) * 20, utility.get_mouse_pos()
-			local w = math.clamp(u - v[2], -n, n)
-			utility.move_mouse(0, w)
-			return true
+			return false
 		end
 	end
 	function a.l()
@@ -785,12 +838,7 @@ do
 		end
 		local i, j =
 			function(i, j, k, l)
-				local m = setmetatable({
-					TabRef = i,
-					ContainerRef = j,
-					Name = k,
-					Debug = l and l.Debug,
-				}, h)
+				local m = setmetatable({ TabRef = i, ContainerRef = j, Name = k, Debug = l and l.Debug }, h)
 				c.Register(k, m)
 				f[k] = m
 				if m.Debug then
@@ -972,7 +1020,9 @@ do
 		end
 		function e.NewTab(l, m)
 			ui.newTab(l, m)
-			return setmetatable({ Ref = l }, k)
+			return setmetatable({
+				Ref = l,
+			}, k)
 		end
 		function e:SetDebugMode(l)
 			self.DebugMode = l
@@ -992,7 +1042,10 @@ do
 	function a.s()
 		local b, c, d = {}, "Features_DiddyWare", "Features"
 		function b:Initialise(e)
-			local f = e:Container(c, d, { autosize = true, next = true })
+			local f = e:Container(c, d, {
+				autosize = true,
+				next = true,
+			})
 			f:Checkbox("Auto Door Hold")
 			f:KeyPicker("Auto Door Hold Hotkey", true)
 			f:SliderInt("Auto Door Hold Speed", 1, 25, 15)
