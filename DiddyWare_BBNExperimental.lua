@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T11:48:41.388856+00:00",
+	genDate = "2026-04-03T12:00:49.149262200+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -394,6 +394,7 @@ do
 					local r = q:find_first_child_of_class("Model")
 					if not r then
 						e.killer = { name = nil, character = nil, humanoid = nil, animator = nil, animations = {} }
+						return
 					end
 					local s = r.Name
 					if e.killer and e.killer.name == s then
