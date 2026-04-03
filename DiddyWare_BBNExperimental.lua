@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T12:00:49.149262200+00:00",
+	genDate = "2026-04-03T12:12:26.784917+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -363,14 +363,10 @@ do
 			function()
 				if e.killer and e.killer.humanoid then
 					e.killer.animations = f:GetPlayingAnimationTracks(e.killer.humanoid, e.killer)
-					for p, q in pairs(e.killer.animations) do
-						print(p, q)
-						if type(q) == "table" then
-							print("---")
-							for r, s in pairs(q) do
-								print(r, s)
-							end
-						end
+					local p = e.killer.animations
+					for q = 1, #p do
+						local r = p[q]
+						print("Name: " .. r.Animation.Name .. " | ID: " .. r.Animation.AnimationId .. " | Time: " .. r.TimePosition .. " | Speed: " .. r.Speed .. " | Looped: " .. tostring(r.Looped) .. " | Weight: " .. r.WeightTarget)
 					end
 				end
 				local p, q = (d.GetValue("Update Map Every (s)") or 1) * 1000, utility.get_tick_count()
