@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-03-31T19:32:28.174731800+00:00",
+	genDate = "2026-04-03T10:41:57.950498900+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -117,44 +117,77 @@ do
 		return b
 	end
 	function a.d()
-		local b, c = {}, memory.Read
-		function b.Read(d, e)
-			return c(e.Type, d + e.Offset)
+		local b = a.load("a")
+		return {
+			LocalPlayer = b:Register(
+				"EnviromentLocalPlayer",
+				{
+					Player = game.LocalPlayer,
+					Entity = entity.GetLocalPlayer(),
+					PlayerGui = game.LocalPlayer.PlayerGui,
+					Data = { Character = nil, Ping = 0 },
+				}
+			),
+			Players = b:Register("EnvironmentPlayerData", {}),
+			Objects = b:Register("EnvironmentObjects", {
+				Items = {},
+				Domains = {},
+			}),
+			ClosestDomain = b:Register("EnvironmentClosestDomain", {
+				Instance = nil,
+				Distance = math.huge,
+			}),
+			OffsetsLoaded = false,
+		}
+	end
+	function a.e()
+		local b, c, d = a.load("d"), {}, memory.Read
+		function c.Read(e, f)
+			if not b.OffsetsLoaded then
+				return
+			end
+			return d(f.Type, e + f.Offset)
 		end
-		function b.ReadVector2(d, e)
-			local f, g = c(e.Type, d + e.X), c(e.Type, d + e.Y)
-			return Vector3.new(f, g, 0)
+		function c.ReadVector2(e, f)
+			if not b.OffsetsLoaded then
+				return
+			end
+			local g, h = d(f.Type, e + f.X), d(f.Type, e + f.Y)
+			return Vector3.new(g, h, 0)
+		end
+		return c
+	end
+	function a.f()
+		local b, c = {}, a.load("d")
+		function b:Initialise(d)
+			http.Get(
+				[[https://raw.githubusercontent.com/glizzymuncher57/DiddyWare/refs/heads/main/shared_offsets.lua]],
+				{},
+				function(e)
+					if not e then
+						print("no response")
+						return
+					end
+					local f = loadstring(e)
+					f = f()
+					for g in pairs(b) do
+						if g ~= "Initialise" then
+							b[g] = nil
+						end
+					end
+					for g, h in pairs(f) do
+						b[g] = h
+					end
+					c.OffsetsLoaded = true
+					if d then
+						d()
+					end
+				end
+			)
 		end
 		return b
 	end
-	function a.e()
-		return {
-			version = "version-6776addb8fbc4d17",
-			DoubleConstrainedValue = { Value = { Type = "double", Offset = 0xe0 } },
-			Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x848 } },
-			Animation = {
-				AnimationId = { Type = "string", Offset = 0xd0 },
-			},
-			GuiObject = {
-				Size = { Type = "float", X = 0x538, Y = 0x540 },
-				AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c },
-				AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
-				Visible = { Type = "bool", Offset = 0x5b5 },
-				Position = { Type = "float", X = 0x518, Y = 0x520 },
-				Rotation = { Type = "float", Offset = 0x188 },
-			},
-			ScreenGui = {
-				Enabled = { Type = "bool", Offset = 0x4cc },
-			},
-			AnimationTrack = {
-				TimePosition = { Type = "float", Offset = 0xe8 },
-				Speed = { Type = "float", Offset = 0xe4 },
-				Looped = { Type = "bool", Offset = 0xf5 },
-				Animation = { Type = "pointer", Offset = 0xd0 },
-			},
-		}
-	end
-	function a.f()
+	function a.g()
 		local b, c, d, e, f = a.load("a"), a.load("c"), a.load("b"), utility.getTickCount, utility.getMousePos
 		local g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w =
 			{ Messages = b:Register("DM.Messages", {}) },
@@ -303,9 +336,9 @@ do
 		end
 		return g
 	end
-	function a.g()
+	function a.h()
 		local b, c, d, e, f, g, h, i =
-			a.load("b"), a.load("a"), a.load("c"), a.load("d"), a.load("e"), a.load("f"), memory.read, math.floor
+			a.load("b"), a.load("a"), a.load("c"), a.load("e"), a.load("f"), a.load("g"), memory.read, math.floor
 		local j, k, l =
 			{ Animations = c:Register("AMAnimations", {}), _ScanState = {
 				Queue = {},
@@ -403,41 +436,25 @@ do
 		end
 		return j
 	end
-	function a.h()
-		local b = a.load("a")
-		return {
-			LocalPlayer = b:Register(
-				"EnviromentLocalPlayer",
-				{
-					Player = game.LocalPlayer,
-					Entity = entity.GetLocalPlayer(),
-					PlayerGui = game.LocalPlayer.PlayerGui,
-					Data = { Character = nil, Ping = 0 },
-				}
-			),
-			Players = b:Register("EnvironmentPlayerData", {}),
-			Objects = b:Register("EnvironmentObjects", { Items = {}, Domains = {} }),
-			ClosestDomain = b:Register("EnvironmentClosestDomain", { Instance = nil, Distance = math.huge }),
-		}
-	end
 	function a.i()
 		local b, c, d, e, f, g, h, i =
-			a.load("g"),
-			a.load("a"),
 			a.load("h"),
+			a.load("a"),
+			a.load("d"),
 			a.load("c"),
 			a.load("b"),
-			a.load("f"),
+			a.load("g"),
 			game.GetService("Players"),
 			game.GetService("Stats")
 		local j = i:FindFirstChild("Network")
 		local k = j.ServerStatsItem
 		local l, m, n, o, p =
-			k["Data Ping"],
-			c:Register("LastUse_PlayerScanner", {}),
-			c:Register("CooldownStarts_PlayerScanner", {}),
-			{ LastCooldownUpdate = 0, LastAnimationUpdate = 0, LastLocalUpdate = 0, LastRebuild = 0 },
-			function(l, m, n)
+			k["Data Ping"], c:Register("LastUse_PlayerScanner", {}), c:Register("CooldownStarts_PlayerScanner", {}), {
+				LastCooldownUpdate = 0,
+				LastAnimationUpdate = 0,
+				LastLocalUpdate = 0,
+				LastRebuild = 0,
+			}, function(l, m, n)
 				local o = l:GetAttribute(m)
 				return o and o.Value or n
 			end
@@ -666,7 +683,7 @@ do
 		return b
 	end
 	function a.k()
-		local b, c, d, e, f = {}, a.load("h"), a.load("c"), a.load("j").New(), game.GetService("Workspace")
+		local b, c, d, e, f = {}, a.load("d"), a.load("c"), a.load("j").New(), game.GetService("Workspace")
 		local g, h = f.Items, f.Domains
 		function b:Initialise()
 			e:AddCategory("Domains", { h }, 2000)
@@ -696,7 +713,7 @@ do
 		return b
 	end
 	function a.l()
-		local b, c, d, e, f, g = a.load("f"), a.load("a"), a.load("c"), a.load("b"), a.load("h"), a.load("i")
+		local b, c, d, e, f, g = a.load("g"), a.load("a"), a.load("c"), a.load("b"), a.load("d"), a.load("i")
 		local h, i, j, k, l, m =
 			f.LocalPlayer.Entity,
 			utility.GetTickCount,
@@ -745,7 +762,7 @@ do
 	end
 	function a.m()
 		local b, c, d, e, f, g =
-			{ LastClick = 0 }, a.load("h"), a.load("b"), a.load("c"), utility.GetTickCount, keyboard.Click
+			{ LastClick = 0 }, a.load("d"), a.load("b"), a.load("c"), utility.GetTickCount, keyboard.Click
 		local h, i, j, k, l = c.LocalPlayer.PlayerGui, "Auto Lawyer QTE", "Auto Lawyer QTE Delay (ms)", "QTE", "QTE_PC"
 		local m = function()
 			if not d.GetValue(i) then
@@ -778,7 +795,7 @@ do
 	end
 	function a.n()
 		local b, c, d, e, f, g, h =
-			{}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("f"), entity.GetLocalPlayer()
+			{}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("g"), entity.GetLocalPlayer()
 		local i, j, k, l =
 			d:Register("MahoragaTimingTable", {
 				AnimationId = "rbxassetid://85024950165903",
@@ -837,11 +854,11 @@ do
 	function a.o()
 		local b, c, d, e, f, g, h, i, j, k =
 			{ CurrentRatio = nil, PressedR = false },
-			a.load("h"),
+			a.load("d"),
 			a.load("c"),
 			a.load("b"),
-			a.load("e"),
 			a.load("f"),
+			a.load("g"),
 			entity.GetPlayers,
 			memory.Read,
 			math.abs,
@@ -901,7 +918,7 @@ do
 	end
 	function a.p()
 		local b, c, d, e, f, g, h =
-			{}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("f"), entity.GetLocalPlayer()
+			{}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("g"), entity.GetLocalPlayer()
 		local i, j, k, l, m =
 			d:Register("TodoBlackflashState", { Waiting = false, BruteForceFired = false }),
 			d:Register(
@@ -970,7 +987,7 @@ do
 		return b
 	end
 	function a.q()
-		local b, c, d, e, f, g, h = {}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("h"), a.load("f")
+		local b, c, d, e, f, g, h = {}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("d"), a.load("g")
 		local i, j, k, l =
 			d:Register("TodoSwapState", { Waiting = false, Fired = false, StoredClap = nil }),
 			d:Register("TodoSwapWhitelistedAnimations", {
@@ -1050,7 +1067,7 @@ do
 		return b
 	end
 	function a.r()
-		local b, c, d, e, f, g = {}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("f")
+		local b, c, d, e, f, g = {}, a.load("c"), a.load("a"), a.load("b"), a.load("i"), a.load("g")
 		local h, i, j =
 			d:Register("PunishM1Items", {}), function(h, i)
 				if not e.GetValue("Debug Mode") then
@@ -1111,7 +1128,7 @@ do
 		return b
 	end
 	function a.s()
-		local b, c, d, e, f = {}, a.load("c"), a.load("a"), a.load("b"), a.load("h")
+		local b, c, d, e, f = {}, a.load("c"), a.load("a"), a.load("b"), a.load("d")
 		local g, h, i, j, k, l, m, n, o, p, q, r, s, t, u =
 			d:Register("PV_TextSizeCache", {}),
 			d:Register("PV_NameCache", {}),
@@ -1290,7 +1307,7 @@ do
 		return b
 	end
 	function a.t()
-		local aa, ab, ac, ad, ae = {}, a.load("c"), a.load("b"), a.load("a"), a.load("h")
+		local aa, ab, ac, ad, ae = {}, a.load("c"), a.load("b"), a.load("a"), a.load("d")
 		local af, ag, ah, ai, aj, b, c, d, e, f =
 			ad:Register("WV_TextSizeCache", {}),
 			ad:Register("WV_ColorCache", {}),
@@ -1407,7 +1424,7 @@ do
 		return aa
 	end
 	function a.u()
-		local aa, ab, ac = a.load("d"), a.load("e"), 0
+		local aa, ab, ac = a.load("e"), a.load("f"), 0
 		local ad, ae =
 			function(ad)
 				local ae = ad.Address
@@ -1463,7 +1480,7 @@ do
 		end
 	end
 	function a.v()
-		local aa, ab = a.load("d"), a.load("e")
+		local aa, ab = a.load("e"), a.load("f")
 		local ac, ad =
 			function(ac)
 				local ad = ac.Address
@@ -1758,10 +1775,10 @@ do
 	function a.x()
 		local aa, ab, ac, ad, ae, af =
 			{ GameUI = nil, GameType = nil },
-			a.load("h"),
+			a.load("d"),
 			a.load("c"),
 			a.load("b"),
-			a.load("f"),
+			a.load("g"),
 			{ ["Flight Game"] = a.load("u"), ["Catch Game"] = a.load("v") }
 		local ag = function(ag)
 			if not ad.GetValue("Debug Mode") then
@@ -1958,30 +1975,31 @@ do
 		end
 	end
 end
-local aa, ab, ac, ad, ae, af, ag, ah, ai, aj =
+local aa, ab, ac, ad, ae, af, ag, ah, ai, aj, b =
 	a.load("i"),
 	a.load("k"),
-	a.load("g"),
+	a.load("h"),
 	a.load("f"),
+	a.load("g"),
 	a.load("y"),
 	a.load("D"),
 	a.load("c"),
 	a.load("a"),
 	a.load("E"),
 	a.load("w")
-local b = function()
-	ai()
-	ag:Initialise()
-	aj:Initialise()
+local c = function()
+	aj()
+	ah:Initialise()
+	b:Initialise()
 	aa:Initialise()
 	ab:Initialise()
 	ac:Initialise()
-	ad:Initialise()
-	af:Initialise()
 	ae:Initialise()
-	ag.Add("shutdown", function()
-		ag.ClearAll()
-		ah:UnloadAll()
+	ag:Initialise()
+	af:Initialise()
+	ah.Add("shutdown", function()
+		ah.ClearAll()
+		ai:UnloadAll()
 	end)
 end
-b()
+ad:Initialise(c)
