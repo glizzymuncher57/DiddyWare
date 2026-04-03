@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T12:12:26.784917+00:00",
+	genDate = "2026-04-03T14:24:48.416449400+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -19,6 +19,46 @@ a = {
 }
 do
 	function a.a()
+		local b, c, d = {}, {}, { "onPaint", "onUpdate", "onSlowUpdate", "shutdown" }
+		for e, f in ipairs(d) do
+			c[f] = {}
+		end
+		function b.Add(e, f)
+			if type(e) ~= "string" or type(f) ~= "function" then
+				return nil
+			end
+			if not c[e] then
+				return nil
+			end
+			local g = #c[e] + 1
+			c[e][g] = f
+			return g
+		end
+		function b.Remove(e, f)
+			if c[e] then
+				c[e][f] = nil
+			end
+		end
+		function b.ClearAll()
+			for e, f in pairs(c) do
+				c[e] = {}
+			end
+		end
+		local e = function(e, ...)
+			for f, g in pairs(c[e]) do
+				g(...)
+			end
+		end
+		function b:Initialise()
+			for f, g in ipairs(d) do
+				cheat.Register(g, function(...)
+					e(g, ...)
+				end)
+			end
+		end
+		return b
+	end
+	function a.b()
 		local b = {}
 		b.__index = b
 		local c = {}
@@ -62,58 +102,27 @@ do
 		end
 		return b
 	end
-	function a.b()
-		local b, c, d = {}, {}, {
-			"onPaint",
-			"onUpdate",
-			"onSlowUpdate",
-			"shutdown",
-		}
-		for e, f in ipairs(d) do
-			c[f] = {}
-		end
-		function b.Add(e, f)
-			if type(e) ~= "string" or type(f) ~= "function" then
-				return nil
-			end
-			if not c[e] then
-				return nil
-			end
-			local g = #c[e] + 1
-			c[e][g] = f
-			return g
-		end
-		function b.Remove(e, f)
-			if c[e] then
-				c[e][f] = nil
-			end
-		end
-		function b.ClearAll()
-			for e, f in pairs(c) do
-				c[e] = {}
-			end
-		end
-		local e = function(e, ...)
-			for f, g in pairs(c[e]) do
-				g(...)
-			end
-		end
-		function b:Initialise()
-			for f, g in ipairs(d) do
-				cheat.Register(g, function(...)
-					e(g, ...)
-				end)
-			end
-		end
-		return b
-	end
 	function a.c()
-		local b = a.load("a")
+		local b, c = a.load("b"), {}
+		local d, e = b:Register("Configuration.Elements", {}), b:Register("Configuration.Values", {})
+		function c.Register(f, g)
+			d[f] = g
+		end
+		function c.GetValue(f)
+			return e[f]
+		end
+		function c.SetValue(f, g)
+			e[f] = g
+		end
+		return c
+	end
+	function a.d()
+		local b = a.load("b")
 		return {
 			cached_generators = {},
 			cached_fuseboxes = {},
 			cached_items = {},
-			killer = { name = nil, character = nil, humanoid = nil, animator = nil, animations = {} },
+			killer = { name = nil, character = nil, root_part = nil, position = Vector3.new(0, 0, 0) },
 			local_player = nil,
 			player_gui = nil,
 			local_position = Vector3.new(0, 0, 0),
@@ -122,8 +131,142 @@ do
 			offsets_loaded = false,
 		}
 	end
-	function a.d()
-		local b, c, d = a.load("c"), {}, memory.read
+	function a.e()
+		local b, c, d, e, f =
+			game.GetService("Workspace"), a.load("a"), a.load("c"), a.load("d"), entity.get_local_player()
+		local g, h, i, j, k, l =
+			b:find_first_child("MAPS"),
+			b:find_first_child("IGNORE"),
+			b:find_first_child("PLAYERS"),
+			0,
+			0,
+			function(g, h, i)
+				local j = g:GetAttribute(h)
+				return j and j.Value or i
+			end
+		local m, n =
+			function()
+				local m = {}
+				for n, o in pairs(h:get_children()) do
+					local p, q = o.Name
+					if p == "Battery" then
+						q = o
+					elseif p == "Trap" then
+						q = o:find_first_child_of_class("MeshPart")
+					elseif p == "Minion" then
+						q = o:find_first_child("RootPart")
+					end
+					if q then
+						local r
+						if p ~= "Minion" then
+							r = q.Position
+						end
+						table.insert(m, { name = p, render_part = q, position = r })
+					end
+				end
+				e.cached_items = m
+			end, function()
+				local m, n = { generators = {}, fuse_boxes = {} }, g:find_first_child("GAME MAP")
+				if not n then
+					e.cached_generators = {}
+					e.cached_fuseboxes = {}
+					e.cached_items = {}
+					return false
+				end
+				local o, p = n:find_first_child("Generators"), n:find_first_child("FuseBoxes")
+				if o then
+					for q, r in pairs(o:get_children()) do
+						local s, t, u = r.Name, r.RootPart, l(r, "Progress", 0)
+						local v = t.Position
+						table.insert(m.generators, { model = r, progress = u, name = s, position = v })
+					end
+					e.cached_generators = m.generators
+				end
+				if p then
+					for q, r in pairs(p:get_children()) do
+						local s, t, u = "Fuse Box", r:find_first_child("Position"), l(r, "Inserted", false)
+						local v = t.Position
+						table.insert(m.fuse_boxes, { model = r, inserted = u, name = s, position = v })
+					end
+					e.cached_fuseboxes = m.fuse_boxes
+				end
+				return true
+			end
+		local o, p, q =
+			function()
+				if e.killer and e.killer.root_part then
+					e.killer.position = e.killer.root_part.Position
+				end
+				local o, p = (d.GetValue("Update Map Every (s)") or 1) * 1000, utility.get_tick_count()
+				if (p - j) > o then
+					local q = n()
+					if q then
+						j = p
+					end
+				end
+				if (p - k) > o then
+					m()
+					k = p
+				end
+				e.local_position = f.Position
+			end, function()
+				local o = game.LocalPlayer
+				e.local_player = o
+				e.player_gui = o:find_first_child("PlayerGui")
+				local p = i:find_first_child("KILLER")
+				if p then
+					local q = p:find_first_child_of_class("Model")
+					if not q then
+						e.killer = { name = nil, character = nil, root_part = nil, position = Vector3.new(0, 0, 0) }
+						return
+					end
+					local r = q.Name
+					if e.killer and e.killer.name == r then
+						return
+					end
+					local s = q:find_first_child("HumanoidRootPart")
+					if not s then
+						return
+					end
+					local t = q:find_first_child_of_class("Humanoid")
+					if not t then
+						return
+					end
+					local u = t:find_first_child_of_class("Animator")
+					if not u then
+						return
+					end
+					e.killer = { name = r, character = q, root_part = s }
+				end
+			end, {}
+		function q:create_colour(r, s, t)
+			local u = r .. s .. t
+			local v = e.colour_cache[u]
+			if v then
+				return v
+			end
+			local w = Color3.fromRGB(r, s, t)
+			e.colour_cache[u] = w
+			return w
+		end
+		function q:get_text_size(r, s)
+			local t = r .. s
+			local u = e.text_size_cache[t]
+			if u then
+				return u[1], u[2]
+			end
+			local v, w = draw.get_text_size(r, s)
+			e.text_size_cache[t] = { v, w }
+			return v, w
+		end
+		function q:Initialise()
+			c.Add("onUpdate", o)
+			c.Add("onSlowUpdate", p)
+		end
+		return q
+	end
+	function a.f()
+		local b, c, d = a.load("d"), {}, memory.read
 		function c.read(e, f)
 			if not b.offsets_loaded then
 				return
@@ -139,7 +282,7 @@ do
 		end
 		return c
 	end
-	function a.e()
+	function a.g()
 		local b, c =
 			{
 				version = "version-689e359b09ad43b0",
@@ -147,26 +290,13 @@ do
 				Path2D = { Visible = { Type = "bool", Offset = 0x115 } },
 				Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x850 } },
 				ScreenGui = { Enabled = { Type = "bool", Offset = 0x4cc } },
-				AnimationTrack = {
-					Speed = { Type = "float", Offset = 0xe4 },
-					TimePosition = { Type = "float", Offset = 0xe8 },
-					Looped = { Type = "bool", Offset = 0xf5 },
-					Animation = { Type = "pointer", Offset = 0xd0 },
-				},
+				AnimationTrack = { Speed = { Type = "float", Offset = 0xe4 }, TimePosition = { Type = "float", Offset = 0xe8 }, Looped = { Type = "bool", Offset = 0xf5 }, Animation = { Type = "pointer", Offset = 0xd0 } },
 				Animation = { AnimationId = { Type = "string", Offset = 0xd0 } },
-				GuiObject = {
-					Size = { Type = "float", X = 0x538, Y = 0x540 },
-					Position = { Type = "float", X = 0x518, Y = 0x520 },
-					Visible = { Type = "bool", Offset = 0x5b5 },
-					AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 },
-					Rotation = {
-						Type = "float",
-						Offset = 0x188,
-					},
-					AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c },
-				},
-			},
-			a.load("c")
+				GuiObject = { Size = { Type = "float", X = 0x538, Y = 0x540 }, Position = { Type = "float", X = 0x518, Y = 0x520 }, Visible = { Type = "bool", Offset = 0x5b5 }, AbsolutePosition = { Type = "float", X = 0x110, Y = 0x114 }, Rotation = {
+					Type = "float",
+					Offset = 0x188,
+				}, AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c } },
+			}, a.load("d")
 		function b:Initialise(d)
 			http.Get(
 				[[https://raw.githubusercontent.com/glizzymuncher57/DiddyWare/refs/heads/main/shared_offsets.lua]],
@@ -195,246 +325,8 @@ do
 		end
 		return b
 	end
-	function a.f()
-		local b, c, d, e = a.load("a"), a.load("b"), a.load("d"), a.load("e")
-		local f, g =
-			{ Animations = b:Register("AMAnimations", {}), _ScanState = {
-				Queue = {},
-				Index = 1,
-				Done = false,
-				StoredCallback = nil,
-			} },
-			{
-				__index = function(f, g)
-					local h = f.Track
-					if g == "TimePosition" then
-						return math.floor(d.read(h, e.AnimationTrack.TimePosition) * 100) / 100
-					elseif g == "Speed" then
-						return math.floor(d.read(h, e.AnimationTrack.Speed) * 100) / 100
-					elseif g == "Looped" then
-						return d.read(h, e.AnimationTrack.Looped)
-					else
-						return nil
-					end
-				end,
-			}
-		local h, i =
-			function()
-				if f._ScanState.Done then
-					return
-				end
-				f._ScanState.Queue = { game.DataModel }
-				f._ScanState.Index = 1
-			end, function()
-				local h, i, j = f._ScanState.Queue, f._ScanState.Index, f.Animations
-				for k = 1, 250 do
-					local l = h[i]
-					if not l then
-						c.Remove("onUpdate", f._ScanState.StoredCallback)
-						return
-					end
-					if l:IsA("Animation") then
-						local m = d.read(l.Address, e.Animation.AnimationId)
-						if m ~= "" then
-							j[m] = l.Name
-						end
-					end
-					local m = l:GetChildren()
-					for n = 1, #m do
-						h[#h + 1] = m[n]
-					end
-					i = i + 1
-				end
-				f._ScanState.Index = i
-			end
-		function f:GetPlayingAnimationTracks(j, k)
-			if not k then
-				return {}
-			end
-			local l, m = {}, k.animator
-			if not m then
-				return l
-			end
-			local n = d.read(m.Address, e.Animator.AnimationTrackList)
-			if n == 0 then
-				return l
-			end
-			local o = memory.Read("ptr", n)
-			while o ~= 0 and o ~= n do
-				local p = memory.Read("ptr", o + 0x10)
-				if p ~= 0 then
-					local q = d.read(p, e.AnimationTrack.Animation)
-					if q ~= 0 then
-						local r = d.read(q, e.Animation.AnimationId)
-						if r ~= "" then
-							local s =
-								{ Track = p, Animation = { AnimationId = r, Name = f.Animations[r] or "Unknown" } }
-							setmetatable(s, g)
-							l[#l + 1] = s
-						end
-					end
-				end
-				o = memory.Read("pointer", o)
-			end
-			return l
-		end
-		function f:Initialise()
-			h()
-			f._ScanState.StoredCallback = c.Add("onUpdate", i)
-		end
-		return f
-	end
-	function a.g()
-		local b, c = a.load("a"), {}
-		local d, e = b:Register("Configuration.Elements", {}), b:Register("Configuration.Values", {})
-		function c.Register(f, g)
-			d[f] = g
-		end
-		function c.GetValue(f)
-			return e[f]
-		end
-		function c.SetValue(f, g)
-			e[f] = g
-		end
-		return c
-	end
 	function a.h()
-		local b, c, d, e, f, g =
-			game.GetService("Workspace"), a.load("b"), a.load("g"), a.load("c"), a.load("f"), entity.get_local_player()
-		local h, i, j, k, l, m =
-			b:find_first_child("MAPS"),
-			b:find_first_child("IGNORE"),
-			b:find_first_child("PLAYERS"),
-			0,
-			0,
-			function(h, i, j)
-				local k = h:GetAttribute(i)
-				return k and k.Value or j
-			end
-		local n, o =
-			function()
-				local n = {}
-				for o, p in pairs(i:get_children()) do
-					local q, r = p.Name
-					if q == "Battery" then
-						r = p
-					elseif q == "Trap" or q == "BearTrap" then
-						r = p:find_first_child_of_class("MeshPart")
-					elseif q == "Minion" then
-						r = p:find_first_child("RootPart")
-					end
-					if r then
-						local s
-						if q ~= "Minion" then
-							s = r.Position
-						end
-						table.insert(n, { name = q, render_part = r, position = s })
-					end
-				end
-				e.cached_items = n
-			end, function()
-				local n, o = { generators = {}, fuse_boxes = {} }, h:find_first_child("GAME MAP")
-				if not o then
-					e.cached_generators = {}
-					e.cached_fuseboxes = {}
-					e.cached_items = {}
-					return false
-				end
-				local p, q = o:find_first_child("Generators"), o:find_first_child("FuseBoxes")
-				if p then
-					for r, s in pairs(p:get_children()) do
-						local t, u, v = s.Name, s.RootPart, m(s, "Progress", 0)
-						local w = u.Position
-						table.insert(n.generators, { model = s, progress = v, name = t, position = w })
-					end
-					e.cached_generators = n.generators
-				end
-				if q then
-					for r, s in pairs(q:get_children()) do
-						local t, u, v = "Fuse Box", s:find_first_child("Position"), m(s, "Inserted", false)
-						local w = u.Position
-						table.insert(n.fuse_boxes, { model = s, inserted = v, name = t, position = w })
-					end
-					e.cached_fuseboxes = n.fuse_boxes
-				end
-				return true
-			end
-		local p, q, r =
-			function()
-				if e.killer and e.killer.humanoid then
-					e.killer.animations = f:GetPlayingAnimationTracks(e.killer.humanoid, e.killer)
-					local p = e.killer.animations
-					for q = 1, #p do
-						local r = p[q]
-						print("Name: " .. r.Animation.Name .. " | ID: " .. r.Animation.AnimationId .. " | Time: " .. r.TimePosition .. " | Speed: " .. r.Speed .. " | Looped: " .. tostring(r.Looped) .. " | Weight: " .. r.WeightTarget)
-					end
-				end
-				local p, q = (d.GetValue("Update Map Every (s)") or 1) * 1000, utility.get_tick_count()
-				if (q - k) > p then
-					local r = o()
-					if r then
-						k = q
-					end
-				end
-				if (q - l) > p then
-					n()
-					l = q
-				end
-				e.local_position = g.Position
-			end, function()
-				local p = game.LocalPlayer
-				e.local_player = p
-				e.player_gui = p:find_first_child("PlayerGui")
-				local q = j:find_first_child("KILLER")
-				if q then
-					local r = q:find_first_child_of_class("Model")
-					if not r then
-						e.killer = { name = nil, character = nil, humanoid = nil, animator = nil, animations = {} }
-						return
-					end
-					local s = r.Name
-					if e.killer and e.killer.name == s then
-						return
-					end
-					local t = r:find_first_child_of_class("Humanoid")
-					if not t then
-						return
-					end
-					local u = t:find_first_child_of_class("Animator")
-					if not u then
-						return
-					end
-					e.killer = { name = s, character = r, humanoid = t, animator = u, animations = {} }
-				end
-			end, {}
-		function r:create_colour(s, t, u)
-			local v = s .. t .. u
-			local w = e.colour_cache[v]
-			if w then
-				return w
-			end
-			local x = Color3.fromRGB(s, t, u)
-			e.colour_cache[v] = x
-			return x
-		end
-		function r:get_text_size(s, t)
-			local u = s .. t
-			local v = e.text_size_cache[u]
-			if v then
-				return v[1], v[2]
-			end
-			local w, x = draw.get_text_size(s, t)
-			e.text_size_cache[u] = { w, x }
-			return w, x
-		end
-		function r:Initialise()
-			c.Add("onUpdate", p)
-			c.Add("onSlowUpdate", q)
-		end
-		return r
-	end
-	function a.i()
-		local b, c, d, e, f = a.load("c"), a.load("b"), a.load("g"), a.load("d"), a.load("e")
+		local b, c, d, e, f = a.load("d"), a.load("a"), a.load("c"), a.load("f"), a.load("g")
 		local g = function()
 			for g, h in pairs(b.player_gui:get_children()) do
 				if h.Name == "Dot" then
@@ -476,8 +368,8 @@ do
 			c.Add("onUpdate", h)
 		end
 	end
-	function a.j()
-		local b, c, d = a.load("d"), a.load("e"), a.load("g")
+	function a.i()
+		local b, c, d = a.load("f"), a.load("g"), a.load("c")
 		return function(e)
 			local f = e:find_first_child("Wires")
 			if not f then
@@ -532,8 +424,8 @@ do
 			return true
 		end
 	end
-	function a.k()
-		local b, c, d = a.load("d"), a.load("e"), a.load("g")
+	function a.j()
+		local b, c, d = a.load("f"), a.load("g"), a.load("c")
 		return function(e)
 			local f = e:find_first_child("Switch")
 			if not f then
@@ -561,8 +453,8 @@ do
 			return true
 		end
 	end
-	function a.l()
-		local b, c, d = a.load("d"), a.load("e"), a.load("g")
+	function a.k()
+		local b, c, d = a.load("f"), a.load("g"), a.load("c")
 		return function(e)
 			local f = e:find_first_child("Lever")
 			if not f then
@@ -614,9 +506,9 @@ do
 			return true
 		end
 	end
-	function a.m()
+	function a.l()
 		local b, c, d, e =
-			a.load("c"), a.load("b"), a.load("g"), { Wires = a.load("j"), Switches = a.load("k"), Pull = a.load("l") }
+			a.load("d"), a.load("a"), a.load("c"), { Wires = a.load("i"), Switches = a.load("j"), Pull = a.load("k") }
 		local f = function()
 			if utility.get_menu_state() then
 				return
@@ -651,9 +543,57 @@ do
 			c.Add("onUpdate", f)
 		end
 	end
+	function a.m()
+		local b, c, d, e, f =
+			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
+				if not b or not c then
+					return 0
+				end
+				return (b - c).Magnitude
+			end
+		local g = function()
+			local g, h, i, j, k, l =
+				d.GetValue("Visuals Enabled"),
+				d.GetValue("Show Distance"),
+				d.GetValue("Distance Colour"),
+				d.GetValue("Killer ESP"),
+				d.GetValue("Killer Colour"),
+				d.GetValue("ESP Font Selection")
+			if not g or not j then
+				return
+			end
+			local m = b.killer
+			if not b.killer.character then
+				return
+			end
+			if b.killer.name == b.local_player.Name then
+				return
+			end
+			local n, o, p = utility.world_to_screen(m.position)
+			if p then
+				local q = m.name
+				local r, s, t = e:get_text_size(q, l), "", 0
+				if h then
+					local u = b.local_position
+					local v = f(u, m.position)
+					s = "[" .. tostring(math.floor(v)) .. "m]"
+					t = e:get_text_size(s, l)
+				end
+				local u = r + t
+				local v = n - (u / 2)
+				draw.text_outlined(q, v, o, e:create_colour(k.r, k.g, k.b), l, k.a)
+				if h then
+					draw.text_outlined(s, v + r, o, e:create_colour(i.r, i.g, i.b), l, i.a)
+				end
+			end
+		end
+		return function()
+			c.Add("onPaint", g)
+		end
+	end
 	function a.n()
 		local b, c, d, e, f =
-			a.load("c"), a.load("b"), a.load("g"), a.load("h"), function(b, c)
+			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
 				if not b or not c then
 					return 0
 				end
@@ -709,7 +649,7 @@ do
 	end
 	function a.o()
 		local b, c, d, e, f =
-			a.load("c"), a.load("b"), a.load("g"), a.load("h"), function(b, c)
+			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
 				if not b or not c then
 					return 0
 				end
@@ -757,7 +697,7 @@ do
 	end
 	function a.p()
 		local b, c, d, e, f =
-			a.load("c"), a.load("b"), a.load("g"), a.load("h"), function(b, c)
+			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
 				if not b or not c then
 					return 0
 				end
@@ -800,18 +740,19 @@ do
 		end
 	end
 	function a.q()
-		local b, c, d, e, f, g = {}, a.load("i"), a.load("m"), a.load("n"), a.load("o"), a.load("p")
+		local b, c, d, e, f, g, h = {}, a.load("h"), a.load("l"), a.load("m"), a.load("n"), a.load("o"), a.load("p")
 		function b:Initialise()
 			d()
 			c()
 			e()
 			f()
 			g()
+			h()
 		end
 		return b
 	end
 	function a.r()
-		local b, c, d, e = a.load("b"), a.load("g"), a.load("a"), {}
+		local b, c, d, e = a.load("a"), a.load("c"), a.load("b"), {}
 		e.DebugMode = false
 		local f, g, h = d:Register("UI.Elements", {}), d:Register("UI.DebugElements", {}), {}
 		h.__index = h
@@ -844,7 +785,12 @@ do
 		end
 		local i, j =
 			function(i, j, k, l)
-				local m = setmetatable({ TabRef = i, ContainerRef = j, Name = k, Debug = l and l.Debug }, h)
+				local m = setmetatable({
+					TabRef = i,
+					ContainerRef = j,
+					Name = k,
+					Debug = l and l.Debug,
+				}, h)
 				c.Register(k, m)
 				f[k] = m
 				if m.Debug then
@@ -1047,12 +993,14 @@ do
 		local b, c, d = {}, "Features_DiddyWare", "Features"
 		function b:Initialise(e)
 			local f = e:Container(c, d, { autosize = true, next = true })
+			f:Checkbox("Aimbot")
+			f:KeyPicker("Aimbot Hotkey", true)
+			f:SliderInt("Aimbot Speed", 1, 50, 15)
 			f:Checkbox("Auto Door Hold")
 			f:KeyPicker("Auto Door Hold Hotkey", true)
 			f:SliderInt("Auto Door Hold Speed", 1, 25, 15)
 			f:Checkbox("Auto Generator")
 			f:SliderInt("Auto Generator Mouse Speed", 1, 25, 15)
-			f:Checkbox("Auto Parry")
 		end
 		return b
 	end
@@ -1063,10 +1011,17 @@ do
 			f:Checkbox("Visuals Enabled")
 			f:Checkbox("Show Distance")
 			f:Colorpicker("Distance Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
+			f:Checkbox("Killer ESP")
+			f:Colorpicker("Killer Colour", { r = 255, g = 0, b = 0, a = 255 }, true)
 			f:Checkbox("Generator ESP")
 			f:Colorpicker("Generator Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
 			f:Checkbox("Generator Progress")
-			f:Colorpicker("Generator Progress Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
+			f:Colorpicker("Generator Progress Colour", {
+				r = 255,
+				g = 255,
+				b = 255,
+				a = 255,
+			}, true)
 			f:Checkbox("Fuse Box ESP", false)
 			f:Colorpicker("Fuse Box Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
 			f:Checkbox("Item ESP", false)
@@ -1104,20 +1059,19 @@ do
 		end
 	end
 end
-local b, c, d, e, f, g, h, i, j =
-	a.load("f"), a.load("h"), a.load("q"), a.load("v"), a.load("e"), a.load("b"), a.load("a"), a.load("w"), a.load("r")
-local k = function()
-	i()
-	g:Initialise()
-	j:Initialise()
+local b, c, d, e, f, g, h, i =
+	a.load("e"), a.load("q"), a.load("v"), a.load("g"), a.load("a"), a.load("b"), a.load("w"), a.load("r")
+local j = function()
+	h()
+	f:Initialise()
+	i:Initialise()
 	b:Initialise()
 	c:Initialise()
 	d:Initialise()
-	e:Initialise()
-	g.Add("shutdown", function()
-		g.ClearAll()
-		h:UnloadAll()
+	f.Add("shutdown", function()
+		f.ClearAll()
+		g:UnloadAll()
 		entity.clear_models()
 	end)
 end
-f:Initialise(k)
+e:Initialise(j)
