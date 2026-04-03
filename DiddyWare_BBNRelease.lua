@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T14:24:48.416449400+00:00",
+	genDate = "2026-04-03T14:51:28.767760400+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -993,9 +993,6 @@ do
 		local b, c, d = {}, "Features_DiddyWare", "Features"
 		function b:Initialise(e)
 			local f = e:Container(c, d, { autosize = true, next = true })
-			f:Checkbox("Aimbot")
-			f:KeyPicker("Aimbot Hotkey", true)
-			f:SliderInt("Aimbot Speed", 1, 50, 15)
 			f:Checkbox("Auto Door Hold")
 			f:KeyPicker("Auto Door Hold Hotkey", true)
 			f:SliderInt("Auto Door Hold Speed", 1, 25, 15)
@@ -1016,12 +1013,7 @@ do
 			f:Checkbox("Generator ESP")
 			f:Colorpicker("Generator Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
 			f:Checkbox("Generator Progress")
-			f:Colorpicker("Generator Progress Colour", {
-				r = 255,
-				g = 255,
-				b = 255,
-				a = 255,
-			}, true)
+			f:Colorpicker("Generator Progress Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
 			f:Checkbox("Fuse Box ESP", false)
 			f:Colorpicker("Fuse Box Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
 			f:Checkbox("Item ESP", false)
