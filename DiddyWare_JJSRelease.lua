@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T10:41:57.950498900+00:00",
+	genDate = "2026-04-03T10:50:00.230139300+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -857,62 +857,64 @@ do
 			a.load("d"),
 			a.load("c"),
 			a.load("b"),
-			a.load("f"),
 			a.load("g"),
+			a.load("f"),
+			a.load("e"),
 			entity.GetPlayers,
-			memory.Read,
 			math.abs,
 			keyboard.Click
-		local l, m, n =
-			f.ScreenGui.Enabled, f.GuiObject.Position, function(l)
-				if not e.GetValue("Debug Mode") then
-					return
-				end
-				g.AddDebugMessage(l, "info", 1000)
-			end
-		local o = function(o)
-			local p = o:GetBoneInstance("HumanoidRootPart")
-			if not p then
+		local l = function(l)
+			if not e.GetValue("Debug Mode") then
 				return
 			end
-			local q = p:FindFirstChild("Ratio")
-			if not q then
+			f.AddDebugMessage(l, "info", 1000)
+		end
+		local m = function(m)
+			if not c.OffsetsLoaded then
 				return
 			end
-			local r = q.Address
-			if not i(l.Type, r + l.Offset) then
+			local n = m:GetBoneInstance("HumanoidRootPart")
+			if not n then
 				return
 			end
-			local s = b.CurrentRatio
-			if not s or s ~= r then
-				b.CurrentRatio = r
+			local o = n:FindFirstChild("Ratio")
+			if not o then
+				return
+			end
+			local p = o.Address
+			if not h.Read(p, g.ScreenGui.Enabled) then
+				return
+			end
+			local q = b.CurrentRatio
+			if not q or q ~= p then
+				b.CurrentRatio = p
 				b.PressedR = false
 			end
-			local t = q.Bar.Cursor
-			local u, v = i(m.Type, t.Address + m.Y), e.GetValue("Auto Nanami Ratio GUI Scale")
-			local w = j(u - v)
-			n("Nanami Ratio Current Distance: " .. tostring(w))
-			if w <= 0.03 and not b.PressedR then
+			local r, s = o.Bar.Cursor, g.GuiObject.Position
+			local t, u = memory.read(s.Type, r.Address + s.Y), e.GetValue("Auto Nanami Ratio GUI Scale")
+			local v = j(t - u)
+			l("Nanami Ratio Current Distance: " .. tostring(v))
+			if v <= 0.03 and not b.PressedR then
 				b.PressedR = true
 				k("r")
-				n("Completed Nanami Ratio")
+				l("Completed Nanami Ratio")
 			end
 		end
-		local p = function()
+		local n = function()
 			if not e.GetValue("Auto Nanami Ratio") then
 				return
 			end
 			if c.LocalPlayer.Data.Character ~= "Nanami" then
 				return
 			end
-			local p = h(false)
-			for q = 1, #p do
-				local r = p[q]
-				o(r)
+			local n = i(false)
+			for o = 1, #n do
+				local p = n[o]
+				m(p)
 			end
 		end
 		function b:Initialise()
-			d.Add("onUpdate", p)
+			d.Add("onUpdate", n)
 		end
 		return b
 	end
