@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-04T01:40:29.261978200+00:00",
+	genDate = "2026-04-04T20:01:10.746875100+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -177,16 +177,20 @@ do
 				if o then
 					for q, r in pairs(o:get_children()) do
 						local s, t, u = r.Name, r.RootPart, l(r, "Progress", 0)
-						local v = t.Position
-						table.insert(m.generators, { model = r, progress = u, name = s, position = v })
+						if t then
+							local v = t.Position
+							table.insert(m.generators, { model = r, progress = u, name = s, position = v })
+						end
 					end
 					e.cached_generators = m.generators
 				end
 				if p then
 					for q, r in pairs(p:get_children()) do
 						local s, t, u = "Fuse Box", r:find_first_child("Position"), l(r, "Inserted", false)
-						local v = t.Position
-						table.insert(m.fuse_boxes, { model = r, inserted = u, name = s, position = v })
+						if t then
+							local v = t.Position
+							table.insert(m.fuse_boxes, { model = r, inserted = u, name = s, position = v })
+						end
 					end
 					e.cached_fuseboxes = m.fuse_boxes
 				end
@@ -470,83 +474,73 @@ do
 		end
 	end
 	function a.k()
-		local b, c, d, e, f, g = a.load("f"), a.load("g"), a.load("c"), 1, false
-		return function(h)
-			local i = h:find_first_child("Lever")
-			if not i then
-				g = nil
-				f = false
-				mouse.release("leftmouse")
+		local b, c, d, e, f, g =
+			a.load("f"), a.load("g"), a.load("c"), 1, function(b, c, d, e)
+				return b >= d.X and b <= d.X + e.X and c >= d.Y and c <= d.Y + e.Y
+			end
+		local h = function()
+			e = 1
+			g = nil
+			mouse.release("leftmouse")
+		end
+		return function(i)
+			local j = i:find_first_child("Lever")
+			local k = j and j:find_first_child("ProgressBar")
+			if not k then
+				h()
 				return false
 			end
-			local j = i:find_first_child("ProgressBar")
-			if not j then
-				g = nil
-				f = false
-				mouse.release("leftmouse")
-				return false
-			end
-			local k = j.Fill
-			local l = k and k.Bar
+			local l = k.Fill and k.Fill.Bar
 			if not l then
-				g = nil
-				f = false
-				mouse.release("leftmouse")
+				h()
 				return false
 			end
-			local m = memory.read("float", l.Address + c.GuiObject.Size.X)
+			local m = memory.read(c.GuiObject.Size.Type, l.Address + c.GuiObject.Size.X)
 			if m > 0.9 then
-				g = nil
-				f = false
-				mouse.release("leftmouse")
+				h()
 				return true
 			end
-			local n = i:find_first_child("Rope")
+			local n = j:find_first_child("Rope")
 			local o = n and n:find_first_child("Button")
 			if not o then
-				g = nil
-				f = false
-				mouse.release("leftmouse")
+				h()
 				return false
 			end
-			local p = d.GetValue("Auto Generator Mouse Speed")
-			local q, r, s =
-				p * 3,
+			local p, q, r, s =
+				utility.get_mouse_pos(),
+				(d.GetValue("Auto Generator Mouse Speed") or 10) * 3,
 				b.read_vector2(o.Address, c.GuiObject.AbsolutePosition),
 				b.read_vector2(o.Address, c.GuiObject.AbsoluteSize)
 			local t = r + (s / 2)
 			if not g then
 				g = t
 			end
-			local u, v, w =
-				b.read_vector2(i.Address, c.GuiObject.AbsolutePosition),
-				b.read_vector2(i.Address, c.GuiObject.AbsoluteSize),
-				t.X
-			local x, y, z = Vector3.new(w, u.Y + v.Y, 0), Vector3.new(w, g.Y, 0), utility.get_mouse_pos()
-			if not f then
-				local A, B = (t.X - z[1]), (t.Y - z[2])
-				local C = math.sqrt(A * A + B * B)
-				if C <= 6 then
-					f = true
+			local u, v =
+				b.read_vector2(j.Address, c.GuiObject.AbsolutePosition),
+				b.read_vector2(j.Address, c.GuiObject.AbsoluteSize)
+			local w = (e == 1) and Vector3.new(t.X, u.Y + v.Y, 0) or Vector3.new(t.X, g.Y, 0)
+			if not keyboard.IsPressed("leftmouse") then
+				local x, y = (t.X - p[1]), (t.Y - p[2])
+				local z = math.sqrt(x * x + y * y)
+				if z <= 6 and f(p[1], p[2], r, s) then
 					mouse.press("leftmouse")
 				else
-					local D = q / 100
-					utility.move_mouse(A * D, B * D)
+					local A = q / 100
+					utility.move_mouse(x * A, y * A)
 				end
 				return false
 			end
-			local A = (e == 1) and x or y
-			local B, C = A.X - z[1], A.Y - z[2]
-			local D = (B * B + C * C)
-			if D >= 1 then
-				local E = q / 100
-				utility.move_mouse(B * E, C * E)
+			local x, y = (w.X - p[1]), (w.Y - p[2])
+			local z = math.sqrt(x * x + y * y)
+			if z >= 1 then
+				local A = q / 100
+				utility.move_mouse(x * A, y * A)
 			else
-				utility.move_mouse(B, C)
+				utility.move_mouse(x * 0.5, y * 0.5)
 			end
-			local E = utility.get_mouse_pos()
-			local F = math.abs(E[2] - A.Y) <= 5
-			if F then
+			p = utility.get_mouse_pos()
+			local A = math.abs(p[2] - w.Y) <= 5
+			if A then
 				e = -e
 			end
 			return false
@@ -579,6 +573,7 @@ do
 				if not i then
 					return
 				end
+				print("wires done")
 				local j = e.Switches(h)
 				if j then
 					e.Pull(h)
@@ -831,7 +826,12 @@ do
 		end
 		local i, j =
 			function(i, j, k, l)
-				local m = setmetatable({ TabRef = i, ContainerRef = j, Name = k, Debug = l and l.Debug }, h)
+				local m = setmetatable({
+					TabRef = i,
+					ContainerRef = j,
+					Name = k,
+					Debug = l and l.Debug,
+				}, h)
 				c.Register(k, m)
 				f[k] = m
 				if m.Debug then
@@ -1013,9 +1013,7 @@ do
 		end
 		function e.NewTab(l, m)
 			ui.newTab(l, m)
-			return setmetatable({
-				Ref = l,
-			}, k)
+			return setmetatable({ Ref = l }, k)
 		end
 		function e:SetDebugMode(l)
 			self.DebugMode = l
@@ -1035,10 +1033,7 @@ do
 	function a.s()
 		local b, c, d = {}, "Features_DiddyWare", "Features"
 		function b:Initialise(e)
-			local f = e:Container(c, d, {
-				autosize = true,
-				next = true,
-			})
+			local f = e:Container(c, d, { autosize = true, next = true })
 			f:Checkbox("Auto Door Hold")
 			f:KeyPicker("Auto Door Hold Hotkey", true)
 			f:SliderInt("Auto Door Hold Speed", 1, 25, 15)
