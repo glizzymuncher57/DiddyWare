@@ -7,6 +7,10 @@ return {
     ['Animator'] = {
         ['AnimationTrackList'] = {Type = 'pointer', Offset = 0x850},
     },
+    ['SphereHandleAdornment'] = {
+        ['Position'] = {Type = 'float', X = 0x154, Y = 0x158, Z = 0x15C},
+        ['Transparency'] = {Type = 'float', Offset = 0xFC},
+    },
     ['Animation'] = {
         ['AnimationId'] = {Type = 'string', Offset = 0xD0},
     },
