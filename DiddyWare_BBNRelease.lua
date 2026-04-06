@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-04T20:01:10.746875100+00:00",
+	genDate = "2026-04-06T22:43:21.233487500+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -270,35 +270,7 @@ do
 		return q
 	end
 	function a.f()
-		local b, c, d = a.load("d"), {}, memory.read
-		function c.read(e, f)
-			if not b.offsets_loaded then
-				return
-			end
-			return d(f.Type, e + f.Offset)
-		end
-		function c.read_vector2(e, f)
-			if not b.offsets_loaded then
-				return Vector3.new(0, 0, 0)
-			end
-			local g, h = d(f.Type, e + f.X), d(f.Type, e + f.Y)
-			return Vector3.new(g, h, 0)
-		end
-		return c
-	end
-	function a.g()
-		local b, c =
-			{ version = "version-689e359b09ad43b0", ImageButton = { Image = {
-				Type = "string",
-				Offset = 0xcc8,
-			} }, Path2D = { Visible = { Type = "bool", Offset = 0x115 } }, Animator = { AnimationTrackList = { Type = "pointer", Offset = 0x850 } }, ScreenGui = { Enabled = {
-				Type = "bool",
-				Offset = 0x4cc,
-			} }, AnimationTrack = { Speed = { Type = "float", Offset = 0xe4 }, TimePosition = { Type = "float", Offset = 0xe8 }, Looped = { Type = "bool", Offset = 0xf5 }, Animation = { Type = "pointer", Offset = 0xd0 } }, Animation = { AnimationId = { Type = "string", Offset = 0xd0 } }, GuiObject = { Size = { Type = "float", X = 0x538, Y = 0x540 }, Position = { Type = "float", X = 0x518, Y = 0x520 }, Visible = { Type = "bool", Offset = 0x5b5 }, AbsolutePosition = {
-				Type = "float",
-				X = 0x110,
-				Y = 0x114,
-			}, Rotation = { Type = "float", Offset = 0x188 }, AbsoluteSize = { Type = "float", X = 0x118, Y = 0x11c } } }, a.load("d")
+		local b, c = {}, a.load("d")
 		function b:Initialise(d)
 			http.Get(
 				[[https://raw.githubusercontent.com/glizzymuncher57/DiddyWare/refs/heads/main/shared_offsets.lua]],
@@ -327,8 +299,110 @@ do
 		end
 		return b
 	end
+	function a.g()
+		local b, c, d = a.load("f"), a.load("a"), function(b, c, d, e)
+			return b(d.Type, c + d.Offset, e)
+		end
+		return function(e, f, g, h)
+			if not e or not f or not g or not h then
+				return
+			end
+			local i, j, k, l =
+				b.Instance.AttributeContainer,
+				b.Instance.AttributeList,
+				b.Instance.AttributeToValue,
+				b.Instance.AttributeToNext
+			local m = d(memory.read, f.Address, i)
+			if m == 0 then
+				return false
+			end
+			local n = d(memory.read, m, j)
+			if n == 0 then
+				return false
+			end
+			local o
+			o = c.Add("onUpdate", function()
+				if n == 0 or n == m then
+					c.Remove("onUpdate", o)
+					return
+				end
+				local p = d(memory.read, n, { Type = "pointer", Offset = 0 })
+				local q = d(memory.read, p, { Type = "string", Offset = 0 })
+				if q == g then
+					d(memory.write, n, { Type = e, Offset = k.Offset }, h)
+					c.Remove("onUpdate", o)
+					return
+				end
+				n = n + l.Offset
+			end)
+			return true
+		end
+	end
 	function a.h()
-		local b, c, d, e, f = a.load("d"), a.load("a"), a.load("c"), a.load("f"), a.load("g")
+		local b, c, d, e, f =
+			a.load("d"), a.load("a"), a.load("c"), a.load("g"), function(b, c, d)
+				return math.max(c, math.min(d, b))
+			end
+		local g = function()
+			if not b.offsets_loaded then
+				return
+			end
+			local g = entity.get_local_player()
+			local h = g:get_bone_instance("HumanoidRootPart")
+			local i = h and h.Parent
+			if i then
+				local j, k = d.GetValue("Speed Modifier"), d.GetValue("Speed Modifier Hotkey") == true
+				local l, m =
+					(j and k) and d.GetValue("WalkSpeed Modifier Amount") or 1,
+					(j and k) and d.GetValue("RunSpeed Modifier Amount") or 1
+				local n, o = f(12 * l, 0, 30), f(24 * m, 0, 50)
+				e("double", i, "WalkSpeed", n)
+				e("double", i, "RunSpeed", o)
+			end
+		end
+		return function()
+			c.Add("onUpdate", g)
+		end
+	end
+	function a.i()
+		local b, c, d, e = a.load("d"), a.load("a"), a.load("c"), a.load("g")
+		local f = function()
+			if not b.offsets_loaded then
+				return
+			end
+			if not d.GetValue("Infinite Stamina") then
+				return
+			end
+			local f = entity.get_local_player()
+			local g = f:get_bone_instance("HumanoidRootPart")
+			local h = g and g.Parent
+			if h then
+				e("double", h, "Stamina", 100)
+			end
+		end
+		return function()
+			c.Add("onUpdate", f)
+		end
+	end
+	function a.j()
+		local b, c, d = a.load("d"), {}, memory.read
+		function c.read(e, f)
+			if not b.offsets_loaded then
+				return
+			end
+			return d(f.Type, e + f.Offset)
+		end
+		function c.read_vector2(e, f)
+			if not b.offsets_loaded then
+				return Vector3.new(0, 0, 0)
+			end
+			local g, h = d(f.Type, e + f.X), d(f.Type, e + f.Y)
+			return Vector3.new(g, h, 0)
+		end
+		return c
+	end
+	function a.k()
+		local b, c, d, e, f = a.load("d"), a.load("a"), a.load("c"), a.load("j"), a.load("f")
 		local g = function()
 			for g, h in pairs(b.player_gui:get_children()) do
 				if h.Name == "Dot" then
@@ -367,11 +441,11 @@ do
 			utility.move_mouse(p, q)
 		end
 		return function()
-			c.Add("onUpdate", h)
+			c.Add("onPaint", h)
 		end
 	end
-	function a.i()
-		local b, c, d = a.load("f"), a.load("g"), a.load("c")
+	function a.l()
+		local b, c, d = a.load("j"), a.load("f"), a.load("c")
 		return function(e)
 			local f = e:find_first_child("Wires")
 			if not f then
@@ -438,8 +512,8 @@ do
 			return true
 		end
 	end
-	function a.j()
-		local b, c, d = a.load("f"), a.load("g"), a.load("c")
+	function a.m()
+		local b, c, d = a.load("j"), a.load("f"), a.load("c")
 		return function(e)
 			local f = e:find_first_child("Switch")
 			if not f then
@@ -473,9 +547,9 @@ do
 			return true
 		end
 	end
-	function a.k()
+	function a.n()
 		local b, c, d, e, f, g =
-			a.load("f"), a.load("g"), a.load("c"), 1, function(b, c, d, e)
+			a.load("j"), a.load("f"), a.load("c"), 1, function(b, c, d, e)
 				return b >= d.X and b <= d.X + e.X and c >= d.Y and c <= d.Y + e.Y
 			end
 		local h = function()
@@ -546,9 +620,9 @@ do
 			return false
 		end
 	end
-	function a.l()
+	function a.o()
 		local b, c, d, e =
-			a.load("d"), a.load("a"), a.load("c"), { Wires = a.load("i"), Switches = a.load("j"), Pull = a.load("k") }
+			a.load("d"), a.load("a"), a.load("c"), { Wires = a.load("l"), Switches = a.load("m"), Pull = a.load("n") }
 		local f = function()
 			if utility.get_menu_state() then
 				return
@@ -570,13 +644,11 @@ do
 			local h = g:find_first_child("Generator")
 			if h then
 				local i = e.Wires(h)
-				if not i then
-					return
-				end
-				print("wires done")
-				local j = e.Switches(h)
-				if j then
-					e.Pull(h)
+				if i then
+					local j = e.Switches(h)
+					if j then
+						e.Pull(h)
+					end
 				end
 			end
 		end
@@ -584,7 +656,7 @@ do
 			c.Add("onUpdate", f)
 		end
 	end
-	function a.m()
+	function a.p()
 		local b, c, d, e, f =
 			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
 				if not b or not c then
@@ -632,7 +704,7 @@ do
 			c.Add("onPaint", g)
 		end
 	end
-	function a.n()
+	function a.q()
 		local b, c, d, e, f =
 			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
 				if not b or not c then
@@ -688,7 +760,7 @@ do
 			c.Add("onPaint", g)
 		end
 	end
-	function a.o()
+	function a.r()
 		local b, c, d, e, f =
 			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
 				if not b or not c then
@@ -736,7 +808,7 @@ do
 			c.Add("onPaint", g)
 		end
 	end
-	function a.p()
+	function a.s()
 		local b, c, d, e, f =
 			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
 				if not b or not c then
@@ -780,19 +852,22 @@ do
 			c.Add("onPaint", g)
 		end
 	end
-	function a.q()
-		local b, c, d, e, f, g, h = {}, a.load("h"), a.load("l"), a.load("m"), a.load("n"), a.load("o"), a.load("p")
+	function a.t()
+		local b, c, d, e, f, g, h, i, j =
+			{}, a.load("h"), a.load("i"), a.load("k"), a.load("o"), a.load("p"), a.load("q"), a.load("r"), a.load("s")
 		function b:Initialise()
-			d()
 			c()
-			e()
+			d()
 			f()
+			e()
 			g()
 			h()
+			i()
+			j()
 		end
 		return b
 	end
-	function a.r()
+	function a.u()
 		local b, c, d, e = a.load("a"), a.load("c"), a.load("b"), {}
 		e.DebugMode = false
 		local f, g, h = d:Register("UI.Elements", {}), d:Register("UI.DebugElements", {}), {}
@@ -826,12 +901,7 @@ do
 		end
 		local i, j =
 			function(i, j, k, l)
-				local m = setmetatable({
-					TabRef = i,
-					ContainerRef = j,
-					Name = k,
-					Debug = l and l.Debug,
-				}, h)
+				local m = setmetatable({ TabRef = i, ContainerRef = j, Name = k, Debug = l and l.Debug }, h)
 				c.Register(k, m)
 				f[k] = m
 				if m.Debug then
@@ -1013,7 +1083,9 @@ do
 		end
 		function e.NewTab(l, m)
 			ui.newTab(l, m)
-			return setmetatable({ Ref = l }, k)
+			return setmetatable({
+				Ref = l,
+			}, k)
 		end
 		function e:SetDebugMode(l)
 			self.DebugMode = l
@@ -1030,19 +1102,38 @@ do
 		end
 		return e
 	end
-	function a.s()
+	function a.v()
 		local b, c, d = {}, "Features_DiddyWare", "Features"
 		function b:Initialise(e)
-			local f = e:Container(c, d, { autosize = true, next = true })
-			f:Checkbox("Auto Door Hold")
+			local f = e:Container(c, d, {
+				autosize = true,
+				next = true,
+			})
+			local g = f:Checkbox("Auto Door Hold")
 			f:KeyPicker("Auto Door Hold Hotkey", true)
-			f:SliderInt("Auto Door Hold Speed", 1, 25, 15)
-			f:Checkbox("Auto Generator")
-			f:SliderInt("Auto Generator Mouse Speed", 1, 25, 15)
+			local h, i, j, k =
+				f:SliderInt("Auto Door Hold Speed", 1, 25, 15),
+				f:Checkbox("Auto Generator"),
+				f:SliderInt("Auto Generator Mouse Speed", 1, 25, 15),
+				f:Checkbox("Speed Modifier")
+			f:KeyPicker("Speed Modifier Hotkey", true)
+			local l, m =
+				f:SliderFloat("WalkSpeed Modifier Amount", 1, 3, 1), f:SliderFloat("RunSpeed Modifier Amount", 1, 2, 1)
+			f:Checkbox("Infinite Stamina")
+			g:OnChange(function(n)
+				h:Visible(n)
+			end)
+			i:OnChange(function(n)
+				j:Visible(n)
+			end)
+			k:OnChange(function(n)
+				l:Visible(n)
+				m:Visible(n)
+			end)
 		end
 		return b
 	end
-	function a.t()
+	function a.w()
 		local b, c, d = {}, "VisualsTab_DiddyWare", "Visuals"
 		function b:Initialise(e)
 			local f = e:Container(c, d, { autosize = true, next = true })
@@ -1062,7 +1153,7 @@ do
 		end
 		return b
 	end
-	function a.u()
+	function a.x()
 		local b, c, d = {}, "Settings_DiddyWare", "Settings"
 		function b:Initialise(e)
 			local f = e:Container(c, d, { autosize = true })
@@ -1071,8 +1162,8 @@ do
 		end
 		return b
 	end
-	function a.v()
-		local b, c, d, e, f = {}, a.load("r"), a.load("s"), a.load("t"), a.load("u")
+	function a.y()
+		local b, c, d, e, f = {}, a.load("u"), a.load("v"), a.load("w"), a.load("x")
 		function b:Initialise()
 			local g = c.NewTab("DiddyWare_JB", "DiddyWare")
 			d:Initialise(g)
@@ -1081,7 +1172,7 @@ do
 		end
 		return b
 	end
-	function a.w()
+	function a.z()
 		return function()
 			function math.floor(b)
 				return b - (b % 1)
@@ -1093,7 +1184,7 @@ do
 	end
 end
 local b, c, d, e, f, g, h, i =
-	a.load("e"), a.load("q"), a.load("v"), a.load("g"), a.load("a"), a.load("b"), a.load("w"), a.load("r")
+	a.load("e"), a.load("t"), a.load("y"), a.load("f"), a.load("a"), a.load("b"), a.load("z"), a.load("u")
 local j = function()
 	h()
 	f:Initialise()
