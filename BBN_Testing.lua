@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-08T00:17:39.481443100+00:00",
+	genDate = "2026-04-08T12:57:26.919387100+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -68,14 +68,7 @@ do
 			cached_generators = {},
 			cached_fuseboxes = {},
 			cached_items = {},
-			killer = {
-				name = nil,
-				character = nil,
-				root_part = nil,
-				position = Vector3.new(0, 0, 0),
-				stamina = nil,
-				max_stamina = nil,
-			},
+			killer = { name = nil, character = nil, root_part = nil, position = Vector3.new(0, 0, 0), stamina = nil, max_stamina = nil },
 			players = {},
 			local_data = {
 				player = nil,
@@ -606,32 +599,34 @@ do
 		end
 	end
 	function a.l()
-		local b, c, d, e, f = a.load("b"), a.load("d"), a.load("j"), 0, function(b, c)
-			return (b - c).Magnitude
-		end
-		local g = function()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), 0
+		local f = function()
 			if utility.get_menu_state() then
 				return
 			end
 			if not d.GetValue("Auto Attack") then
 				return
 			end
-			local g, h = d.GetValue("Auto Attack Distance"), b.killer
-			local i, j = h.position, utility.get_tick_count()
-			if h.name == b.local_data.player.Name and (j - e) >= 750 then
-				for k, l in ipairs(b.players) do
-					if l.name ~= b.local_data.player.Name and l.health > 0 then
-						local m = f(i, l.position)
-						if m >= g then
-							mouse.click("leftmouse")
-							e = j
-						end
+			local f, g, h = d.GetValue("Auto Attack Distance"), b.killer, utility.get_tick_count()
+			if g.name ~= b.local_data.player.Name then
+				return
+			end
+			if h - e < 750 then
+				return
+			end
+			for i = 1, #b.players do
+				local j = b.players[i]
+				if j.name ~= b.local_data.player.Name then
+					local k = (j.position - b.local_data.player_position).Magnitude
+					if k <= f then
+						mouse.click("leftmouse")
+						e = h
 					end
 				end
 			end
 		end
 		return function()
-			c.Add("onUpdate", g)
+			c.Add("onUpdate", f)
 		end
 	end
 	function a.m()
