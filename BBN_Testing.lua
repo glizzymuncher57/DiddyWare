@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-07T23:26:47.875343800+00:00",
+	genDate = "2026-04-08T00:15:16.382830200+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -613,7 +613,7 @@ do
 			local i, j = h.position, utility.get_tick_count()
 			if h.name == b.local_data.player.Name and (j - e) >= 750 then
 				for k, l in ipairs(b.players) do
-					if l.health > 0 then
+					if l.name ~= b.local_data.player.Name and l.health > 0 then
 						local m = f(i, l.position)
 						if m >= g then
 							mouse.click("leftmouse")
@@ -781,6 +781,9 @@ do
 			end
 		local j = function()
 			if not b.offsets_loaded then
+				return
+			end
+			if b.local_data.player.Name == b.killer.name then
 				return
 			end
 			local j = b.local_data.humanoid
