@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-08T00:15:16.382830200+00:00",
+	genDate = "2026-04-08T00:17:39.481443100+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -68,7 +68,14 @@ do
 			cached_generators = {},
 			cached_fuseboxes = {},
 			cached_items = {},
-			killer = { name = nil, character = nil, root_part = nil, position = Vector3.new(0, 0, 0), stamina = nil, max_stamina = nil },
+			killer = {
+				name = nil,
+				character = nil,
+				root_part = nil,
+				position = Vector3.new(0, 0, 0),
+				stamina = nil,
+				max_stamina = nil,
+			},
 			players = {},
 			local_data = {
 				player = nil,
@@ -783,12 +790,12 @@ do
 			if not b.offsets_loaded then
 				return
 			end
-			if b.local_data.player.Name == b.killer.name then
-				return
-			end
 			local j = b.local_data.humanoid
 			if not j then
 				i = nil
+				return
+			end
+			if b.local_data.player.Name == b.killer.name then
 				return
 			end
 			if not d.GetValue("Auto Avoid Traps") then
