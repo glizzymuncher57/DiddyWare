@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-06T22:43:21.233487500+00:00",
+	genDate = "2026-04-09T12:35:36.335174700+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -19,46 +19,6 @@ a = {
 }
 do
 	function a.a()
-		local b, c, d = {}, {}, { "onPaint", "onUpdate", "onSlowUpdate", "shutdown" }
-		for e, f in ipairs(d) do
-			c[f] = {}
-		end
-		function b.Add(e, f)
-			if type(e) ~= "string" or type(f) ~= "function" then
-				return nil
-			end
-			if not c[e] then
-				return nil
-			end
-			local g = #c[e] + 1
-			c[e][g] = f
-			return g
-		end
-		function b.Remove(e, f)
-			if c[e] then
-				c[e][f] = nil
-			end
-		end
-		function b.ClearAll()
-			for e, f in pairs(c) do
-				c[e] = {}
-			end
-		end
-		local e = function(e, ...)
-			for f, g in pairs(c[e]) do
-				g(...)
-			end
-		end
-		function b:Initialise()
-			for f, g in ipairs(d) do
-				cheat.Register(g, function(...)
-					e(g, ...)
-				end)
-			end
-		end
-		return b
-	end
-	function a.b()
 		local b = {}
 		b.__index = b
 		local c = {}
@@ -102,8 +62,499 @@ do
 		end
 		return b
 	end
+	function a.b()
+		local b = a.load("a")
+		return {
+			cached_generators = {},
+			cached_fuseboxes = {},
+			cached_items = {},
+			killer = { name = nil, character = nil, root_part = nil, position = Vector3.new(0, 0, 0), stamina = nil, max_stamina = nil },
+			players = {},
+			local_data = {
+				player = nil,
+				character = nil,
+				humanoid = nil,
+				player_gui = nil,
+				player_position = nil,
+				selected_class = nil,
+			},
+			colour_cache = b:Register("env_colour_cache", {}),
+			text_size_cache = b:Register("env_text_size_cache", {}),
+			offsets_loaded = false,
+		}
+	end
 	function a.c()
 		local b, c = a.load("b"), {}
+		c.__index = c
+		local d, e, f, g = {}, {}, 1, function(d)
+			if type(d) == "table" then
+				return {}
+			end
+			return d
+		end
+		local h, i =
+			function(h)
+				if not e[h] then
+					e[h] = {}
+				end
+				return e[h]
+			end, function(h)
+				local i = utility.get_tick_count()
+				if (i - h.last) < h.interval then
+					return
+				end
+				local j = h.back
+				if type(j) == "table" then
+					for k in pairs(j) do
+						j[k] = nil
+					end
+				end
+				local k = pcall(h.run, j, b, h)
+				if k then
+					h.front, h.back = j, h.front
+					b[h.target] = h.front
+					h.last = i
+				end
+			end
+		function c:Register(j, k)
+			local l, m, n = k.priority or 3, k.target or j, k.default ~= nil and k.default or {}
+			d[j] =
+				{ name = j, run = k.run, interval = k.interval or 1000, priority = l, target = m, last = 0, front = n, back = g(
+					n
+				) }
+			b[m] = d[j].front
+			table.insert(h(l), j)
+		end
+		function c:Unregister(j)
+			local k = d[j]
+			if not k then
+				return
+			end
+			local l = e[k.priority]
+			if l then
+				for m, n in ipairs(l) do
+					if n == j then
+						table.remove(l, m)
+						break
+					end
+				end
+			end
+			d[j] = nil
+		end
+		function c:Invalidate(j)
+			if d[j] then
+				d[j].last = 0
+			end
+		end
+		function c:Get(j)
+			return d[j] and d[j].front
+		end
+		function c:Update()
+			for j = 1, 2 do
+				local k = e[j]
+				if k then
+					for l, m in ipairs(k) do
+						i(d[m])
+					end
+				end
+			end
+			local j = {}
+			for k, l in pairs(e) do
+				if k >= 3 then
+					for m, n in ipairs(l) do
+						table.insert(j, n)
+					end
+				end
+			end
+			if #j > 0 then
+				if f > #j then
+					f = 1
+				end
+				i(d[j[f]])
+				f = f + 1
+			end
+		end
+		function c:create_colour(j, k, l)
+			local m = j .. k .. l
+			local n = b.colour_cache[m]
+			if n then
+				return n
+			end
+			local o = Color3.fromRGB(j, k, l)
+			b.colour_cache[m] = o
+			return o
+		end
+		function c:get_text_size(j, k)
+			local l = j .. k
+			local m = b.text_size_cache[l]
+			if m then
+				return m[1], m[2]
+			end
+			local n, o = draw.get_text_size(j, k)
+			b.text_size_cache[l] = { n, o }
+			return n, o
+		end
+		return c
+	end
+	function a.d()
+		local b, c, d = {}, {}, { "onPaint", "onUpdate", "onSlowUpdate", "shutdown" }
+		for e, f in ipairs(d) do
+			c[f] = {}
+		end
+		function b.Add(e, f)
+			if type(e) ~= "string" or type(f) ~= "function" then
+				return nil
+			end
+			if not c[e] then
+				return nil
+			end
+			local g = #c[e] + 1
+			c[e][g] = f
+			return g
+		end
+		function b.Remove(e, f)
+			if c[e] then
+				c[e][f] = nil
+			end
+		end
+		function b.ClearAll()
+			for e, f in pairs(c) do
+				c[e] = {}
+			end
+		end
+		local e = function(e, ...)
+			for f, g in pairs(c[e]) do
+				g(...)
+			end
+		end
+		function b:Initialise()
+			for f, g in ipairs(d) do
+				cheat.Register(g, function(...)
+					e(g, ...)
+				end)
+			end
+		end
+		return b
+	end
+	function a.e()
+		local b = game.GetService("Workspace")
+		local c = b:find_first_child("IGNORE")
+		return {
+			{
+				name = "ignore_items",
+				target = "cached_items",
+				interval = 1000,
+				priority = 3,
+				default = {},
+				run = function(d, e, f)
+					for g, h in pairs(c:get_children()) do
+						local i, j = h.Name
+						if i == "Battery" then
+							j = h
+						elseif i == "Trap" then
+							j = h:find_first_child_of_class("MeshPart")
+						elseif i == "Minion" then
+							j = h:find_first_child_of_class("MeshPart")
+						end
+						if j then
+							table.insert(
+								d,
+								{ name = i, render_part = j, position = (i ~= "Minion") and j.Position or nil }
+							)
+						end
+					end
+				end,
+			},
+			{
+				name = "ignore_items_update",
+				interval = 75,
+				priority = 1,
+				run = function(d, e, f)
+					local g = e.cached_items
+					if not g then
+						return
+					end
+					for h, i in ipairs(g) do
+						if i.name == "Minion" then
+							i.position = i.render_part.Position
+						end
+					end
+				end,
+			},
+		}
+	end
+	function a.f()
+		local b = game.GetService("Workspace")
+		local c, d =
+			b:find_first_child("PLAYERS").KILLER, function(c, d, e)
+				local f = c:GetAttribute(d)
+				return f and f.Value or e
+			end
+		return {
+			{
+				name = "killer_data_gathering",
+				target = "killer",
+				interval = 2000,
+				priority = 3,
+				default = {
+					name = nil,
+					character = nil,
+					hitbox_part = nil,
+					position_part = nil,
+					position = nil,
+					stamina = nil,
+					max_stamina = nil,
+				},
+				run = function(e, f, g)
+					local h = c:find_first_child_of_class("Model")
+					if not h then
+						return
+					end
+					local i = h:find_first_child("Hitbox")
+					if not i then
+						return
+					end
+					e.name = h.Name
+					e.character = h
+					e.position_part = i
+					e.hitbox_part = i
+					e.position = e.position_part.Position
+					e.stamina = d(h, "Stamina", 70)
+				end,
+			},
+			{
+				name = "killer_data_updating",
+				interval = 50,
+				priority = 1,
+				run = function(e, f, g)
+					local h = f.killer
+					if not h or not h.position_part then
+						return
+					end
+					h.stamina = d(h.character, "Stamina", 70)
+					h.max_stamina = d(h.character, "MaxStamina", 100)
+					h.position = h.position_part.Position
+				end,
+			},
+		}
+	end
+	function a.g()
+		local b = game.GetService("Workspace")
+		local c, d =
+			b:find_first_child("MAPS"), function(c, d, e)
+				local f = c:get_attribute(d)
+				return f and f.Value or e
+			end
+		return {
+			{
+				name = "map_generators",
+				target = "cached_generators",
+				interval = 2000,
+				priority = 3,
+				default = {},
+				run = function(e, f, g)
+					local h = c:find_first_child("GAME MAP")
+					if not h then
+						return
+					end
+					local i = h:find_first_child("Generators")
+					if not i then
+						return
+					end
+					for j, k in pairs(i:get_children()) do
+						local l = k.RootPart
+						if l then
+							table.insert(
+								e,
+								{ model = k, name = k.Name, position = l.Position, progress = d(k, "Progress", 0) }
+							)
+						end
+					end
+				end,
+			},
+			{
+				name = "map_fuse_boxes",
+				target = "cached_fuseboxes",
+				interval = 2000,
+				priority = 3,
+				default = {},
+				run = function(e, f, g)
+					local h = c:find_first_child("GAME MAP")
+					if not h then
+						return
+					end
+					local i = h:find_first_child("FuseBoxes")
+					if not i then
+						return
+					end
+					for j, k in pairs(i:get_children()) do
+						local l = k:find_first_child("Position")
+						if l then
+							table.insert(
+								e,
+								{ model = k, name = "Fuse Box", position = l.Position, inserted = d(
+									k,
+									"Inserted",
+									false
+								) }
+							)
+						end
+					end
+				end,
+			},
+			{
+				name = "map_generators_update",
+				interval = 1000,
+				priority = 3,
+				run = function(e, f, g)
+					local h = f.cached_generators
+					if not h then
+						return
+					end
+					for i, j in ipairs(h) do
+						j.progress = d(j.model, "Progress", 0)
+					end
+				end,
+			},
+			{
+				name = "map_fuse_boxes_update",
+				interval = 1000,
+				priority = 3,
+				run = function(e, f, g)
+					local h = f.cached_fuseboxes
+					if not h then
+						return
+					end
+					for i, j in ipairs(h) do
+						j.inserted = d(j.Model, "Inserted", false)
+					end
+				end,
+			},
+		}
+	end
+	function a.h()
+		local b = game.GetService("Workspace")
+		local c, d, e =
+			b:find_first_child("PLAYERS").ALIVE, entity.get_local_player(), function(c, d, e)
+				local f = c:GetAttribute(d)
+				return f and f.Value or e
+			end
+		return {
+			{
+				name = "player_data_gathering",
+				target = "players",
+				interval = 2000,
+				priority = 3,
+				default = {
+					name = nil,
+					player = nil,
+					character = nil,
+					hitbox_part = nil,
+					position_part = nil,
+					position = nil,
+					stamina = nil,
+				},
+				run = function(f, g, h)
+					local i = entity.get_players()
+					for j, k in ipairs(i) do
+						local l = c:find_first_child(k.Name)
+						if l then
+							table.insert(
+								f,
+								{
+									name = k.Name,
+									character = l,
+									humanoid = k,
+									position_part = k,
+									hitbox_part = l:find_first_child("Hitbox"),
+									health = k.Health,
+									max_health = k.MaxHealth,
+									position = k.Position,
+									stamina = e(l, "Stamina", 100),
+									max_stamina = e(l, "MaxStamina", 100),
+								}
+							)
+						end
+					end
+				end,
+			},
+			{
+				name = "player_data_updating",
+				interval = 75,
+				priority = 1,
+				run = function(f, g, h)
+					local i = g.players
+					if not i then
+						return
+					end
+					for j, k in ipairs(i) do
+						k.health = k.humanoid.Health
+						k.max_health = k.humanoid.MaxHealth
+						k.position = k.position_part.Position
+						k.stamina = e(k.character, "Stamina", 100)
+						k.max_stamina = e(k.character, "MaxStamina", 100)
+					end
+				end,
+			},
+			{
+				name = "local_data_gathering",
+				target = "local_data",
+				interval = 2500,
+				priority = 3,
+				default = {
+					player = nil,
+					character = nil,
+					humanoid = nil,
+					player_gui = nil,
+					player_position = nil,
+					selected_class = nil,
+				},
+				run = function(f, g, h)
+					local i = game.LocalPlayer
+					if i then
+						local j = i.PlayerGui
+						f.player = d
+						f.player_gui = j
+						f.player_position = d.Position
+						local k = d:get_bone_instance("HumanoidRootPart")
+						if k then
+							f.character = k.Parent
+							f.humanoid = f.character:find_first_child_of_class("Humanoid")
+						end
+					end
+				end,
+			},
+			{
+				name = "local_data_updating",
+				interval = 150,
+				priority = 1,
+				run = function(f, g, h)
+					local i = g.local_data
+					if not i then
+						print("couldn't find local data")
+						return
+					end
+					i.player_position = i.player.Position
+					i.selected_class = e(i.character, "Character", "Survivor-Customer")
+				end,
+			},
+		}
+	end
+	function a.i()
+		local b, c, d = a.load("c"), a.load("d"), { a.load("e"), a.load("f"), a.load("g"), a.load("h") }
+		return function()
+			for e, f in ipairs(d) do
+				for g, h in ipairs(f) do
+					b:Register(h.name, h)
+				end
+			end
+			c.Add("onUpdate", function()
+				b:Update()
+			end)
+		end
+	end
+	function a.j()
+		local b, c = a.load("a"), {}
 		local d, e = b:Register("Configuration.Elements", {}), b:Register("Configuration.Values", {})
 		function c.Register(f, g)
 			d[f] = g
@@ -116,168 +567,76 @@ do
 		end
 		return c
 	end
-	function a.d()
-		local b = a.load("b")
-		return {
-			cached_generators = {},
-			cached_fuseboxes = {},
-			cached_items = {},
-			killer = { name = nil, character = nil, root_part = nil, position = Vector3.new(0, 0, 0) },
-			local_player = nil,
-			player_gui = nil,
-			local_position = Vector3.new(0, 0, 0),
-			colour_cache = b:Register("env_colour_cache", {}),
-			text_size_cache = b:Register("env_text_size_cache", {}),
-			offsets_loaded = false,
-		}
+	function a.k()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), function(b, c)
+			return (b - c).Magnitude
+		end
+		local f = function()
+			if utility.get_menu_state() then
+				return
+			end
+			if not d.GetValue("Auto Parry") then
+				return
+			end
+			local f, g = d.GetValue("Auto Parry Distance"), b.killer
+			if not g.character then
+				return
+			end
+			if g.name == b.local_data.player.Name then
+				return
+			end
+			local h = e(g.position, b.local_data.player_position)
+			if h > f then
+				return
+			end
+			local i = g.character:find_first_child_of_class("Highlight")
+			if i then
+				keyboard.click("e")
+			end
+		end
+		return function()
+			c.Add("onUpdate", f)
+		end
 	end
-	function a.e()
-		local b, c, d, e, f =
-			game.GetService("Workspace"), a.load("a"), a.load("c"), a.load("d"), entity.get_local_player()
-		local g, h, i, j, k, l =
-			b:find_first_child("MAPS"),
-			b:find_first_child("IGNORE"),
-			b:find_first_child("PLAYERS"),
-			0,
-			0,
-			function(g, h, i)
-				local j = g:GetAttribute(h)
-				return j and j.Value or i
+	function a.l()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), 0
+		local f = function()
+			if utility.get_menu_state() then
+				return
 			end
-		local m, n =
-			function()
-				local m = {}
-				for n, o in pairs(h:get_children()) do
-					local p, q = o.Name
-					if p == "Battery" then
-						q = o
-					elseif p == "Trap" then
-						q = o:find_first_child_of_class("MeshPart")
-					elseif p == "Minion" then
-						q = o:find_first_child("RootPart")
-					end
-					if q then
-						local r
-						if p ~= "Minion" then
-							r = q.Position
-						end
-						table.insert(m, { name = p, render_part = q, position = r })
-					end
-				end
-				e.cached_items = m
-			end, function()
-				local m, n = { generators = {}, fuse_boxes = {} }, g:find_first_child("GAME MAP")
-				if not n then
-					e.cached_generators = {}
-					e.cached_fuseboxes = {}
-					e.cached_items = {}
-					return false
-				end
-				local o, p = n:find_first_child("Generators"), n:find_first_child("FuseBoxes")
-				if o then
-					for q, r in pairs(o:get_children()) do
-						local s, t, u = r.Name, r.RootPart, l(r, "Progress", 0)
-						if t then
-							local v = t.Position
-							table.insert(m.generators, { model = r, progress = u, name = s, position = v })
-						end
-					end
-					e.cached_generators = m.generators
-				end
-				if p then
-					for q, r in pairs(p:get_children()) do
-						local s, t, u = "Fuse Box", r:find_first_child("Position"), l(r, "Inserted", false)
-						if t then
-							local v = t.Position
-							table.insert(m.fuse_boxes, { model = r, inserted = u, name = s, position = v })
-						end
-					end
-					e.cached_fuseboxes = m.fuse_boxes
-				end
-				return true
+			if not d.GetValue("Auto Attack") then
+				return
 			end
-		local o, p, q =
-			function()
-				if e.killer and e.killer.root_part then
-					e.killer.position = e.killer.root_part.Position
-				end
-				local o, p = (d.GetValue("Update Map Every (s)") or 1) * 1000, utility.get_tick_count()
-				if (p - j) > o then
-					local q = n()
-					if q then
-						j = p
-					end
-				end
-				if (p - k) > o then
-					m()
-					k = p
-				end
-				e.local_position = f.Position
-			end, function()
-				local o = game.LocalPlayer
-				e.local_player = o
-				e.player_gui = o:find_first_child("PlayerGui")
-				local p = i:find_first_child("KILLER")
-				if p then
-					local q = p:find_first_child_of_class("Model")
-					if not q then
-						e.killer = { name = nil, character = nil, root_part = nil, position = Vector3.new(0, 0, 0) }
-						return
-					end
-					local r = q.Name
-					if e.killer and e.killer.name == r then
-						return
-					end
-					local s = q:find_first_child("HumanoidRootPart")
-					if not s then
-						return
-					end
-					local t = q:find_first_child_of_class("Humanoid")
-					if not t then
-						return
-					end
-					local u = t:find_first_child_of_class("Animator")
-					if not u then
-						return
-					end
-					e.killer = { name = r, character = q, root_part = s, position = s.Position }
-				end
-			end, {}
-		function q:create_colour(r, s, t)
-			local u = r .. s .. t
-			local v = e.colour_cache[u]
-			if v then
-				return v
+			local f, g, h = d.GetValue("Auto Attack Distance"), b.killer, utility.get_tick_count()
+			if g.name ~= b.local_data.player.Name then
+				return
 			end
-			local w = Color3.fromRGB(r, s, t)
-			e.colour_cache[u] = w
-			return w
+			if h - e < 750 then
+				return
+			end
+			for i = 1, #b.players do
+				local j = b.players[i]
+				if j.name ~= b.local_data.player.Name then
+					local k = (j.position - b.killer.position).Magnitude
+					if k <= f then
+						mouse.click("leftmouse")
+						e = h
+					end
+				end
+			end
 		end
-		function q:get_text_size(r, s)
-			local t = r .. s
-			local u = e.text_size_cache[t]
-			if u then
-				return u[1], u[2]
-			end
-			local v, w = draw.get_text_size(r, s)
-			e.text_size_cache[t] = { v, w }
-			return v, w
+		return function()
+			c.Add("onUpdate", f)
 		end
-		function q:Initialise()
-			c.Add("onUpdate", o)
-			c.Add("onSlowUpdate", p)
-		end
-		return q
 	end
-	function a.f()
-		local b, c = {}, a.load("d")
+	function a.m()
+		local b, c = {}, a.load("b")
 		function b:Initialise(d)
 			http.Get(
 				[[https://raw.githubusercontent.com/glizzymuncher57/DiddyWare/refs/heads/main/shared_offsets.lua]],
 				{},
 				function(e)
 					if not e then
-						print("no response")
 						return
 					end
 					local f = loadstring(e)
@@ -299,8 +658,8 @@ do
 		end
 		return b
 	end
-	function a.g()
-		local b, c, d = a.load("f"), a.load("a"), function(b, c, d, e)
+	function a.n()
+		local b, c, d = a.load("m"), a.load("d"), function(b, c, d, e)
 			return b(d.Type, c + d.Offset, e)
 		end
 		return function(e, f, g, h)
@@ -338,9 +697,9 @@ do
 			return true
 		end
 	end
-	function a.h()
+	function a.o()
 		local b, c, d, e, f =
-			a.load("d"), a.load("a"), a.load("c"), a.load("g"), function(b, c, d)
+			a.load("b"), a.load("d"), a.load("j"), a.load("n"), function(b, c, d)
 				return math.max(c, math.min(d, b))
 			end
 		local g = function()
@@ -364,8 +723,8 @@ do
 			c.Add("onUpdate", g)
 		end
 	end
-	function a.i()
-		local b, c, d, e = a.load("d"), a.load("a"), a.load("c"), a.load("g")
+	function a.p()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), a.load("n")
 		local f = function()
 			if not b.offsets_loaded then
 				return
@@ -384,27 +743,87 @@ do
 			c.Add("onUpdate", f)
 		end
 	end
-	function a.j()
-		local b, c, d = a.load("d"), {}, memory.read
-		function c.read(e, f)
+	function a.q()
+		local b, c, d, e = a.load("b"), {}, memory.read, memory.write
+		function c.read(f, g)
 			if not b.offsets_loaded then
 				return
 			end
-			return d(f.Type, e + f.Offset)
+			return d(g.Type, f + g.Offset)
 		end
-		function c.read_vector2(e, f)
+		function c.write(f, g, h)
+			if not b.offsets_loaded then
+				return
+			end
+			return e(g.Type, f + g.Offset, h)
+		end
+		function c.read_vector2(f, g)
 			if not b.offsets_loaded then
 				return Vector3.new(0, 0, 0)
 			end
-			local g, h = d(f.Type, e + f.X), d(f.Type, e + f.Y)
-			return Vector3.new(g, h, 0)
+			local h, i = d(g.Type, f + g.X), d(g.Type, f + g.Y)
+			return Vector3.new(h, i, 0)
 		end
 		return c
 	end
-	function a.k()
-		local b, c, d, e, f = a.load("d"), a.load("a"), a.load("c"), a.load("j"), a.load("f")
+	function a.r()
+		local b, c, d, e, f, g, h, i =
+			a.load("b"), a.load("d"), a.load("j"), a.load("m"), a.load("q"), 2.8, function(b, c)
+				local d = math.huge
+				for e = 1, #b do
+					local f = b[e]
+					if f.name == "Trap" then
+						local g = (c - f.position).Magnitude
+						if g < d then
+							d = g
+						end
+					end
+				end
+				return d
+			end
+		local j = function()
+			if not b.offsets_loaded then
+				return
+			end
+			local j = b.local_data.humanoid
+			if not j then
+				i = nil
+				return
+			end
+			if b.local_data.player.Name == b.killer.name then
+				return
+			end
+			if not d.GetValue("Auto Avoid Traps") then
+				if i then
+					f.write(j.Address, e.Humanoid.HipHeight, i)
+					i = nil
+				end
+				return
+			end
+			local k, l, m = d.GetValue("Auto Avoid Traps Distance"), b.cached_items, b.local_data.player_position
+			local n = h(l, m)
+			if n == math.huge then
+				return
+			end
+			if not i then
+				i = f.read(j.Address, e.Humanoid.HipHeight)
+			end
+			local o
+			if n <= k then
+				o = g
+			else
+				o = i or 0
+			end
+			f.write(j.Address, e.Humanoid.HipHeight, o)
+		end
+		return function()
+			c.Add("onUpdate", j)
+		end
+	end
+	function a.s()
+		local b, c, d, e, f = a.load("b"), a.load("d"), a.load("j"), a.load("q"), a.load("m")
 		local g = function()
-			for g, h in pairs(b.player_gui:get_children()) do
+			for g, h in pairs(b.local_data.player_gui:get_children()) do
 				if h.Name == "Dot" then
 					local i = e.read(h.Address, f.ScreenGui.Enabled)
 					if i then
@@ -424,7 +843,7 @@ do
 			if utility.get_menu_state() then
 				return
 			end
-			if not b.player_gui then
+			if not b.local_data.player_gui then
 				return
 			end
 			local h = g()
@@ -444,8 +863,8 @@ do
 			c.Add("onPaint", h)
 		end
 	end
-	function a.l()
-		local b, c, d = a.load("j"), a.load("f"), a.load("c")
+	function a.t()
+		local b, c, d = a.load("q"), a.load("m"), a.load("j")
 		return function(e)
 			local f = e:find_first_child("Wires")
 			if not f then
@@ -512,8 +931,8 @@ do
 			return true
 		end
 	end
-	function a.m()
-		local b, c, d = a.load("j"), a.load("f"), a.load("c")
+	function a.u()
+		local b, c, d = a.load("q"), a.load("m"), a.load("j")
 		return function(e)
 			local f = e:find_first_child("Switch")
 			if not f then
@@ -547,9 +966,9 @@ do
 			return true
 		end
 	end
-	function a.n()
+	function a.v()
 		local b, c, d, e, f, g =
-			a.load("j"), a.load("f"), a.load("c"), 1, function(b, c, d, e)
+			a.load("q"), a.load("m"), a.load("j"), 1, function(b, c, d, e)
 				return b >= d.X and b <= d.X + e.X and c >= d.Y and c <= d.Y + e.Y
 			end
 		local h = function()
@@ -620,9 +1039,9 @@ do
 			return false
 		end
 	end
-	function a.o()
+	function a.w()
 		local b, c, d, e =
-			a.load("d"), a.load("a"), a.load("c"), { Wires = a.load("l"), Switches = a.load("m"), Pull = a.load("n") }
+			a.load("b"), a.load("d"), a.load("j"), { Wires = a.load("t"), Switches = a.load("u"), Pull = a.load("v") }
 		local f = function()
 			if utility.get_menu_state() then
 				return
@@ -630,24 +1049,25 @@ do
 			if not d.GetValue("Auto Generator") then
 				return
 			end
-			if not b.player_gui then
-				return
-			end
-			local f = b.player_gui:find_first_child("Gen")
+			local f = b.local_data.player_gui
 			if not f then
 				return
 			end
-			local g = f:find_first_child("MainFrame")
+			local g = f:find_first_child("Gen")
 			if not g then
 				return
 			end
-			local h = g:find_first_child("Generator")
-			if h then
-				local i = e.Wires(h)
-				if i then
-					local j = e.Switches(h)
-					if j then
-						e.Pull(h)
+			local h = g:find_first_child("MainFrame")
+			if not h then
+				return
+			end
+			local i = h:find_first_child("Generator")
+			if i then
+				local j = e.Wires(i)
+				if j then
+					local k = e.Switches(i)
+					if k then
+						e.Pull(i)
 					end
 				end
 			end
@@ -656,64 +1076,370 @@ do
 			c.Add("onUpdate", f)
 		end
 	end
-	function a.p()
-		local b, c, d, e, f =
-			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
-				if not b or not c then
-					return 0
+	function a.x()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), a.load("c")
+		local f, g, h =
+			function()
+				local f = (b.local_data.player.Name == b.killer.name)
+				return f and b.killer.position or b.local_data.player_position
+			end, function(f)
+				local g = draw.get_part_corners(f)
+				if g then
+					local h = {}
+					for i, j in ipairs(g) do
+						local k, l, m = utility.world_to_screen(j)
+						if m then
+							table.insert(h, { k, l })
+						end
+					end
+					if #h >= 3 then
+						local i = draw.compute_convex_hull(h)
+						if i and #i >= 2 then
+							return i
+						end
+					end
 				end
-				return (b - c).Magnitude
+				return nil
+			end, function(f)
+				local g = draw.get_part_corners(f)
+				if not g then
+					return nil
+				end
+				local h, i, j, k = math.huge, math.huge, -math.huge, -math.huge
+				for l, m in ipairs(g) do
+					local n, o, p = utility.world_to_screen(m)
+					if p then
+						if n < h then
+							h = n
+						end
+						if o < i then
+							i = o
+						end
+						if n > j then
+							j = n
+						end
+						if o > k then
+							k = o
+						end
+					end
+				end
+				if h == math.huge then
+					return nil
+				end
+				return { x = h, y = i, w = (j - h), h = (k - i) }
 			end
-		local g = function()
-			local g, h, i, j, k, l =
-				d.GetValue("Visuals Enabled"),
+		local i = function()
+			local i, j = d.GetValue("Visuals Enabled"), d.GetValue("Player ESP")
+			if not i or not j then
+				return
+			end
+			local k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, A, B =
+				d.GetValue("Player Name"),
+				d.GetValue("Player Box"),
+				d.GetValue("Player Filled Box"),
+				d.GetValue("Player Stamina Bar"),
+				d.GetValue("Player Health Bar"),
 				d.GetValue("Show Distance"),
+				d.GetValue("Box Type"),
+				d.GetValue("Player Name Colour"),
+				d.GetValue("Player Box Colour"),
+				d.GetValue("Player Filled Box Colour A"),
+				d.GetValue("Player Filled Box Colour B"),
+				d.GetValue("Player Stamina Bar Colour A"),
+				d.GetValue("Player Stamina Bar Colour B"),
+				d.GetValue("Player Health Bar Colour A"),
+				d.GetValue("Player Health Bar Colour B"),
 				d.GetValue("Distance Colour"),
-				d.GetValue("Killer ESP"),
-				d.GetValue("Killer Colour"),
-				d.GetValue("ESP Font Selection")
-			if not g or not j then
+				d.GetValue("ESP Font Selection"),
+				b.players
+			if not B or #B < 1 then
 				return
 			end
-			local m = b.killer
-			if not b.killer.character then
-				return
-			end
-			if b.killer.name == b.local_player.Name then
-				return
-			end
-			local n, o, p = utility.world_to_screen(m.position)
-			if p then
-				local q = m.name
-				local r, s, t = e:get_text_size(q, l), "", 0
-				if h then
-					local u = b.local_position
-					local v = f(u, m.position)
-					s = "[" .. tostring(math.floor(v)) .. "m]"
-					t = e:get_text_size(s, l)
-				end
-				local u = r + t
-				local v = n - (u / 2)
-				draw.text_outlined(q, v, o, e:create_colour(k.r, k.g, k.b), l, k.a)
-				if h then
-					draw.text_outlined(s, v + r, o, e:create_colour(i.r, i.g, i.b), l, i.a)
+			for C = 1, #B do
+				local D = B[C]
+				if D.name ~= b.local_data.player.Name then
+					local E, F, G = utility.world_to_screen(D.position)
+					if G then
+						if D.hitbox_part then
+							local H = h(D.hitbox_part)
+							if H then
+								if l or m then
+									if q == "3D" then
+										local I = g(D.hitbox_part)
+										draw.polyline(I, e:create_colour(s.r, s.g, s.b), true, 1.5, s.a)
+										if m then
+											draw.ConvexPolyFilled(I, e:create_colour(t.r, t.g, t.b), t.a)
+										end
+									else
+										draw.rect(H.x, H.y, H.w, H.h, e:create_colour(s.r, s.g, s.b), nil, nil, s.a)
+										draw.rect(
+											H.x - 1,
+											H.y - 1,
+											H.w + 2,
+											H.h + 2,
+											e:create_colour(0, 0, 0),
+											1,
+											0,
+											s.a
+										)
+										draw.rect(
+											H.x + 1,
+											H.y + 1,
+											H.w - 2,
+											H.h - 2,
+											e:create_colour(0, 0, 0),
+											1,
+											0,
+											s.a
+										)
+										if m then
+											draw.gradient(
+												H.x,
+												H.y,
+												H.w,
+												H.h,
+												e:create_colour(t.r, t.g, t.b),
+												e:create_colour(u.r, u.g, u.b),
+												false,
+												t.a,
+												u.a
+											)
+										end
+									end
+								end
+								if k then
+									local I, J = e:get_text_size(D.name, A)
+									local K, L = H.x + (H.w / 2) - (I / 2), H.y - J - 2
+									draw.text_outlined(D.name, K, L, e:create_colour(r.r, r.g, r.b), A, r.a)
+								end
+								if p then
+									local I = (D.position - f()).Magnitude
+									local J = "[" .. tostring(math.floor(I)) .. "m]"
+									local K, L = e:get_text_size(J, A)
+									local M, N = H.x + (H.w / 2) - (K / 2), H.y + H.h + 2
+									draw.text_outlined(J, M, N, e:create_colour(z.r, z.g, z.b), A, z.a)
+								end
+								if o then
+									local I, J, K, L = 4, H.h, D.health, D.max_health
+									local M = math.clamp(K / L, 0, 1)
+									local N, O, P = J * M, H.x - I - 2, H.y
+									draw.rect_filled(O, P, I, J, e:create_colour(0, 0, 0), nil, 255)
+									local Q = math.max(I - 2, 1)
+									if N > 0 then
+										draw.gradient(
+											O + 1,
+											P + (J - N) + 1,
+											Q,
+											N,
+											e:create_colour(x.r, x.g, x.b),
+											e:create_colour(y.r, y.g, y.b),
+											false,
+											x.a,
+											y.a
+										)
+									end
+									local R = tostring(math.floor(K))
+									local S = e:get_text_size(R, A)
+									draw.TextOutlined(R, O - S - 2, P + (J - N), e:create_colour(255, 255, 255), A, 255)
+								end
+								if n then
+									local I, J, K, L = 4, H.h, D.stamina, 100
+									local M = math.clamp(K / L, 0, 1)
+									local N, O, P = J * M, H.x + H.w + 2, H.y
+									draw.rect_filled(O, P, I, J, e:create_colour(0, 0, 0), nil, 255)
+									draw.gradient(
+										O + 1,
+										P + (J - N) + 1,
+										math.max(I - 2, 1),
+										N,
+										e:create_colour(v.r, v.g, v.b),
+										e:create_colour(w.r, w.g, w.b),
+										false,
+										v.a,
+										w.a
+									)
+									draw.TextOutlined(
+										tostring(math.floor(K)),
+										O + I + 2,
+										P + (J - N),
+										e:create_colour(255, 255, 255),
+										A,
+										255
+									)
+								end
+							end
+						end
+					end
 				end
 			end
 		end
 		return function()
-			c.Add("onPaint", g)
+			c.Add("onPaint", i)
 		end
 	end
-	function a.q()
-		local b, c, d, e, f =
-			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
-				if not b or not c then
+	function a.y()
+		local b, c, d, e, f, g =
+			a.load("b"), a.load("d"), a.load("j"), a.load("c"), function(b)
+				local c = draw.get_part_corners(b)
+				if c then
+					local d = {}
+					for e, f in ipairs(c) do
+						local g, h, i = utility.world_to_screen(f)
+						if i then
+							table.insert(d, { g, h })
+						end
+					end
+					if #d >= 3 then
+						local e = draw.compute_convex_hull(d)
+						if e and #e >= 2 then
+							return e
+						end
+					end
+				end
+				return nil
+			end, function(b)
+				local c = draw.get_part_corners(b)
+				if not c then
+					return nil
+				end
+				local d, e, f, g = math.huge, math.huge, -math.huge, -math.huge
+				for h, i in ipairs(c) do
+					local j, k, l = utility.world_to_screen(i)
+					if l then
+						if j < d then
+							d = j
+						end
+						if k < e then
+							e = k
+						end
+						if j > f then
+							f = j
+						end
+						if k > g then
+							g = k
+						end
+					end
+				end
+				if d == math.huge then
+					return nil
+				end
+				return { x = d, y = e, w = (f - d), h = (g - e) }
+			end
+		local h = function()
+			local h, i = d.GetValue("Visuals Enabled"), d.GetValue("Killer ESP")
+			if not h or not i then
+				return
+			end
+			local j, k, l, m, n, o, p, q, r, s, t, u, v, w, x =
+				d.GetValue("Killer Name"),
+				d.GetValue("Killer Box"),
+				d.GetValue("Killer Filled Box"),
+				d.GetValue("Killer Stamina Bar"),
+				d.GetValue("Show Distance"),
+				d.GetValue("Box Type"),
+				d.GetValue("Killer Name Colour"),
+				d.GetValue("Killer Box Colour"),
+				d.GetValue("Killer Filled Box Colour A"),
+				d.GetValue("Killer Filled Box Colour B"),
+				d.GetValue("Killer Stamina Bar Colour A"),
+				d.GetValue("Killer Stamina Bar Colour B"),
+				d.GetValue("Distance Colour"),
+				d.GetValue("ESP Font Selection"),
+				b.killer
+			if not x.character then
+				return
+			end
+			if b.local_data.player.Name == x.name then
+				return
+			end
+			local y, z, A = utility.world_to_screen(x.position)
+			if A then
+				local B = g(x.hitbox_part)
+				if B then
+					if k or l then
+						if o == "3D" then
+							local C = f(x.hitbox_part)
+							draw.polyline(C, e:create_colour(q.r, q.g, q.b), true, 1.5, q.a)
+							if l then
+								draw.ConvexPolyFilled(C, e:create_colour(r.r, r.g, r.b), r.a)
+							end
+						else
+							draw.rect(B.x, B.y, B.w, B.h, e:create_colour(q.r, q.g, q.b), nil, nil, q.a)
+							draw.rect(B.x - 1, B.y - 1, B.w + 2, B.h + 2, e:create_colour(0, 0, 0), 1, 0, q.a)
+							draw.rect(B.x + 1, B.y + 1, B.w - 2, B.h - 2, e:create_colour(0, 0, 0), 1, 0, q.a)
+							if l then
+								draw.gradient(
+									B.x,
+									B.y,
+									B.w,
+									B.h,
+									e:create_colour(r.r, r.g, r.b),
+									e:create_colour(s.r, s.g, s.b),
+									false,
+									r.a,
+									s.a
+								)
+							end
+						end
+					end
+					if j then
+						local C, D = e:get_text_size(x.name, w)
+						local F, G = B.x + (B.w / 2) - (C / 2), B.y - D - 2
+						draw.text_outlined(x.name, F, G, e:create_colour(p.r, p.g, p.b), w, p.a)
+					end
+					if n then
+						local C = (x.position - b.local_data.player_position).Magnitude
+						local D = "[" .. tostring(math.floor(C)) .. "m]"
+						local F, G = e:get_text_size(D, w)
+						local H, I = B.x + (B.w / 2) - (F / 2), B.y + B.h + 2
+						draw.text_outlined(D, H, I, e:create_colour(v.r, v.g, v.b), w, v.a)
+					end
+					if m then
+						local C, D, F, G = 4, B.h, x.stamina, 70
+						local H = math.clamp(F / G, 0, 1)
+						local I, J, K = D * H, B.x + B.w + 2, B.y
+						draw.rect_filled(J, K, C, D, e:create_colour(0, 0, 0), nil, 255)
+						draw.gradient(
+							J + 1,
+							K + (D - I) + 1,
+							math.max(C - 2, 1),
+							I,
+							e:create_colour(t.r, t.g, t.b),
+							e:create_colour(u.r, u.g, u.b),
+							false,
+							t.a,
+							u.a
+						)
+						draw.TextOutlined(
+							tostring(math.floor(F)),
+							J + C + 2,
+							K + (D - I),
+							e:create_colour(255, 255, 255),
+							w,
+							255
+						)
+					end
+				end
+			end
+		end
+		return function()
+			c.Add("onPaint", h)
+		end
+	end
+	function a.z()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), a.load("c")
+		local f, g =
+			function()
+				local f = (b.local_data.player.Name == b.killer.name)
+				return f and b.killer.position or b.local_data.player_position
+			end, function(f, g)
+				if not f or not g then
 					return 0
 				end
-				return (b - c).Magnitude
+				return (f - g).Magnitude
 			end
-		local g = function()
-			local g, h, i, j, k, l, m, n =
+		local h = function()
+			local h, i, j, k, l, m, n, o =
 				d.GetValue("Visuals Enabled"),
 				d.GetValue("Show Distance"),
 				d.GetValue("Distance Colour"),
@@ -722,153 +1448,177 @@ do
 				d.GetValue("Generator Progress"),
 				d.GetValue("Generator Progress Colour"),
 				d.GetValue("ESP Font Selection")
-			if not g or not j then
+			if not h or not k then
 				return
 			end
-			for o = 1, #b.cached_generators do
-				local p = b.cached_generators[o]
-				local q = p.progress or 0
-				if q < 100 then
-					local r, s, t = utility.world_to_screen(p.position)
-					if t then
-						local u = p.name
-						local v, w = e:get_text_size(u, n)
-						local x, y = "", 0
-						if h then
-							local z = b.local_position
-							local A = f(z, p.position)
-							x = "[" .. tostring(math.floor(A)) .. "m]"
-							y = e:get_text_size(x, n)
+			for p = 1, #b.cached_generators do
+				local q = b.cached_generators[p]
+				local r = q.progress or 0
+				if r < 100 then
+					local s, t, u = utility.world_to_screen(q.position)
+					if u then
+						local v = q.name
+						local w, x = e:get_text_size(v, o)
+						local z, A = "", 0
+						if i then
+							local B = f()
+							local C = g(B, q.position)
+							z = "[" .. tostring(math.floor(C)) .. "m]"
+							A = e:get_text_size(z, o)
 						end
-						local z = v + y
-						local A = r - (z / 2)
-						draw.text_outlined(u, A, s, e:create_colour(k.r, k.g, k.b), n, k.a)
-						if h then
-							draw.text_outlined(x, A + v, s, e:create_colour(i.r, i.g, i.b), n, i.a)
+						local B = w + A
+						local C = s - (B / 2)
+						draw.text_outlined(v, C, t, e:create_colour(l.r, l.g, l.b), o, l.a)
+						if i then
+							draw.text_outlined(z, C + w, t, e:create_colour(j.r, j.g, j.b), o, j.a)
 						end
-						if l then
-							local B = tostring(q) .. "%"
-							local C = draw.get_text_size(B, n)
-							local D, E = r - (C / 2), s + w
-							draw.text_outlined(B, D, E, e:create_colour(m.r, m.g, m.b), n, m.a)
+						if m then
+							local D = tostring(r) .. "%"
+							local F = draw.get_text_size(D, o)
+							local G, H = s - (F / 2), t + x
+							draw.text_outlined(D, G, H, e:create_colour(n.r, n.g, n.b), o, n.a)
 						end
 					end
 				end
 			end
 		end
 		return function()
-			c.Add("onPaint", g)
+			c.Add("onPaint", h)
 		end
 	end
-	function a.r()
-		local b, c, d, e, f =
-			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
-				if not b or not c then
+	function a.A()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), a.load("c")
+		local f, g =
+			function()
+				local f = (b.local_data.player.Name == b.killer.name)
+				return f and b.killer.position or b.local_data.player_position
+			end, function(f, g)
+				if not f or not g then
 					return 0
 				end
-				return (b - c).Magnitude
+				return (f - g).Magnitude
 			end
-		local g = function()
-			local g, h, i, j, k, l =
+		local h = function()
+			local h, i, j, k, l, m =
 				d.GetValue("Visuals Enabled"),
 				d.GetValue("Show Distance"),
 				d.GetValue("Distance Colour"),
 				d.GetValue("Fuse Box ESP"),
 				d.GetValue("Fuse Box Colour"),
 				d.GetValue("ESP Font Selection")
-			if not g or not j then
+			if not h or not k then
 				return
 			end
-			for m = 1, #b.cached_fuseboxes do
-				local n = b.cached_fuseboxes[m]
-				local o = n.inserted
-				if not o then
-					local p, q, r = utility.world_to_screen(n.position)
-					if r then
-						local s = n.name
-						local t, u = e:get_text_size(s, l)
-						local v, w = "", 0
-						if h then
-							local x = b.local_position
-							local y = f(x, n.position)
-							v = "[" .. tostring(math.floor(y)) .. "m]"
-							w = e:get_text_size(v, l)
+			for n = 1, #b.cached_fuseboxes do
+				local o = b.cached_fuseboxes[n]
+				local p = o.inserted
+				if not p then
+					local q, r, s = utility.world_to_screen(o.position)
+					if s then
+						local t = o.name
+						local u, v = e:get_text_size(t, m)
+						local w, x = "", 0
+						if i then
+							local z = f()
+							local A = g(z, o.position)
+							w = "[" .. tostring(math.floor(A)) .. "m]"
+							x = e:get_text_size(w, m)
 						end
-						local x = t + w
-						local y = p - (x / 2)
-						draw.text_outlined(s, y, q, e:create_colour(k.r, k.g, k.b), l, k.a)
-						if h then
-							draw.text_outlined(v, y + t, q, e:create_colour(i.r, i.g, i.b), l, i.a)
+						local z = u + x
+						local A = q - (z / 2)
+						draw.text_outlined(t, A, r, e:create_colour(l.r, l.g, l.b), m, l.a)
+						if i then
+							draw.text_outlined(w, A + u, r, e:create_colour(j.r, j.g, j.b), m, j.a)
 						end
 					end
 				end
 			end
 		end
 		return function()
-			c.Add("onPaint", g)
+			c.Add("onPaint", h)
 		end
 	end
-	function a.s()
-		local b, c, d, e, f =
-			a.load("d"), a.load("a"), a.load("c"), a.load("e"), function(b, c)
-				if not b or not c then
+	function a.B()
+		local b, c, d, e = a.load("b"), a.load("d"), a.load("j"), a.load("c")
+		local f, g =
+			function()
+				local f = (b.local_data.player.Name == b.killer.name)
+				return f and b.killer.position or b.local_data.player_position
+			end, function(f, g)
+				if not f or not g then
 					return 0
 				end
-				return (b - c).Magnitude
+				return (f - g).Magnitude
 			end
-		local g = function()
-			local g, h, i, j, k, l =
+		local h = function()
+			local h, i, j, k, l, m =
 				d.GetValue("Visuals Enabled"),
 				d.GetValue("Show Distance"),
 				d.GetValue("Distance Colour"),
 				d.GetValue("Item ESP"),
 				d.GetValue("Item Colour"),
 				d.GetValue("ESP Font Selection")
-			if not g or not j then
+			if not h or not k then
 				return
 			end
-			for m = 1, #b.cached_items do
-				local n = b.cached_items[m]
-				local o, p, q = utility.world_to_screen(n.position or n.render_part.position)
-				if q then
-					local r = n.name
-					local s, t, u = e:get_text_size(r, l), "", 0
-					if h then
-						local v = b.local_position
-						local w = f(v, n.position)
-						t = "[" .. tostring(math.floor(w)) .. "m]"
-						u = e:get_text_size(t, l)
+			for n = 1, #b.cached_items do
+				local o = b.cached_items[n]
+				local p, q, r = utility.world_to_screen(o.position or o.render_part.position)
+				if r then
+					local s = o.name
+					local t, u, v = e:get_text_size(s, m), "", 0
+					if i then
+						local w = f()
+						local x = g(w, o.position)
+						u = "[" .. tostring(math.floor(x)) .. "m]"
+						v = e:get_text_size(u, m)
 					end
-					local v = s + u
-					local w = o - (v / 2)
-					draw.text_outlined(r, w, p, e:create_colour(k.r, k.g, k.b), l, k.a)
-					if h then
-						draw.text_outlined(t, w + s, p, e:create_colour(i.r, i.g, i.b), l, i.a)
+					local w = t + v
+					local x = p - (w / 2)
+					draw.text_outlined(s, x, q, e:create_colour(l.r, l.g, l.b), m, l.a)
+					if i then
+						draw.text_outlined(u, x + t, q, e:create_colour(j.r, j.g, j.b), m, j.a)
 					end
 				end
 			end
 		end
 		return function()
-			c.Add("onPaint", g)
+			c.Add("onPaint", h)
 		end
 	end
-	function a.t()
-		local b, c, d, e, f, g, h, i, j =
-			{}, a.load("h"), a.load("i"), a.load("k"), a.load("o"), a.load("p"), a.load("q"), a.load("r"), a.load("s")
+	function a.C()
+		local b, c, d, e, f, g, h, i, j, k, l, m, n =
+			{},
+			a.load("k"),
+			a.load("l"),
+			a.load("o"),
+			a.load("p"),
+			a.load("r"),
+			a.load("s"),
+			a.load("w"),
+			a.load("x"),
+			a.load("y"),
+			a.load("z"),
+			a.load("A"),
+			a.load("B")
 		function b:Initialise()
 			c()
 			d()
-			f()
 			e()
+			f()
 			g()
-			h()
 			i()
+			h()
 			j()
+			k()
+			l()
+			m()
+			n()
 		end
 		return b
 	end
-	function a.u()
-		local b, c, d, e = a.load("a"), a.load("c"), a.load("b"), {}
+	function a.D()
+		local b, c, d, e = a.load("d"), a.load("j"), a.load("a"), {}
 		e.DebugMode = false
 		local f, g, h = d:Register("UI.Elements", {}), d:Register("UI.DebugElements", {}), {}
 		h.__index = h
@@ -1102,68 +1852,116 @@ do
 		end
 		return e
 	end
-	function a.v()
+	function a.E()
 		local b, c, d = {}, "Features_DiddyWare", "Features"
 		function b:Initialise(e)
 			local f = e:Container(c, d, {
 				autosize = true,
 				next = true,
 			})
-			local g = f:Checkbox("Auto Door Hold")
-			f:KeyPicker("Auto Door Hold Hotkey", true)
-			local h, i, j, k =
-				f:SliderInt("Auto Door Hold Speed", 1, 25, 15),
-				f:Checkbox("Auto Generator"),
-				f:SliderInt("Auto Generator Mouse Speed", 1, 25, 15),
-				f:Checkbox("Speed Modifier")
-			f:KeyPicker("Speed Modifier Hotkey", true)
-			local l, m =
-				f:SliderFloat("WalkSpeed Modifier Amount", 1, 3, 1), f:SliderFloat("RunSpeed Modifier Amount", 1, 2, 1)
-			f:Checkbox("Infinite Stamina")
-			g:OnChange(function(n)
-				h:Visible(n)
+			local g = f:Page("Feature Menu", { "Combat", "Automation", "Movement" })
+			local h, i, j = g:For("Combat"), g:For("Automation"), g:For("Movement")
+			local k, l, m, n, o =
+				h:Checkbox("Auto Parry"),
+				h:SliderInt("Auto Parry Distance", 1, 20, 10),
+				h:Checkbox("Auto Attack"),
+				h:SliderInt("Auto Attack Distance", 1, 20, 5),
+				i:Checkbox("Auto Door Hold")
+			i:KeyPicker("Auto Door Hold Hotkey", true)
+			local p, q, r, s, t, u =
+				i:SliderInt("Auto Door Hold Speed", 1, 5, 5),
+				i:Checkbox("Auto Generator"),
+				i:SliderInt("Auto Generator Mouse Speed", 1, 25, 15),
+				j:Checkbox("Auto Avoid Traps"),
+				j:SliderInt("Auto Avoid Traps Distance", 1, 10, 10),
+				j:Checkbox("Speed Modifier")
+			j:KeyPicker("Speed Modifier Hotkey", true)
+			local v, w =
+				j:SliderFloat("WalkSpeed Modifier Amount", 1, 3, 1), j:SliderFloat("RunSpeed Modifier Amount", 1, 2, 1)
+			j:Checkbox("Infinite Stamina")
+			k:OnChange(function(x)
+				l:Visible(x)
 			end)
-			i:OnChange(function(n)
-				j:Visible(n)
+			m:OnChange(function(x)
+				n:Visible(x)
 			end)
-			k:OnChange(function(n)
-				l:Visible(n)
-				m:Visible(n)
+			o:OnChange(function(x)
+				p:Visible(x)
+			end)
+			q:OnChange(function(x)
+				r:Visible(x)
+			end)
+			u:OnChange(function(x)
+				v:Visible(x)
+				w:Visible(x)
+			end)
+			s:OnChange(function(x)
+				t:Visible(x)
 			end)
 		end
 		return b
 	end
-	function a.w()
+	function a.F()
 		local b, c, d = {}, "VisualsTab_DiddyWare", "Visuals"
 		function b:Initialise(e)
 			local f = e:Container(c, d, { autosize = true, next = true })
-			f:Checkbox("Visuals Enabled")
-			f:Checkbox("Show Distance")
-			f:Colorpicker("Distance Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
-			f:Checkbox("Killer ESP")
-			f:Colorpicker("Killer Colour", { r = 255, g = 0, b = 0, a = 255 }, true)
-			f:Checkbox("Generator ESP")
-			f:Colorpicker("Generator Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
-			f:Checkbox("Generator Progress")
-			f:Colorpicker("Generator Progress Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
-			f:Checkbox("Fuse Box ESP", false)
-			f:Colorpicker("Fuse Box Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
-			f:Checkbox("Item ESP", false)
-			f:Colorpicker("Item Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
+			local g = f:Page("Visuals Page", { "Main", "Players", "Killer", "World" })
+			local h, i, j, k = g:For("Main"), g:For("Players"), g:For("Killer"), g:For("World")
+			h:Checkbox("Visuals Enabled")
+			h:Checkbox("Show Distance")
+			h:Colorpicker("Distance Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
+			h:Dropdown("Box Type", { "2D", "3D" }, 1)
+			i:Checkbox("Player ESP")
+			i:Checkbox("Player Name")
+			i:Colorpicker("Player Name Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
+			i:Checkbox("Player Box")
+			i:Colorpicker("Player Box Colour", { r = 0, g = 255, b = 120, a = 255 }, true)
+			i:Checkbox("Player Filled Box")
+			i:Colorpicker("Player Filled Box Colour A", { r = 0, g = 255, b = 120, a = 140 }, true)
+			i:Colorpicker("Player Filled Box Colour B", { r = 0, g = 200, b = 90, a = 140 }, true)
+			i:Checkbox("Player Stamina Bar")
+			i:Colorpicker("Player Stamina Bar Colour A", {
+				r = 0,
+				g = 170,
+				b = 255,
+				a = 255,
+			}, true)
+			i:Colorpicker("Player Stamina Bar Colour B", { r = 0, g = 90, b = 200, a = 255 }, true)
+			i:Checkbox("Player Health Bar")
+			i:Colorpicker("Player Health Bar Colour A", { r = 0, g = 255, b = 0, a = 255 }, true)
+			i:Colorpicker("Player Health Bar Colour B", { r = 255, g = 0, b = 0, a = 255 }, true)
+			j:Checkbox("Killer ESP")
+			j:Checkbox("Killer Name")
+			j:Colorpicker("Killer Name Colour", { r = 255, g = 220, b = 220, a = 255 }, true)
+			j:Checkbox("Killer Box")
+			j:Colorpicker("Killer Box Colour", { r = 255, g = 0, b = 0, a = 255 }, true)
+			j:Checkbox("Killer Filled Box")
+			j:Colorpicker("Killer Filled Box Colour A", { r = 255, g = 60, b = 60, a = 160 }, true)
+			j:Colorpicker("Killer Filled Box Colour B", { r = 180, g = 0, b = 0, a = 160 }, true)
+			j:Checkbox("Killer Stamina Bar")
+			j:Colorpicker("Killer Stamina Bar Colour A", { r = 80, g = 140, b = 255, a = 255 }, true)
+			j:Colorpicker("Killer Stamina Bar Colour B", { r = 20, g = 80, b = 200, a = 255 }, true)
+			k:Checkbox("Generator ESP")
+			k:Colorpicker("Generator Colour", { r = 255, g = 140, b = 0, a = 255 }, true)
+			k:Checkbox("Generator Progress")
+			k:Colorpicker("Generator Progress Colour", { r = 255, g = 255, b = 255, a = 255 }, true)
+			k:Checkbox("Fuse Box ESP", false)
+			k:Colorpicker("Fuse Box Colour", { r = 0, g = 120, b = 255, a = 255 }, true)
+			k:Checkbox("Item ESP", false)
+			k:Colorpicker("Item Colour", { r = 120, g = 120, b = 120, a = 255 }, true)
 		end
 		return b
 	end
-	function a.x()
+	function a.G()
 		local b, c, d = {}, "Settings_DiddyWare", "Settings"
 		function b:Initialise(e)
 			local f = e:Container(c, d, { autosize = true })
-			f:SliderFloat("Update Map Every (s)", 1, 5, 1)
 			f:Dropdown("ESP Font Selection", { "ConsolasBold", "SmallestPixel", "Verdana", "Tahoma" }, 1)
 		end
 		return b
 	end
-	function a.y()
-		local b, c, d, e, f = {}, a.load("u"), a.load("v"), a.load("w"), a.load("x")
+	function a.H()
+		local b, c, d, e, f = {}, a.load("D"), a.load("E"), a.load("F"), a.load("G")
 		function b:Initialise()
 			local g = c.NewTab("DiddyWare_JB", "DiddyWare")
 			d:Initialise(g)
@@ -1172,7 +1970,7 @@ do
 		end
 		return b
 	end
-	function a.z()
+	function a.I()
 		return function()
 			function math.floor(b)
 				return b - (b % 1)
@@ -1184,14 +1982,14 @@ do
 	end
 end
 local b, c, d, e, f, g, h, i =
-	a.load("e"), a.load("t"), a.load("y"), a.load("f"), a.load("a"), a.load("b"), a.load("z"), a.load("u")
+	a.load("i"), a.load("C"), a.load("H"), a.load("m"), a.load("d"), a.load("a"), a.load("I"), a.load("D")
 local j = function()
 	h()
 	f:Initialise()
 	i:Initialise()
-	b:Initialise()
 	c:Initialise()
 	d:Initialise()
+	b()
 	f.Add("shutdown", function()
 		f.ClearAll()
 		g:UnloadAll()
