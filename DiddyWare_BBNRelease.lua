@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-09T12:35:36.335174700+00:00",
+	genDate = "2026-04-09T13:39:58.617640500+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -582,7 +582,7 @@ do
 			if not g.character then
 				return
 			end
-			if g.name == b.local_data.player.Name then
+			if g.name == b.local_data.player.Name or b.local_data.selected_class ~= "Survivor-Fighter" then
 				return
 			end
 			local h = e(g.position, b.local_data.player_position)
@@ -616,7 +616,7 @@ do
 			end
 			for i = 1, #b.players do
 				local j = b.players[i]
-				if j.name ~= b.local_data.player.Name then
+				if j.name ~= b.local_data.player.Name and j.health > 0 then
 					local k = (j.position - b.killer.position).Magnitude
 					if k <= f then
 						mouse.click("leftmouse")
@@ -1160,7 +1160,7 @@ do
 				if D.name ~= b.local_data.player.Name then
 					local E, F, G = utility.world_to_screen(D.position)
 					if G then
-						if D.hitbox_part then
+						if D.hitbox_part and D.health > 0 then
 							local H = h(D.hitbox_part)
 							if H then
 								if l or m then
