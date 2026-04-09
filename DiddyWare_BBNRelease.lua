@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-09T14:05:29.983348100+00:00",
+	genDate = "2026-04-09T15:26:44.145881400+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -470,6 +470,7 @@ do
 									health = k.Health,
 									max_health = k.MaxHealth,
 									position = k.Position,
+									role = e(l, "Character", "Survivor-Customer"),
 									stamina = e(l, "Stamina", 100),
 									max_stamina = e(l, "MaxStamina", 100),
 								}
@@ -491,6 +492,7 @@ do
 						k.health = k.humanoid.Health
 						k.max_health = k.humanoid.MaxHealth
 						k.position = k.position_part.Position
+						k.role = e(k.character, "Character", "Survivor-Customer")
 						k.stamina = e(k.character, "Stamina", 100)
 						k.max_stamina = e(k.character, "MaxStamina", 100)
 					end
@@ -864,61 +866,65 @@ do
 		end
 	end
 	function a.t()
-		local b, c, d, e =
-			a.load("q"), a.load("m"), a.load("j"), function(b, c, d)
-				local e = (b * b + c * c)
-				if e >= 1 then
-					local f = math.sqrt(e)
-					local g = math.max(f * (d / 100), 1.5)
-					utility.move_mouse((b / f) * g, (c / f) * g)
-				else
-					utility.move_mouse(b, c)
-				end
-			end
-		return function(f)
-			local g = f:find_first_child("Wires")
-			if not g then
+		local b, c, d = a.load("q"), a.load("m"), a.load("j")
+		return function(e)
+			local f = e:find_first_child("Wires")
+			if not f then
 				return false
 			end
-			local h, i = g:find_first_child("WiresEnd"), g:find_first_child("WireBoxes")
-			if not h or not i then
+			local g, h = f:find_first_child("WiresEnd"), f:find_first_child("WireBoxes")
+			if not g or not h then
 				return false
 			end
-			local j = d.GetValue("Auto Generator Mouse Speed") * 2
-			for k = 1, 4 do
-				local l, m, n =
-					h:find_first_child(tostring(k)).Hitbox,
-					i:find_first_child(tostring(k)),
-					g:find_first_child(tostring(k))
-				if l and m and n then
-					local o, p, q =
-						m.ConnectHitbox,
-						b.read_vector2(l.Address, c.GuiObject.AbsolutePosition),
-						b.read_vector2(l.Address, c.GuiObject.AbsoluteSize)
-					local r, s, t =
-						b.read_vector2(o.Address, c.GuiObject.AbsolutePosition),
-						b.read_vector2(o.Address, c.GuiObject.AbsoluteSize),
-						p + (q / 2)
-					local u, v, w =
-						r.X + s.X, r.Y + s.Y / 2, (t.X >= r.X and t.X <= r.X + s.X and t.Y >= r.Y and t.Y <= r.Y + s.Y)
-					if not w then
-						local x, y = b.read(n.Address, c.Path2D.Visible), utility.get_mouse_pos()
-						if not x then
-							e(t.X - y[1], t.Y - y[2], j)
-							y = utility.get_mouse_pos()
-							local z = (y[1] >= p.X and y[1] <= p.X + q.X and y[2] >= p.Y and y[2] <= p.Y + q.Y)
-							if z then
+			local i = d.GetValue("Auto Generator Mouse Speed") * 2
+			for j = 1, 4 do
+				local k, l, m =
+					g:find_first_child(tostring(j)).Hitbox,
+					h:find_first_child(tostring(j)),
+					f:find_first_child(tostring(j))
+				if k and l and m then
+					local n, o, p =
+						l.ConnectHitbox,
+						b.read_vector2(k.Address, c.GuiObject.AbsolutePosition),
+						b.read_vector2(k.Address, c.GuiObject.AbsoluteSize)
+					local q, r, s =
+						b.read_vector2(n.Address, c.GuiObject.AbsolutePosition),
+						b.read_vector2(n.Address, c.GuiObject.AbsoluteSize),
+						o + (p / 2)
+					local t, u, v =
+						q.X + r.X, q.Y + r.Y / 2, (s.X >= q.X and s.X <= q.X + r.X and s.Y >= q.Y and s.Y <= q.Y + r.Y)
+					if not v then
+						local w, x = b.read(m.Address, c.Path2D.Visible), utility.get_mouse_pos()
+						if not w then
+							local y, z = s.X - x[1], s.Y - x[2]
+							local A = (y * y + z * z)
+							if A >= 1 then
+								local B = i / 100
+								utility.move_mouse(y * B, z * B)
+							else
+								utility.move_mouse(y, z)
+							end
+							x = utility.get_mouse_pos()
+							local B = (x[1] >= o.X and x[1] <= o.X + p.X and x[2] >= o.Y and x[2] <= o.Y + p.Y)
+							if B then
 								mouse.click("leftmouse")
 							end
 							return false
 						end
-						e(u - y[1], v - y[2], j)
-						local z = utility.get_mouse_pos()
-						local A = (math.abs(z[1] - u) <= 7.5 and math.abs(z[2] - v) <= 7.5)
-						if not A then
+						local y, z = t - x[1], u - x[2]
+						local A = (y * y + z * z)
+						if A >= 1 then
+							local B = i / 100
+							utility.move_mouse(y * B, z * B)
+						else
+							utility.move_mouse(y, z)
+						end
+						local B = utility.get_mouse_pos()
+						local C = (math.abs(B[1] - t) <= 7.5 and math.abs(B[2] - u) <= 7.5)
+						if not C then
 							return false
 						end
-						if k == 4 then
+						if j == 4 then
 							return true
 						end
 					end
@@ -1215,7 +1221,7 @@ do
 									draw.text_outlined(I, L, M, e:create_colour(z.r, z.g, z.b), "SmallestPixel", z.a)
 								end
 								if o then
-									local H, I, J, K = 4, G.h, C.health, C.max_health
+									local H, I, J, K = 6, G.h, C.health, C.max_health
 									local L = math.clamp(J / K, 0, 1)
 									local M, N, O = I * L, G.x - H - 2, G.y
 									draw.rect_filled(N, O, H, I, e:create_colour(0, 0, 0), nil, 255)
@@ -1245,7 +1251,7 @@ do
 									)
 								end
 								if n then
-									local H, I, J, K = 4, G.h, C.stamina, 100
+									local H, I, J, K = 6, G.h, C.stamina, 100
 									local L = math.clamp(J / K, 0, 1)
 									local M, N, O = I * L, G.x + G.w + 2, G.y
 									draw.rect_filled(N, O, H, I, e:create_colour(0, 0, 0), nil, 255)
@@ -1396,7 +1402,7 @@ do
 						draw.text_outlined(C, G, H, e:create_colour(v.r, v.g, v.b), "SmallestPixel", v.a)
 					end
 					if m then
-						local B, C, E, F = 4, A.h, w.stamina, 70
+						local B, C, E, F = 6, A.h, w.stamina, 70
 						local G = math.clamp(E / F, 0, 1)
 						local H, I, J = C * G, A.x + A.w + 2, A.y
 						draw.rect_filled(I, J, B, C, e:create_colour(0, 0, 0), nil, 255)
