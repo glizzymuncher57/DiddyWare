@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-09T13:39:58.617640500+00:00",
+	genDate = "2026-04-09T14:05:29.983348100+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -611,7 +611,7 @@ do
 			if g.name ~= b.local_data.player.Name then
 				return
 			end
-			if h - e < 750 then
+			if h - e < 1000 then
 				return
 			end
 			for i = 1, #b.players do
@@ -864,65 +864,61 @@ do
 		end
 	end
 	function a.t()
-		local b, c, d = a.load("q"), a.load("m"), a.load("j")
-		return function(e)
-			local f = e:find_first_child("Wires")
-			if not f then
+		local b, c, d, e =
+			a.load("q"), a.load("m"), a.load("j"), function(b, c, d)
+				local e = (b * b + c * c)
+				if e >= 1 then
+					local f = math.sqrt(e)
+					local g = math.max(f * (d / 100), 1.5)
+					utility.move_mouse((b / f) * g, (c / f) * g)
+				else
+					utility.move_mouse(b, c)
+				end
+			end
+		return function(f)
+			local g = f:find_first_child("Wires")
+			if not g then
 				return false
 			end
-			local g, h = f:find_first_child("WiresEnd"), f:find_first_child("WireBoxes")
-			if not g or not h then
+			local h, i = g:find_first_child("WiresEnd"), g:find_first_child("WireBoxes")
+			if not h or not i then
 				return false
 			end
-			local i = d.GetValue("Auto Generator Mouse Speed") * 2
-			for j = 1, 4 do
-				local k, l, m =
-					g:find_first_child(tostring(j)).Hitbox,
-					h:find_first_child(tostring(j)),
-					f:find_first_child(tostring(j))
-				if k and l and m then
-					local n, o, p =
-						l.ConnectHitbox,
-						b.read_vector2(k.Address, c.GuiObject.AbsolutePosition),
-						b.read_vector2(k.Address, c.GuiObject.AbsoluteSize)
-					local q, r, s =
-						b.read_vector2(n.Address, c.GuiObject.AbsolutePosition),
-						b.read_vector2(n.Address, c.GuiObject.AbsoluteSize),
-						o + (p / 2)
-					local t, u, v =
-						q.X + r.X, q.Y + r.Y / 2, (s.X >= q.X and s.X <= q.X + r.X and s.Y >= q.Y and s.Y <= q.Y + r.Y)
-					if not v then
-						local w, x = b.read(m.Address, c.Path2D.Visible), utility.get_mouse_pos()
-						if not w then
-							local y, z = s.X - x[1], s.Y - x[2]
-							local A = (y * y + z * z)
-							if A >= 1 then
-								local B = i / 100
-								utility.move_mouse(y * B, z * B)
-							else
-								utility.move_mouse(y, z)
-							end
-							x = utility.get_mouse_pos()
-							local B = (x[1] >= o.X and x[1] <= o.X + p.X and x[2] >= o.Y and x[2] <= o.Y + p.Y)
-							if B then
+			local j = d.GetValue("Auto Generator Mouse Speed") * 2
+			for k = 1, 4 do
+				local l, m, n =
+					h:find_first_child(tostring(k)).Hitbox,
+					i:find_first_child(tostring(k)),
+					g:find_first_child(tostring(k))
+				if l and m and n then
+					local o, p, q =
+						m.ConnectHitbox,
+						b.read_vector2(l.Address, c.GuiObject.AbsolutePosition),
+						b.read_vector2(l.Address, c.GuiObject.AbsoluteSize)
+					local r, s, t =
+						b.read_vector2(o.Address, c.GuiObject.AbsolutePosition),
+						b.read_vector2(o.Address, c.GuiObject.AbsoluteSize),
+						p + (q / 2)
+					local u, v, w =
+						r.X + s.X, r.Y + s.Y / 2, (t.X >= r.X and t.X <= r.X + s.X and t.Y >= r.Y and t.Y <= r.Y + s.Y)
+					if not w then
+						local x, y = b.read(n.Address, c.Path2D.Visible), utility.get_mouse_pos()
+						if not x then
+							e(t.X - y[1], t.Y - y[2], j)
+							y = utility.get_mouse_pos()
+							local z = (y[1] >= p.X and y[1] <= p.X + q.X and y[2] >= p.Y and y[2] <= p.Y + q.Y)
+							if z then
 								mouse.click("leftmouse")
 							end
 							return false
 						end
-						local y, z = t - x[1], u - x[2]
-						local A = (y * y + z * z)
-						if A >= 1 then
-							local B = i / 100
-							utility.move_mouse(y * B, z * B)
-						else
-							utility.move_mouse(y, z)
-						end
-						local B = utility.get_mouse_pos()
-						local C = (math.abs(B[1] - t) <= 7.5 and math.abs(B[2] - u) <= 7.5)
-						if not C then
+						e(u - y[1], v - y[2], j)
+						local z = utility.get_mouse_pos()
+						local A = (math.abs(z[1] - u) <= 7.5 and math.abs(z[2] - v) <= 7.5)
+						if not A then
 							return false
 						end
-						if j == 4 then
+						if k == 4 then
 							return true
 						end
 					end
@@ -1133,7 +1129,7 @@ do
 			if not i or not j then
 				return
 			end
-			local k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, A, B =
+			local k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, A =
 				d.GetValue("Player Name"),
 				d.GetValue("Player Box"),
 				d.GetValue("Player Filled Box"),
@@ -1150,43 +1146,42 @@ do
 				d.GetValue("Player Health Bar Colour A"),
 				d.GetValue("Player Health Bar Colour B"),
 				d.GetValue("Distance Colour"),
-				d.GetValue("ESP Font Selection"),
 				b.players
-			if not B or #B < 1 then
+			if not A or #A < 1 then
 				return
 			end
-			for C = 1, #B do
-				local D = B[C]
-				if D.name ~= b.local_data.player.Name then
-					local E, F, G = utility.world_to_screen(D.position)
-					if G then
-						if D.hitbox_part and D.health > 0 then
-							local H = h(D.hitbox_part)
-							if H then
+			for B = 1, #A do
+				local C = A[B]
+				if C.name ~= b.local_data.player.Name then
+					local D, E, F = utility.world_to_screen(C.position)
+					if F then
+						if C.hitbox_part and C.health > 0 then
+							local G = h(C.hitbox_part)
+							if G then
 								if l or m then
 									if q == "3D" then
-										local I = g(D.hitbox_part)
-										draw.polyline(I, e:create_colour(s.r, s.g, s.b), true, 1.5, s.a)
+										local H = g(C.hitbox_part)
+										draw.polyline(H, e:create_colour(s.r, s.g, s.b), true, 1.5, s.a)
 										if m then
-											draw.ConvexPolyFilled(I, e:create_colour(t.r, t.g, t.b), t.a)
+											draw.ConvexPolyFilled(H, e:create_colour(t.r, t.g, t.b), t.a)
 										end
 									else
-										draw.rect(H.x, H.y, H.w, H.h, e:create_colour(s.r, s.g, s.b), nil, nil, s.a)
+										draw.rect(G.x, G.y, G.w, G.h, e:create_colour(s.r, s.g, s.b), nil, nil, s.a)
 										draw.rect(
-											H.x - 1,
-											H.y - 1,
-											H.w + 2,
-											H.h + 2,
+											G.x - 1,
+											G.y - 1,
+											G.w + 2,
+											G.h + 2,
 											e:create_colour(0, 0, 0),
 											1,
 											0,
 											s.a
 										)
 										draw.rect(
-											H.x + 1,
-											H.y + 1,
-											H.w - 2,
-											H.h - 2,
+											G.x + 1,
+											G.y + 1,
+											G.w - 2,
+											G.h - 2,
 											e:create_colour(0, 0, 0),
 											1,
 											0,
@@ -1194,10 +1189,10 @@ do
 										)
 										if m then
 											draw.gradient(
-												H.x,
-												H.y,
-												H.w,
-												H.h,
+												G.x,
+												G.y,
+												G.w,
+												G.h,
 												e:create_colour(t.r, t.g, t.b),
 												e:create_colour(u.r, u.g, u.b),
 												false,
@@ -1208,29 +1203,29 @@ do
 									end
 								end
 								if k then
-									local I, J = e:get_text_size(D.name, A)
-									local K, L = H.x + (H.w / 2) - (I / 2), H.y - J - 2
-									draw.text_outlined(D.name, K, L, e:create_colour(r.r, r.g, r.b), A, r.a)
+									local H, I = e:get_text_size(C.name, "Tahoma")
+									local J, K = G.x + (G.w / 2) - (H / 2), G.y - I - 2
+									draw.text_outlined(C.name, J, K, e:create_colour(r.r, r.g, r.b), "Tahoma", r.a)
 								end
 								if p then
-									local I = (D.position - f()).Magnitude
-									local J = "[" .. tostring(math.floor(I)) .. "m]"
-									local K, L = e:get_text_size(J, A)
-									local M, N = H.x + (H.w / 2) - (K / 2), H.y + H.h + 2
-									draw.text_outlined(J, M, N, e:create_colour(z.r, z.g, z.b), A, z.a)
+									local H = (C.position - f()).Magnitude
+									local I = "" .. tostring(math.floor(H)) .. "m"
+									local J, K = e:get_text_size(I, "SmallestPixel")
+									local L, M = G.x + (G.w / 2) - (J / 2), G.y + G.h + 2
+									draw.text_outlined(I, L, M, e:create_colour(z.r, z.g, z.b), "SmallestPixel", z.a)
 								end
 								if o then
-									local I, J, K, L = 4, H.h, D.health, D.max_health
-									local M = math.clamp(K / L, 0, 1)
-									local N, O, P = J * M, H.x - I - 2, H.y
-									draw.rect_filled(O, P, I, J, e:create_colour(0, 0, 0), nil, 255)
-									local Q = math.max(I - 2, 1)
-									if N > 0 then
+									local H, I, J, K = 4, G.h, C.health, C.max_health
+									local L = math.clamp(J / K, 0, 1)
+									local M, N, O = I * L, G.x - H - 2, G.y
+									draw.rect_filled(N, O, H, I, e:create_colour(0, 0, 0), nil, 255)
+									local P = math.max(H - 2, 1)
+									if M > 0 then
 										draw.gradient(
-											O + 1,
-											P + (J - N) + 1,
-											Q,
-											N,
+											N + 1,
+											O + (I - M) + 1,
+											P,
+											M,
 											e:create_colour(x.r, x.g, x.b),
 											e:create_colour(y.r, y.g, y.b),
 											false,
@@ -1238,20 +1233,27 @@ do
 											y.a
 										)
 									end
-									local R = tostring(math.floor(K))
-									local S = e:get_text_size(R, A)
-									draw.TextOutlined(R, O - S - 2, P + (J - N), e:create_colour(255, 255, 255), A, 255)
+									local Q = tostring(math.floor(J))
+									local R = e:get_text_size(Q, "SmallestPixel")
+									draw.TextOutlined(
+										Q,
+										N - R - 2,
+										O + (I - M),
+										e:create_colour(255, 255, 255),
+										"SmallestPixel",
+										255
+									)
 								end
 								if n then
-									local I, J, K, L = 4, H.h, D.stamina, 100
-									local M = math.clamp(K / L, 0, 1)
-									local N, O, P = J * M, H.x + H.w + 2, H.y
-									draw.rect_filled(O, P, I, J, e:create_colour(0, 0, 0), nil, 255)
+									local H, I, J, K = 4, G.h, C.stamina, 100
+									local L = math.clamp(J / K, 0, 1)
+									local M, N, O = I * L, G.x + G.w + 2, G.y
+									draw.rect_filled(N, O, H, I, e:create_colour(0, 0, 0), nil, 255)
 									draw.gradient(
-										O + 1,
-										P + (J - N) + 1,
-										math.max(I - 2, 1),
-										N,
+										N + 1,
+										O + (I - M) + 1,
+										math.max(H - 2, 1),
+										M,
 										e:create_colour(v.r, v.g, v.b),
 										e:create_colour(w.r, w.g, w.b),
 										false,
@@ -1259,11 +1261,11 @@ do
 										w.a
 									)
 									draw.TextOutlined(
-										tostring(math.floor(K)),
-										O + I + 2,
-										P + (J - N),
+										tostring(math.floor(J)),
+										N + H + 2,
+										O + (I - M),
 										e:create_colour(255, 255, 255),
-										A,
+										"SmallestPixel",
 										255
 									)
 								end
@@ -1330,7 +1332,7 @@ do
 			if not h or not i then
 				return
 			end
-			local j, k, l, m, n, o, p, q, r, s, t, u, v, w, x =
+			local j, k, l, m, n, o, p, q, r, s, t, u, v, w =
 				d.GetValue("Killer Name"),
 				d.GetValue("Killer Box"),
 				d.GetValue("Killer Filled Box"),
@@ -1344,35 +1346,34 @@ do
 				d.GetValue("Killer Stamina Bar Colour A"),
 				d.GetValue("Killer Stamina Bar Colour B"),
 				d.GetValue("Distance Colour"),
-				d.GetValue("ESP Font Selection"),
 				b.killer
-			if not x.character then
+			if not w.character then
 				return
 			end
-			if b.local_data.player.Name == x.name then
+			if b.local_data.player.Name == w.name then
 				return
 			end
-			local y, z, A = utility.world_to_screen(x.position)
-			if A then
-				local B = g(x.hitbox_part)
-				if B then
+			local x, y, z = utility.world_to_screen(w.position)
+			if z then
+				local A = g(w.hitbox_part)
+				if A then
 					if k or l then
 						if o == "3D" then
-							local C = f(x.hitbox_part)
-							draw.polyline(C, e:create_colour(q.r, q.g, q.b), true, 1.5, q.a)
+							local B = f(w.hitbox_part)
+							draw.polyline(B, e:create_colour(q.r, q.g, q.b), true, 1.5, q.a)
 							if l then
-								draw.ConvexPolyFilled(C, e:create_colour(r.r, r.g, r.b), r.a)
+								draw.ConvexPolyFilled(B, e:create_colour(r.r, r.g, r.b), r.a)
 							end
 						else
-							draw.rect(B.x, B.y, B.w, B.h, e:create_colour(q.r, q.g, q.b), nil, nil, q.a)
-							draw.rect(B.x - 1, B.y - 1, B.w + 2, B.h + 2, e:create_colour(0, 0, 0), 1, 0, q.a)
-							draw.rect(B.x + 1, B.y + 1, B.w - 2, B.h - 2, e:create_colour(0, 0, 0), 1, 0, q.a)
+							draw.rect(A.x, A.y, A.w, A.h, e:create_colour(q.r, q.g, q.b), nil, nil, q.a)
+							draw.rect(A.x - 1, A.y - 1, A.w + 2, A.h + 2, e:create_colour(0, 0, 0), 1, 0, q.a)
+							draw.rect(A.x + 1, A.y + 1, A.w - 2, A.h - 2, e:create_colour(0, 0, 0), 1, 0, q.a)
 							if l then
 								draw.gradient(
-									B.x,
-									B.y,
-									B.w,
-									B.h,
+									A.x,
+									A.y,
+									A.w,
+									A.h,
 									e:create_colour(r.r, r.g, r.b),
 									e:create_colour(s.r, s.g, s.b),
 									false,
@@ -1383,27 +1384,27 @@ do
 						end
 					end
 					if j then
-						local C, D = e:get_text_size(x.name, w)
-						local F, G = B.x + (B.w / 2) - (C / 2), B.y - D - 2
-						draw.text_outlined(x.name, F, G, e:create_colour(p.r, p.g, p.b), w, p.a)
+						local B, C = e:get_text_size(w.name, "Tahoma")
+						local E, F = A.x + (A.w / 2) - (B / 2), A.y - C - 2
+						draw.text_outlined(w.name, E, F, e:create_colour(p.r, p.g, p.b), "Tahoma", p.a)
 					end
 					if n then
-						local C = (x.position - b.local_data.player_position).Magnitude
-						local D = "[" .. tostring(math.floor(C)) .. "m]"
-						local F, G = e:get_text_size(D, w)
-						local H, I = B.x + (B.w / 2) - (F / 2), B.y + B.h + 2
-						draw.text_outlined(D, H, I, e:create_colour(v.r, v.g, v.b), w, v.a)
+						local B = (w.position - b.local_data.player_position).Magnitude
+						local C = tostring(math.floor(B)) .. "m"
+						local E, F = e:get_text_size(C, "SmallestPixel")
+						local G, H = A.x + (A.w / 2) - (E / 2), A.y + A.h + 2
+						draw.text_outlined(C, G, H, e:create_colour(v.r, v.g, v.b), "SmallestPixel", v.a)
 					end
 					if m then
-						local C, D, F, G = 4, B.h, x.stamina, 70
-						local H = math.clamp(F / G, 0, 1)
-						local I, J, K = D * H, B.x + B.w + 2, B.y
-						draw.rect_filled(J, K, C, D, e:create_colour(0, 0, 0), nil, 255)
+						local B, C, E, F = 4, A.h, w.stamina, 70
+						local G = math.clamp(E / F, 0, 1)
+						local H, I, J = C * G, A.x + A.w + 2, A.y
+						draw.rect_filled(I, J, B, C, e:create_colour(0, 0, 0), nil, 255)
 						draw.gradient(
-							J + 1,
-							K + (D - I) + 1,
-							math.max(C - 2, 1),
-							I,
+							I + 1,
+							J + (C - H) + 1,
+							math.max(B - 2, 1),
+							H,
 							e:create_colour(t.r, t.g, t.b),
 							e:create_colour(u.r, u.g, u.b),
 							false,
@@ -1411,11 +1412,11 @@ do
 							u.a
 						)
 						draw.TextOutlined(
-							tostring(math.floor(F)),
-							J + C + 2,
-							K + (D - I),
+							tostring(math.floor(E)),
+							I + B + 2,
+							J + (C - H),
 							e:create_colour(255, 255, 255),
-							w,
+							"SmallestPixel",
 							255
 						)
 					end
@@ -1458,7 +1459,7 @@ do
 					local s, t, u = utility.world_to_screen(q.position)
 					if u then
 						local v = q.name
-						local w, x = e:get_text_size(v, o)
+						local w, y = e:get_text_size(v, o)
 						local z, A = "", 0
 						if i then
 							local B = f()
@@ -1473,10 +1474,10 @@ do
 							draw.text_outlined(z, C + w, t, e:create_colour(j.r, j.g, j.b), o, j.a)
 						end
 						if m then
-							local D = tostring(r) .. "%"
-							local F = draw.get_text_size(D, o)
-							local G, H = s - (F / 2), t + x
-							draw.text_outlined(D, G, H, e:create_colour(n.r, n.g, n.b), o, n.a)
+							local E = tostring(r) .. "%"
+							local F = draw.get_text_size(E, o)
+							local G, H = s - (F / 2), t + y
+							draw.text_outlined(E, G, H, e:create_colour(n.r, n.g, n.b), o, n.a)
 						end
 					end
 				end
@@ -1517,14 +1518,14 @@ do
 					if s then
 						local t = o.name
 						local u, v = e:get_text_size(t, m)
-						local w, x = "", 0
+						local w, y = "", 0
 						if i then
 							local z = f()
 							local A = g(z, o.position)
 							w = "[" .. tostring(math.floor(A)) .. "m]"
-							x = e:get_text_size(w, m)
+							y = e:get_text_size(w, m)
 						end
-						local z = u + x
+						local z = u + y
 						local A = q - (z / 2)
 						draw.text_outlined(t, A, r, e:create_colour(l.r, l.g, l.b), m, l.a)
 						if i then
@@ -1569,15 +1570,15 @@ do
 					local t, u, v = e:get_text_size(s, m), "", 0
 					if i then
 						local w = f()
-						local x = g(w, o.position)
-						u = "[" .. tostring(math.floor(x)) .. "m]"
+						local y = g(w, o.position)
+						u = "[" .. tostring(math.floor(y)) .. "m]"
 						v = e:get_text_size(u, m)
 					end
 					local w = t + v
-					local x = p - (w / 2)
-					draw.text_outlined(s, x, q, e:create_colour(l.r, l.g, l.b), m, l.a)
+					local y = p - (w / 2)
+					draw.text_outlined(s, y, q, e:create_colour(l.r, l.g, l.b), m, l.a)
 					if i then
-						draw.text_outlined(u, x + t, q, e:create_colour(j.r, j.g, j.b), m, j.a)
+						draw.text_outlined(u, y + t, q, e:create_colour(j.r, j.g, j.b), m, j.a)
 					end
 				end
 			end
@@ -1813,12 +1814,12 @@ do
 							return nil
 						end
 						return function(w, ...)
-							local x = v(p, ...)
-							n[s][#n[s] + 1] = x
+							local y = v(p, ...)
+							n[s][#n[s] + 1] = y
 							if s ~= o then
-								x:Visible(false)
+								y:Visible(false)
 							end
-							return x
+							return y
 						end
 					end,
 				})
@@ -1879,24 +1880,24 @@ do
 			local v, w =
 				j:SliderFloat("WalkSpeed Modifier Amount", 1, 3, 1), j:SliderFloat("RunSpeed Modifier Amount", 1, 2, 1)
 			j:Checkbox("Infinite Stamina")
-			k:OnChange(function(x)
-				l:Visible(x)
+			k:OnChange(function(y)
+				l:Visible(y)
 			end)
-			m:OnChange(function(x)
-				n:Visible(x)
+			m:OnChange(function(y)
+				n:Visible(y)
 			end)
-			o:OnChange(function(x)
-				p:Visible(x)
+			o:OnChange(function(y)
+				p:Visible(y)
 			end)
-			q:OnChange(function(x)
-				r:Visible(x)
+			q:OnChange(function(y)
+				r:Visible(y)
 			end)
-			u:OnChange(function(x)
-				v:Visible(x)
-				w:Visible(x)
+			u:OnChange(function(y)
+				v:Visible(y)
+				w:Visible(y)
 			end)
-			s:OnChange(function(x)
-				t:Visible(x)
+			s:OnChange(function(y)
+				t:Visible(y)
 			end)
 		end
 		return b
