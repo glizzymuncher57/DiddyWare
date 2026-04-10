@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-09T15:26:44.145881400+00:00",
+	genDate = "2026-04-10T01:42:09.207127300+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -1172,27 +1172,17 @@ do
 											draw.ConvexPolyFilled(H, e:create_colour(t.r, t.g, t.b), t.a)
 										end
 									else
-										draw.rect(G.x, G.y, G.w, G.h, e:create_colour(s.r, s.g, s.b), nil, nil, s.a)
-										draw.rect(
+										draw.Rect(
 											G.x - 1,
 											G.y - 1,
 											G.w + 2,
 											G.h + 2,
 											e:create_colour(0, 0, 0),
-											1,
-											0,
+											nil,
+											nil,
 											s.a
 										)
-										draw.rect(
-											G.x + 1,
-											G.y + 1,
-											G.w - 2,
-											G.h - 2,
-											e:create_colour(0, 0, 0),
-											1,
-											0,
-											s.a
-										)
+										draw.Rect(G.x, G.y, G.w, G.h, e:create_colour(s.r, s.g, s.b), nil, nil, s.a)
 										if m then
 											draw.gradient(
 												G.x,
@@ -1221,45 +1211,42 @@ do
 									draw.text_outlined(I, L, M, e:create_colour(z.r, z.g, z.b), "SmallestPixel", z.a)
 								end
 								if o then
-									local H, I, J, K = 6, G.h, C.health, C.max_health
-									local L = math.clamp(J / K, 0, 1)
-									local M, N, O = I * L, G.x - H - 2, G.y
-									draw.rect_filled(N, O, H, I, e:create_colour(0, 0, 0), nil, 255)
-									local P = math.max(H - 2, 1)
-									if M > 0 then
-										draw.gradient(
-											N + 1,
-											O + (I - M) + 1,
-											P,
-											M,
-											e:create_colour(x.r, x.g, x.b),
-											e:create_colour(y.r, y.g, y.b),
-											false,
-											x.a,
-											y.a
-										)
-									end
-									local Q = tostring(math.floor(J))
-									local R = e:get_text_size(Q, "SmallestPixel")
+									local H, I, J = 4, C.health, C.max_health
+									local K, L = math.clamp(I / J, 0, 1), G.x - H - 3
+									draw.rect(L - 1, G.y - 1, H + 2, G.h + 2, e:create_colour(0, 0, 0), nil, nil, 255)
+									draw.rect_filled(L, G.y, H, G.h, e:create_colour(0, 0, 0), nil, 255)
+									draw.gradient(
+										L + 1,
+										G.y + 1 + ((G.h - 2) - ((G.h - 2) * K)),
+										H - 2,
+										(G.h - 2) * K,
+										e:create_colour(x.r, x.g, x.b),
+										e:create_colour(y.r, y.g, y.b),
+										false,
+										x.a,
+										y.a
+									)
+									local M = tostring(math.floor(I))
+									local N = e:get_text_size(M, "SmallestPixel")
 									draw.TextOutlined(
-										Q,
-										N - R - 2,
-										O + (I - M),
+										M,
+										L - N - 2,
+										G.y + 1 + ((G.h - 2) - ((G.h - 2) * K)),
 										e:create_colour(255, 255, 255),
 										"SmallestPixel",
 										255
 									)
 								end
 								if n then
-									local H, I, J, K = 6, G.h, C.stamina, 100
-									local L = math.clamp(J / K, 0, 1)
-									local M, N, O = I * L, G.x + G.w + 2, G.y
-									draw.rect_filled(N, O, H, I, e:create_colour(0, 0, 0), nil, 255)
+									local H, I, J = 4, C.stamina, 100
+									local K, L = math.clamp(I / J, 0, 1), G.x + G.w + 3
+									draw.rect(L - 1, G.y - 1, H + 2, G.h + 2, e:create_colour(0, 0, 0), nil, nil, 255)
+									draw.rect_filled(L, G.y, H, G.h, e:create_colour(0, 0, 0), nil, 255)
 									draw.gradient(
-										N + 1,
-										O + (I - M) + 1,
-										math.max(H - 2, 1),
-										M,
+										L + 1,
+										G.y + 1 + ((G.h - 2) - ((G.h - 2) * K)),
+										H - 2,
+										(G.h - 2) * K,
 										e:create_colour(v.r, v.g, v.b),
 										e:create_colour(w.r, w.g, w.b),
 										false,
@@ -1267,9 +1254,9 @@ do
 										w.a
 									)
 									draw.TextOutlined(
-										tostring(math.floor(J)),
-										N + H + 2,
-										O + (I - M),
+										tostring(math.floor(I)),
+										L + H + 2,
+										G.y + 1 + ((G.h - 2) - ((G.h - 2) * K)),
 										e:create_colour(255, 255, 255),
 										"SmallestPixel",
 										255
@@ -1371,9 +1358,8 @@ do
 								draw.ConvexPolyFilled(B, e:create_colour(r.r, r.g, r.b), r.a)
 							end
 						else
-							draw.rect(A.x, A.y, A.w, A.h, e:create_colour(q.r, q.g, q.b), nil, nil, q.a)
-							draw.rect(A.x - 1, A.y - 1, A.w + 2, A.h + 2, e:create_colour(0, 0, 0), 1, 0, q.a)
-							draw.rect(A.x + 1, A.y + 1, A.w - 2, A.h - 2, e:create_colour(0, 0, 0), 1, 0, q.a)
+							draw.Rect(A.x - 1, A.y - 1, A.w + 2, A.h + 2, e:create_colour(0, 0, 0), nil, nil, q.a)
+							draw.Rect(A.x, A.y, A.w, A.h, e:create_colour(q.r, q.g, q.b), nil, nil, q.a)
 							if l then
 								draw.gradient(
 									A.x,
@@ -1402,15 +1388,15 @@ do
 						draw.text_outlined(C, G, H, e:create_colour(v.r, v.g, v.b), "SmallestPixel", v.a)
 					end
 					if m then
-						local B, C, E, F = 6, A.h, w.stamina, 70
-						local G = math.clamp(E / F, 0, 1)
-						local H, I, J = C * G, A.x + A.w + 2, A.y
-						draw.rect_filled(I, J, B, C, e:create_colour(0, 0, 0), nil, 255)
+						local B, C, E = 4, w.stamina, 70
+						local F, G = math.clamp(C / E, 0, 1), A.x + A.w + 3
+						draw.rect(G - 1, A.y - 1, B + 2, A.h + 2, e:create_colour(0, 0, 0), nil, nil, 255)
+						draw.rect_filled(G, A.y, B, A.h, e:create_colour(0, 0, 0), nil, 255)
 						draw.gradient(
-							I + 1,
-							J + (C - H) + 1,
-							math.max(B - 2, 1),
-							H,
+							G + 1,
+							A.y + 1 + ((A.h - 2) - ((A.h - 2) * F)),
+							B - 2,
+							(A.h - 2) * F,
 							e:create_colour(t.r, t.g, t.b),
 							e:create_colour(u.r, u.g, u.b),
 							false,
@@ -1418,9 +1404,9 @@ do
 							u.a
 						)
 						draw.TextOutlined(
-							tostring(math.floor(E)),
-							I + B + 2,
-							J + (C - H),
+							tostring(math.floor(C)),
+							G + B + 2,
+							A.y + ((A.h - 2) - ((A.h - 2) * F)),
 							e:create_colour(255, 255, 255),
 							"SmallestPixel",
 							255
