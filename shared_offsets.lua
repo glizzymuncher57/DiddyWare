@@ -1,6 +1,21 @@
 return {
     ['version'] = 'version-26c90be22e0d4758',
 
+    ['CylinderHandleAdornment'] = {
+        ['Height'] = {Type = 'float', Offset = 0x1C4},
+        ['Transparency'] = {Type = 'float', Offset = 0xFC},
+        ['Rotation'] = {Type = 'float', Offset = 0x130},
+        ['Visible'] = {Type = 'bool', Offset = 0x100},
+    },
+    ['Bone'] = {
+        ['WorldPosition'] = {Type = 'float', X = 0xFE4, Y = 0xFE8, Z = 0xFEC},
+    },
+    ['ScreenGui'] = {
+        ['Enabled'] = {Type = 'bool', Offset = 0x4CC},
+    },
+    ['Camera'] = {
+        ['Rotation'] = {Type = 'float', Offset = 0xF8},
+    },
     ['Animator'] = {
         ['AnimationTrackList'] = {Type = 'pointer', Offset = 0x850},
     },
@@ -13,14 +28,11 @@ return {
     ['Path2D'] = {
         ['Visible'] = {Type = 'bool', Offset = 0x115},
     },
+    ['Animation'] = {
+        ['AnimationId'] = {Type = 'string', Offset = 0xD0},
+    },
     ['BasePart'] = {
         ['Primitive'] = {Type = 'pointer', Offset = 0x148},
-    },
-    ['Primitive'] = {
-        ['Rotation'] = {Type = 'float', Offset = 0xC0},
-    },
-    ['ImageButton'] = {
-        ['Image'] = {Type = 'string', Offset = 0xCC8},
     },
     ['AnimationTrack'] = {
         ['Looped'] = {Type = 'bool', Offset = 0xF5},
@@ -28,33 +40,21 @@ return {
         ['Speed'] = {Type = 'float', Offset = 0xE4},
         ['TimePosition'] = {Type = 'float', Offset = 0xE8},
     },
-    ['CylinderHandleAdornment'] = {
-        ['Visible'] = {Type = 'bool', Offset = 0x100},
-        ['Transparency'] = {Type = 'float', Offset = 0xFC},
-        ['Height'] = {Type = 'float', Offset = 0x1C4},
-        ['Rotation'] = {Type = 'float', Offset = 0x130},
-    },
-    ['Bone'] = {
-        ['Position'] = {Type = 'float', X = 0xDC, Y = 0xE0, Z = 0xE4},
-    },
-    ['Camera'] = {
-        ['Rotation'] = {Type = 'float', Offset = 0xF8},
+    ['GuiObject'] = {
+        ['Position'] = {Type = 'float', X = 0x518, Y = 0x520},
+        ['Size'] = {Type = 'float', X = 0x538, Y = 0x540},
+        ['AbsoluteSize'] = {Type = 'float', X = 0x118, Y = 0x11C},
+        ['Visible'] = {Type = 'bool', Offset = 0x5B5},
+        ['Rotation'] = {Type = 'float', Offset = 0x188},
+        ['AbsolutePosition'] = {Type = 'float', X = 0x110, Y = 0x114},
     },
     ['Humanoid'] = {
         ['HipHeight'] = {Type = 'float', Offset = 0x1A0},
     },
-    ['GuiObject'] = {
-        ['Visible'] = {Type = 'bool', Offset = 0x5B5},
-        ['Size'] = {Type = 'float', X = 0x538, Y = 0x540},
-        ['Position'] = {Type = 'float', X = 0x518, Y = 0x520},
-        ['AbsolutePosition'] = {Type = 'float', X = 0x110, Y = 0x114},
-        ['AbsoluteSize'] = {Type = 'float', X = 0x118, Y = 0x11C},
-        ['Rotation'] = {Type = 'float', Offset = 0x188},
+    ['ImageButton'] = {
+        ['Image'] = {Type = 'string', Offset = 0xCC8},
     },
-    ['ScreenGui'] = {
-        ['Enabled'] = {Type = 'bool', Offset = 0x4CC},
-    },
-    ['Animation'] = {
-        ['AnimationId'] = {Type = 'string', Offset = 0xD0},
+    ['Primitive'] = {
+        ['Rotation'] = {Type = 'float', Offset = 0xC0},
     },
 }
