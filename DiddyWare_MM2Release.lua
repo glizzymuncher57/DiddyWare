@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T10:35:05.199148600+00:00",
+	genDate = "2026-04-15T20:56:25.062942300+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -512,21 +512,24 @@ do
 				k:SliderInt("Tween Speed", 1, 100, 25),
 				e.NewReference("Exploits", "Misc", "Slow Fall"),
 				e.NewReference("Exploits", "Misc", "Fall Speed")
-			local s = function()
-				local s = b.Flags
-				s.Enabled = l:Get()
-				s.SafetyOnFullBag = m:Get()
-				s.MurdererSafezone = n:Get()
-				s.DelayPerCoin = o:Get()
-				s.TweenSpeed = p:Get()
-				m:Visible(s.Enabled)
-				n:Visible(s.Enabled)
-				o:Visible(s.Enabled)
-				p:Visible(s.Enabled)
-				q:Set(s.Enabled)
-				r:Set(1)
-			end
-			b.SAFE_POSITION = c.Lobby.Spawns.SpawnLocation.Position
+			local s, t =
+				function()
+					local s = b.Flags
+					s.Enabled = l:Get()
+					s.SafetyOnFullBag = m:Get()
+					s.MurdererSafezone = n:Get()
+					s.DelayPerCoin = o:Get()
+					s.TweenSpeed = p:Get()
+					m:Visible(s.Enabled)
+					n:Visible(s.Enabled)
+					o:Visible(s.Enabled)
+					p:Visible(s.Enabled)
+					q:Set(s.Enabled)
+					r:Set(1)
+				end, c:FindFirstChild("Lobby")
+			local u = t and t:FindFirstChild("Spawns")
+			local v = u:FindFirstChild("Spawn")
+			b.SAFE_POSITION = v and v.Position or Vector3.new(0, 0, 0)
 			cheat.Register("onUpdate", function()
 				b.Runtime()
 				s()
@@ -536,9 +539,7 @@ do
 	end
 	function a.i()
 		local b, c, d, e, f =
-			{
-				Flags = { Enabled = false },
-			}, a.load("b"), a.load("e"), a.load("f"), entity.GetLocalPlayer()
+			{ Flags = { Enabled = false } }, a.load("b"), a.load("e"), a.load("f"), entity.GetLocalPlayer()
 		local g = function()
 			local g = f:GetBoneInstance("HumanoidRootPart")
 			if not g then
