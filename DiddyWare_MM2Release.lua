@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-15T20:56:25.062942300+00:00",
+	genDate = "2026-04-22T13:34:27.847192600+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -526,9 +526,9 @@ do
 					p:Visible(s.Enabled)
 					q:Set(s.Enabled)
 					r:Set(1)
-				end, c:FindFirstChild("Lobby")
+				end, c:FindFirstChild("Lobby") or c:FindFirstChild("RegularLobby")
 			local u = t and t:FindFirstChild("Spawns")
-			local v = u:FindFirstChild("Spawn")
+			local v = u and u:FindFirstChild("Spawn")
 			b.SAFE_POSITION = v and v.Position or Vector3.new(0, 0, 0)
 			cheat.Register("onUpdate", function()
 				b.Runtime()
@@ -736,23 +736,9 @@ do
 	function a.m()
 		local b, c, d, e, f =
 			{
-				Flags = {
-					Enabled = false,
-					UseRoleColor = false,
-					Color = Color3.new(255, 255, 255),
-					Alpha = 255,
-					SelectedRoleTypes = { Innocent = false, Sheriff = false, Murderer = false },
-				},
+				Flags = { Enabled = false, UseRoleColor = false, Color = Color3.new(255, 255, 255), Alpha = 255, SelectedRoleTypes = { Innocent = false, Sheriff = false, Murderer = false } },
 				CachedTextSizes = {},
-			},
-			Color3.fromRGB(255, 255, 255),
-			{
-				Innocent = Color3.new(0.117647, 0.858824, 0.117647),
-				Murderer = Color3.new(0.72549, 0.101961, 0.101961),
-				Sheriff = Color3.new(0.070588, 0.517647, 0.811765),
-			},
-			a.load("b"),
-			a.load("e")
+			}, Color3.fromRGB(255, 255, 255), { Innocent = Color3.new(0.117647, 0.858824, 0.117647), Murderer = Color3.new(0.72549, 0.101961, 0.101961), Sheriff = Color3.new(0.070588, 0.517647, 0.811765) }, a.load("b"), a.load("e")
 		local g, h =
 			function(g)
 				local h = b.CachedTextSizes[g .. e.Font]
@@ -811,7 +797,11 @@ do
 				j:Checkbox("Role ESP Enabled"),
 				j:Colorpicker("Role ESP Color", { r = 255, g = 255, b = 255, a = 255 }, true),
 				j:Checkbox("Use Role Color", false),
-				j:Multiselect("Draw Roles", { "Innocent", "Sheriff", "Murderer" })
+				j:Multiselect("Draw Roles", {
+					"Innocent",
+					"Sheriff",
+					"Murderer",
+				})
 			cheat.Register("onPaint", b.Runtime)
 			cheat.Register("onUpdate", function()
 				b.Flags.Enabled = k:Get()
@@ -935,10 +925,9 @@ local b, c, d, e, f, g, h, i, j, k, l, n =
 local o = function()
 	local o = k.NewTab("DiddyWare_MM2", "DiddyWare")
 	local p, q, r =
-		o:Container("DiddyWare_MM2C1", "Main", {
-			autosize = true,
-			next = true,
-		}), o:Container("DiddyWare_MM2C2", "Visuals", { autosize = true }), o:Container("DiddyWare_MM2C3", "Settings", { autosize = true, next = true })
+		o:Container("DiddyWare_MM2C1", "Main", { autosize = true, next = true }),
+		o:Container("DiddyWare_MM2C2", "Visuals", { autosize = true }),
+		o:Container("DiddyWare_MM2C3", "Settings", { autosize = true, next = true })
 	l()
 	n()
 	b.Initialise(p)
