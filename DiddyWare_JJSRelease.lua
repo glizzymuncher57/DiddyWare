@@ -2,7 +2,7 @@
 --!nolint
 
 _P = {
-	genDate = "2026-04-03T10:50:00.230139300+00:00",
+	genDate = "2026-04-23T00:55:20.872750300+00:00",
 	cfg = "Release",
 	vers = "",
 }
@@ -1993,15 +1993,17 @@ local c = function()
 	aj()
 	ah:Initialise()
 	b:Initialise()
-	aa:Initialise()
-	ab:Initialise()
-	ac:Initialise()
-	ae:Initialise()
 	ag:Initialise()
-	af:Initialise()
+	ad:Initialise(function()
+		aa:Initialise()
+		ab:Initialise()
+		ac:Initialise()
+		ae:Initialise()
+		af:Initialise()
+	end)
 	ah.Add("shutdown", function()
 		ah.ClearAll()
 		ai:UnloadAll()
 	end)
 end
-ad:Initialise(c)
+c()
